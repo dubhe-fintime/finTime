@@ -60,8 +60,17 @@ elif loggerlevel == "CRITICAL":
 else:
     print("유효한 로그 레벨이 아닙니다.")
 
-# 로그 파일 저장 경로와 파일명 설정
-log_file = os.path.join(script_dir, "logs/admin.log")
+# 현재 스크립트 파일이 위치한 폴더 경로 가져오기
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# logs 폴더 경로 설정
+log_dir = os.path.join(script_dir, "logs")
+
+# logs 폴더가 없으면 생성
+os.makedirs(log_dir, exist_ok=True)
+
+# 로그 파일 경로 설정
+log_file = os.path.join(log_dir, "admin.log")
 
 # 날짜별로 로그 파일 분리 (midnight: 자정에 로그 파일 분리)
 handler = TimedRotatingFileHandler(
