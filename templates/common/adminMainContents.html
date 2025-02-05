@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+
+    <title>Admin Main</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #007bff;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-menu li {
+            margin-right: 20px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 1px;
+            margin-bottom: 100px;
+            margin-top: -80px; /* 서비스 이용 차트와 같은 줄로 표기되도록 top 마진을 조정합니다. */
+            flex: 1 1 50%;
+            max-width: 50%;
+            height: 300px;
+            margin-bottom: 160px;
+            
+        }
+
+        .board-item {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .board-item:nth-child(-n+6) {
+            background-color: #f0f0f0;
+        }
+
+        .board-item:nth-child(n+7) {
+            background-color: white;
+        }
+
+        .content {
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .chart-container1 {
+            flex: 1 1 100%;
+            max-width: 100%;
+            height: 300px;
+            margin-bottom: 160px;
+        }
+        .chart-container2 {
+            flex: 1 1 100%;
+            max-width: 100%;
+            height: 300px;
+            margin-bottom: 160px;
+        }
+        .chart-container3 {
+            flex: 1 1 50%;
+            max-width: 50%;
+            height: 300px;
+            margin-bottom: 160px;
+        }
+        .chart-container4 {
+            flex: 1 1 100%;
+            max-width: 100%;
+            height: 300px;
+            margin-bottom: 160px;
+        }
+        .chart-container2 {
+            margin-top: -80px; /* 서비스 이용 차트와 같은 줄로 표기되도록 top 마진을 조정합니다. */
+        }
+        .chart-container3 {
+            margin-top: -60px; /* 서비스 이용 차트와 같은 줄로 표기되도록 top 마진을 조정합니다. */
+        }
+        .chart-container4 {
+            margin-top: -80px; /* 서비스 이용 차트와 같은 줄로 표기되도록 top 마진을 조정합니다. */
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <div class="content">
+        <div class="chart-container1">
+            <h4>◎실시간 트래픽(Web Server)</h4>
+            <canvas id="traffic-data" style="height: 300px; width: 100%;"></canvas>
+        </div>
+        <div class="chart-container2">
+            <h4>◎실시간 질의어(질의어 누적)</h4>
+            <canvas id="query-data" style="height: 300px; width: 100%;"></canvas>
+        </div>
+        <div class="chart-container3">
+            <div style="display: flex; justify-content: space-between; width:300px;">
+                <h4 style="margin: 0;">◎서비스 이용</h4>
+                <h6 style="margin: 10px;">Interval: <em id="container3"></em> Min</h6>
+            </div>
+            <canvas id="chartContainerAsk" style="height: 300px; width: 600px;"></canvas>
+        </div>
+        <div class="board">
+        </div>
+        <div class="chart-container4">
+            <div style="display: flex; justify-content: space-between; width:100%;">
+                <h4 style="margin: 0;">◎접속자 통계(Weekly)</h4>
+                <h6 style="margin: 10px;">Interval: <em id="container4"></em> Min</h6>
+            </div>
+            <canvas id="accessChart" style="height: 100%; width: 100%;"></canvas>
+        </div>
+    </div>
+    <script>
+        let session_check = "{{session}}";
+        let trafficDataArray = [];
+        let trafficDataArray1 = [];
+        let trafficDataArrayAfter = [];
+
+        if (session_check == 'None') {
+            top.location.href = '/';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeTrafficChart(); // 실시간 트래픽
+            updateTrafficData(); // 실시간 트래픽 데이터 조회
+            initializeQueryChart(); // 실시간 질의어
+            getSelectRealTimeQuery(); // 실시간 질의어 데이터 조회
+            getSelectAsk() // 서비스 이용 데이터 조회
+            getSelectIntent10(); // 인텐트 TOP10
+            getSelectAccess(); // 접속자 통계
+        });
+
+        //////////////////
+        // 실시간 트래픽 //
+        //////////////////
+        // 실시간 트래픽 초기 데이터 설정
+        let realLabels = [];
+        let realData = [];
+        let realChart; // 차트 객체를 전역 변수로 선언
+
+        // 실시간 트래픽
+        function initializeTrafficChart() {
+            let ctx = document.getElementById('traffic-data').getContext('2d');
+            realChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: realLabels,
+                    datasets: [{
+                        label: 'Real-time Traffic Chart[ALL]',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        data: realData,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'Real-time Traffic Chart[ALL]'
+                    },
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Traffic'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 실시간 트래픽 데이터 업데이트 함수
+        function updateTrafficData() {
+            // JSON 형태의 데이터 생성
+            let dataObject = {
+                'pId': '80'
+            }
+
+            $.ajax({
+                url: "{{domain}}:{{port}}/statistics/getTrafficData",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(dataObject),
+                success: function (response) {
+                    // 트래픽 데이터 업데이트
+                    if (response.traffic_data.length > 0) {
+                        let c_data = 0;
+                        trafficDataArrayAfter.push(response.traffic_data[0]); // 데이터 넣기
+
+                        // 새로운 데이터 계산
+                        if (trafficDataArrayAfter.length > 1) {
+                            c_data = response.traffic_data[0] - trafficDataArrayAfter[trafficDataArrayAfter.length - 2];
+                        }
+
+                        // 음수 방지
+                        if (c_data < 0) {
+                            c_data = 0;
+                        }
+
+                        // 현재 시간 가져오기
+                        let currentTime = new Date().toLocaleTimeString();
+
+                        // 새 데이터 추가
+                        realData.push(c_data);
+                        realLabels.push(currentTime);
+
+                        // 데이터가 일정 개수를 초과할 경우 첫 번째 데이터 제거
+                        if (realData.length > 10) {
+                            realData.shift();
+                            realLabels.shift();
+                        }
+
+                        // 차트 업데이트
+                        realChart.update();
+                    } else {
+                        clearInterval(intervalId);
+                        console.log("통계 데이터 적출 오류");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    clearInterval(intervalId);
+                    console.log("Error:", error);
+                }
+            });
+        }
+
+        function getCurrentTime() {
+            var now = new Date();
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            var seconds = now.getSeconds();
+
+            // 시, 분, 초가 한 자리 수일 경우 앞에 0 추가
+            hours = hours < 10 ? "0" + hours : hours;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            return hours + ":" + minutes + ":" + seconds;
+        }
+
+        // 실시간 트래픽 데이터 업데이트
+        var intervalId = setInterval(updateTrafficData, 2000);
+
+        //////////////////
+        // 실시간 질의어 //
+        //////////////////
+        // 실시간 질의어 초기 데이터 설정
+        let realQueryLabels = [];
+        let realQueryData = [];
+        let realQueryChart; // 차트 객체를 전역 변수로 선언
+
+        // 실시간 트래픽
+        function initializeQueryChart() {
+            let ctx = document.getElementById('query-data').getContext('2d');
+            realQueryChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: realQueryLabels,
+                    datasets: [{
+                        label: 'Real-time Query Chart',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        data: realQueryData,
+                        tension: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'Real-time Query Chart'
+                    },
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Traffic'
+                            },
+                            ticks: {
+                                beginAtZero: true, // 세로축의 최소값을 0으로 설정합니다.
+                                suggestedMin: 0, // 최소값이 0보다 작을 때는 0으로 표시됩니다.
+                                precision: 0 // 세로축의 값을 정수로 표기합니다.
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 질의어 데이터 조회
+        function getSelectRealTimeQuery() {
+            // JSON 형태의 데이터 생성
+            let dataObject = {
+                'gTime': '1' // 1분단위로 생성
+            }
+            $.ajax({
+                url: "{{domain}}:{{port}}/statistics/realTimeQuery",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(dataObject),
+                success: function (response) {
+                    // Google Charts 그래프 생성
+                    if (response.length > 0) {
+                        // 새 데이터 추가
+                        realQueryData.push(response[0].message_count);
+                        realQueryLabels.push(response[0].interval_start);
+
+                        // 데이터가 일정 개수를 초과할 경우 첫 번째 데이터 제거
+                        if (realQueryData.length > 10) {
+                            realQueryData.shift();
+                            realQueryLabels.shift();
+                        }
+
+                        // 차트 업데이트
+                        realQueryChart.update();
+                    } else {
+                        clearInterval(intervalId2);
+                        console.log("통계 데이터 적출 오류");
+                    }
+
+                },
+                error: function (xhr, status, error) {
+                    clearInterval(intervalId2);
+                    console.log("Error:", error);
+                }
+            });
+        }
+        // 실시간 트래픽 데이터 업데이트
+        var intervalId2 = setInterval(getSelectRealTimeQuery, 60000);
+
+        //////////////////
+        // 서비스 이용 //
+        //////////////////
+        let serviceChart; // 차트 객체를 전역 변수로 선언
+
+        // 서비스 이용 차트 생성
+        function createChart2() {
+            var ctx = document.getElementById('chartContainerAsk').getContext('2d');
+            serviceChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['시나리오', '단순질의', '오류'],
+                    datasets: [{
+                        label: '서비스 이용',
+                        data: [],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.2)', // 파란색, 투명도 20%
+                            'rgba(255, 206, 86, 0.2)', // 노란색, 투명도 20%
+                            'rgba(255, 99, 132, 0.2)' // 붉은색, 투명도 20%
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)', // 파란색
+                            'rgba(255, 206, 86, 1)', // 노란색
+                            'rgba(255, 99, 132, 1)' // 붉은색
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: '서비스 이용 차트'
+                    }
+                }
+            });
+        }
+
+        // 서비스 이용 조회 및 차트 업데이트
+        function getSelectAsk() {
+            // JSON 형태의 데이터 생성
+            let dataObject = {};
+            $.ajax({
+                url: "{{domain}}:{{port}}/getTotalUse",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(dataObject),
+                success: function(response) {
+                    if (response != undefined) {
+                        // 차트가 생성되었는지 확인
+                        if (serviceChart) {
+                            // 데이터 업데이트
+                            serviceChart.data.datasets[0].data = [response.scen, response.intent, response.fail];
+                            // 차트 업데이트
+                            serviceChart.update();
+                        } else {
+                            console.log("서비스 이용 차트가 생성되지 않았습니다.");
+                        }
+                    } else {
+                        clearInterval(intervalId3);
+                        console.log("통계 데이터 적출 오류");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    clearInterval(intervalId3);
+                    console.log("Error:", error);
+                }
+            });
+        }
+
+        // 서비스 이용 차트 생성 및 실시간 데이터 업데이트 시작
+        createChart2(); // 초기 차트 생성
+        var cart2_interval_time = 1; // 분
+        var cart2_real_time = cart2_interval_time*60*1000;
+        var intervalId3 = setInterval(getSelectAsk, cart2_real_time); // 실시간 데이터 업데이트
+        $("#container3").html(cart2_interval_time);
+
+
+        //////////////////
+        // 인텐트 Top10 //
+        //////////////////
+        // 인텐트 Top10
+        function getSelectIntent10() {
+            $(".board").html("");
+            $.ajax({
+                url: "{{domain}}:{{port}}/statistics/intent10",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json", 
+                success: function(response) {
+                    // Google Charts 그래프 생성
+                    var oHtml = "";
+                    
+                    oHtml += '<div><h4>◎인텐트 Top10(Daily)</h4></div>';
+                    oHtml += '<div></div>';
+                    oHtml += '<div style="text-align: right;"><h6>Interval : '+intent10_interval_time+' Min</h6></div>';
+                    oHtml += '<div class="board-item">NO</div>';
+                    oHtml += '<div class="board-item">인텐트</div>';
+                    oHtml += '<div class="board-item">횟수</div>';
+                    var cnt = 10 - response.length;
+                    var boardCnt = response.length+1;
+                    if(response != undefined){ 
+                        if(response.length == 10){
+                            $.each(response, function(i, v){
+                                oHtml += '<div class="board-item">'+eval(i+1)+'</div>';
+                                oHtml += '<div class="board-item">'+v.intent_name+'</div>';
+                                oHtml += '<div class="board-item">'+v.cnt+'</div>';
+                            });
+                        }else{
+                            $.each(response, function(i, v){
+                                oHtml += '<div class="board-item">'+eval(i+1)+'</div>';
+                                oHtml += '<div class="board-item">'+v.intent_name+'</div>';
+                                oHtml += '<div class="board-item">'+v.cnt+'</div>';
+                            });
+                            for(var i=0; i < cnt; i++){
+                                oHtml += '<div class="board-item">'+boardCnt+'</div>';
+                                oHtml += '<div class="board-item">-</div>';
+                                oHtml += '<div class="board-item">-</div>';
+                                if(boardCnt == 10){
+                                    break;
+                                }else{
+                                    boardCnt++;
+                                }
+                            }
+
+                        }
+                        $(".board").html(oHtml);
+                    }else{
+                        clearInterval(intervalId4);
+                        console.log("통계 데이터 적출 오류");
+                    }
+                    
+                },
+                error: function(xhr, status, error) {
+                    clearInterval(intervalId4);
+                    console.log("Error:", error);
+                }
+            });
+        }
+        var intent10_interval_time = 1; // 분
+        var intent10_real_time = intent10_interval_time*60*1000;
+        var intervalId4 = setInterval(getSelectIntent10, intent10_real_time);
+        ////////////////
+        // 접속자 통계 //
+        ////////////////
+        let daysOfWeek = [];
+        let uvData = [];
+        let pvData = [];
+        let accessChart;
+
+        // 초기 차트 생성 플래그
+        let chartInitialized = false;
+
+        // 접속자 통계 조회 및 차트 생성 또는 업데이트
+        function getSelectAccess() {
+            $.ajax({
+                url: "{{domain}}:{{port}}/statistics/access",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                success: function (response) {
+                    if (response.length > 0) {
+                        var accessData = [];
+                        $.each(response, function (i, v) {
+                            switch (v.day_of_week) {
+                                case 1:
+                                    dayString = "일요일";
+                                    break;
+                                case 2:
+                                    dayString = "월요일";
+                                    break;
+                                case 3:
+                                    dayString = "화요일";
+                                    break;
+                                case 4:
+                                    dayString = "수요일";
+                                    break;
+                                case 5:
+                                    dayString = "목요일";
+                                    break;
+                                case 6:
+                                    dayString = "금요일";
+                                    break;
+                                case 7:
+                                    dayString = "토요일";
+                                    break;
+                                default:
+                                    dayString = "알 수 없는 요일";
+                            }
+
+                            accessData.push({ day: dayString, UV: v.UV, PV: v.PV })
+                        });
+
+                        daysOfWeek = accessData.map(response => response.day);
+                        uvData = accessData.map(response => response.UV);
+                        pvData = accessData.map(response => response.PV);
+
+                        if (!chartInitialized) {
+                            accessChart = createChart(); // 접속자 통계 차트 생성
+                            chartInitialized = true;
+                        } else {
+                            accessChart.data.labels = daysOfWeek;
+                            accessChart.data.datasets[0].data = uvData;
+                            accessChart.data.datasets[1].data = pvData;
+                            accessChart.update(); // 차트 업데이트
+                        }
+                    } else {
+                        clearInterval(intervalId5);
+                        console.log("통계 데이터 적출 오류");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    clearInterval(intervalId5);
+                    console.log("Error:", error);
+                }
+            });
+        }
+
+        // Chart 객체 생성 및 반환
+        function createChart() {
+            const ctx = document.getElementById('accessChart').getContext('2d');
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: daysOfWeek,
+                    datasets: [{
+                        label: 'UV',
+                        data: uvData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)', // 붉은색
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'PV',
+                        data: pvData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)', // 파란색
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '접속량'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: '요일'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        var cart_interval_time = 1; // 분
+        var cart_real_time = cart_interval_time * 60 * 1000;
+        var intervalId5 = setInterval(getSelectAccess, cart_real_time); // 실시간 데이터 업데이트
+        $("#container4").html(cart_interval_time);
+    </script>
+</body>
+
+</html>

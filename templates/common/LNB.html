@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="{{ url_for('static', filename='assets/images/favicon-32x32.png') }}" type="image/png">
+  <title>AIioth-chat | LNB</title>
+  <link rel="icon" href="{{ url_for('static', filename='assets/images/favicon-32x32.png') }}" type="image/png">
+  <link href="{{ url_for('static', filename='style/lnb.css') }}" rel="stylesheet" />
+  <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+  <link href="{{ url_for('static', filename='style/common.css') }}" rel="stylesheet" />
+
+</head>
+
+<body>
+  <aside class="side-area">
+    <div>
+      <header class="main-logo">
+        <h1 onclick="loadContent('/adminMainContents')" style="cursor: pointer;">AIdu Chat Admin</h1>
+      </header>
+      <!-- S : INFO BOX -->
+      <div class="info-box">
+        <div class="top">
+          <div class="id">ID: {{ session }}</div>
+          <button class="time-extend-btn" onclick="resetRemainingTime()">시간 연장</button>
+        </div>
+        <div class="bottom">
+          <div class="remain-time">
+            <span>남은시간</span><time id="remaining-time"></time>
+          </div>
+          <div class="access-time">
+            <span>접속시간</span><time>{{starttime}}</time>
+          </div>
+        </div>
+      </div>
+      <!-- E : INFO BOX -->
+      <!-- S : LNB -->
+      <nav class="lnb">
+        <div class="menu">
+          <strong class="depth1 ico-intent" onclick="ToggleMenu('intentList')" id="intentList">인텐트 현황</strong>
+          <ul class="depth2">
+            <li><a class="depth3" href="#" onclick="loadContent('/intentMange',this)">인텐트 현황/관리</a></li>
+          </ul>
+        </div>
+        <div class="menu">
+          <strong class="depth1 ico-add" onclick="ToggleMenu('intentAdd')" id="intentAdd">인텐트 추가</strong>
+          <ul class="depth2">
+            <li>
+              <a class="depth3" href="#" onclick="loadContent('/intentRegister',this)">인텐트 / 유사 질의어 추가</a>
+            </li>
+          </ul>
+        </div>
+        <div class="menu">
+          <strong class="depth1 ico-edu" onclick="ToggleMenu('eduManagement')" id="eduManagement">학습 관리</strong>
+          <ul class="depth2">
+            <li><a class="depth3" href="#" onclick="loadContent('/train',this)">학습 대기 인텐트</a></li>
+            <li><a class="depth3" href="#" onclick="loadContent('/hypotheticStudy',this)">학습 시뮬레이션</a></li>
+          </ul>
+        </div>
+        <div class="menu">
+          <strong class="depth1 ico-card" onclick="ToggleMenu('cardManagement')" id="cardManagement">카드 관리</strong>
+          <ul class="depth2">
+            <li><a class="depth3" href="#" onclick="loadContent('/cardRegister',this)">신규 카드 추가</a></li>
+            <!-- <li><a href="#" onclick="loadContent('/cardInfo')">카드 정보 관리</a></li> -->
+          </ul>
+        </div>
+        <div class="menu">
+          <strong class="depth1 ico-scenario" onclick="ToggleMenu('scenManagement')" id="scenManagement">시나리오
+            관리</strong>
+          <ul class="depth2">
+            <li><a class="depth3" href="#" onclick="loadContent('/InsertScenario',this)">시나리오 추가</a></li>
+            <li><a class="depth3" href="#" onclick="loadContent('/scenarioMange',this)">시나리오 관리</a></li>
+          </ul>
+        </div>
+        <div class="menu">
+          <strong class="depth1 ico-etc" onclick="ToggleMenu('etcManagement')" id="etcManagement">기타 관리</strong>
+          <ul class="depth2">
+            <li><a class="depth3" href="#" onclick="loadContent('/forbiddenWord',this)">비속어 관리</a></li>
+            <li><a class="depth3" href="#" onclick="loadContent('/command_word',this)">명령어 관리</a></li>
+            <li><a class="depth3" href="#" onclick="loadContent('/groupCode',this)">코드 관리</a></li>
+            <li><a class="depth3" href="#" onclick="loadContent('/notice',this)">실시간 공지</a></li>
+            <!-- <li><a href="#" onclick="loadContent('/cardTypeManage')">카드 유형 관리</a></li> -->
+          </ul>
+        </div>
+        <div class="menu">
+          <strong class="depth1 ico-total" onclick="ToggleMenu('graph'); " id="graph">통계</strong>
+          <ul class="depth2">
+            <li><a class="depth3" href="#" onclick="loadContent('/access',this)">접속 통계</a></li>
+            <li><a class="depth3" href="#" onclick="loadContent('/usage',this)">이용 통계</a></li>
+            <li><a class="depth3" href="#" onclick="loadContent('/error',this)">오류 통계</a></li>
+            <li><a class="depth3" href="#" onclick="loadContent('/edu',this)">학습 통계</a></li>
+            <!-- <li><a href="#" onclick="loadContent('/cardTypeManage')">카드 유형 관리</a></li> -->
+          </ul>
+        </div>
+        <div class="menu">
+          <strong class="depth1 ico-access" onclick="ToggleMenu('accessManagement');" id="accessManagement">접속
+            관리</strong>
+          <ul class="depth2">
+            <li><a class="depth3" href="#" onclick="loadContent('/adminGroupMange',this)">그룹 관리</a></li>
+            <li><a class="depth3" href="#" onclick="loadContent('/userMange',this)">유저 관리</a></li>
+
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <!-- E : LNB -->
+    <h3 class="logout-btn"><a onclick="LogoutModal()">로그아웃</a></h3>
+  </aside>
+  <div class="content">
+    <!-- 오른쪽 화면에 표시될 내용 -->
+    <iframe id="menuContent" frameborder="0"></iframe>
+  </div>
+</body>
+<script>
+  //세션 관리
+  let session_check = "{{session}}";
+  if (session_check == 'None') { top.location.href = '/'; }
+
+  // LNB 토글 메뉴
+  function ToggleMenu(id) {
+    //올리는것
+    $(".depth1.on").next().slideUp(200);
+    $(".depth1")
+      .not($(`#${id}`))
+      .removeClass("on");
+    if ($(`#${id}`).next().length > 0) {
+      //뎁스 1 색칠이 되어 있다면 
+      if ($(`#${id}`).hasClass("on")) {
+        $(`#${id}`).next().slideUp(200);
+        $(`#${id}`).removeClass("on");
+      } else {
+        $(`#${id}`).next().slideDown(200);
+        $(`#${id}`).addClass("on");
+      }
+    } else {
+      $($(`#${id}`)).toggleClass("on");
+    }
+  }
+
+
+  //타이머 및 페이지 src 변경
+  var timer;
+  function loadContent(page, id) {
+    //토글버튼 depth3
+    if ($(".depth3.on").length > 0) {
+      $(".depth3.on").removeClass("on")
+    }
+    $(id).addClass('on')
+
+    document.getElementById('menuContent').src = page;
+    updateRemainingTime(true)
+  }
+  loadContent('/adminMainContents')
+
+  //시간 연장 버튼
+  function resetRemainingTime() {
+    values = `<p>시간 연장이 완료되었습니다.</p>`
+    OpenModal("시간 연장", "", true, "", "", "확인", "", "", "sm", values)
+    updateRemainingTime(true)
+  }
+
+  function updateRemainingTime(reset) {
+    //세션시간 (!만약 서버에서 세션 유효기간 바꾸면 여기도 바꿔야함!)
+    var sessionStartTime = new Date()
+    var sessionDuration = 10 * 60 * 1000
+
+    if (reset) {
+      clearInterval(timer)
+    }
+    timer = setInterval(function update() {
+      var currentTime = new Date();
+      // 남은 시간 계산 (밀리초로)
+      var remainingTime = sessionStartTime.getTime() + sessionDuration - currentTime.getTime();
+
+      // 남은 시간이 음수가 되면 0으로 설정
+      remainingTime = Math.max(remainingTime, 0);
+
+      // 밀리초를 분과 초로 변환
+      var remainingMinutes = Math.floor(remainingTime / (1000 * 60));
+      var remainingSeconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+
+      //분,초가 1자리수 일때 앞에 0 붙여넣기
+      var formattedMinutes = (remainingMinutes < 10) ? "0" + remainingMinutes : remainingMinutes;
+      var formattedSeconds = (remainingSeconds < 10) ? "0" + remainingSeconds : remainingSeconds;
+
+      document.getElementById("remaining-time").innerHTML = `${formattedMinutes}: ${formattedSeconds}`
+
+      if (remainingTime === 0) {
+        clearInterval(timer);
+      }
+    }, 1000);
+  }
+
+  //로그아웃 모달
+  function LogoutModal() {
+    values = `<p>정말 로그아웃을 하시겠습니까?</p>`
+    OpenModal("로그아웃", "", true, true, "Logout()", "확인", "취소", "", "md", values)
+  }
+
+  //로그아웃 기능
+  function Logout() {
+
+    CloseModal()
+    $.ajax({
+      url: "{{domain}}:{{port}}/logout",
+      type: "POST",
+      contentType: "application/json",
+      dataType: "json",
+      data: JSON.stringify(session_check),
+      success: function (response) {
+        if (response[0] == "00000") {
+          values = `<p>로그아웃 되었습니다.</p>`
+          OpenModal("완료", "", true, "", `top.location.href="/"`, "확인", "", "", "md", values)
+        }
+
+      }, error: function (xhr, error, status) {
+        console.log(error)
+      }
+
+    })
+  }
+</script>
+
+</html>

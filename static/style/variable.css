@@ -1,0 +1,57 @@
+:root {
+  /* ----- S : COLOR SYSTEM ----- */
+
+  /* Primaryblue */
+  --blue900: #2D41AD;
+  --blue800: #526EC5;
+  --blue700: #7A8FD1;
+  --blue600: #98A9DE;
+  --blue500: #B6C2E7;
+  --blue400: #C8D1EF;
+  --blue300: #DFE4F5;
+  --blue200: #ECEFF8;
+  --blue100: #F2F4FA;
+
+  /* PrimaryGrey */
+  --black: #000000;
+  --grey900: #121619;
+  --grey800: #21272A;
+  --grey700: #343A3F;
+  --grey600: #565C63;
+  --grey550: #6C747E;
+  --grey500: #808892;
+  --grey400: #B9C1C9;
+  --grey300: #D6DBE1;
+  --grey250: #E1E6EC;
+  --grey200: #EBEFF5;
+  --grey100: #F3F6FB;
+  --grey50: #F8F9FC;
+  --white: #FFFFFF;
+
+  /* Secondary */
+  --positiveBlue: #0471E9;
+  --negativeRed: #D61111;
+
+  /* ----- E : COLOR SYSTEM ----- */
+
+  /* ----- S : FONT SCALE ----- */
+  --t1-font-size: 24px;
+  --t1-line-height: 36px;
+  --t2-font-size: 22px;
+  --t2-line-height: 32px;
+  --t3-font-size: 20px;
+  --t3-line-height: 30px;
+  --t4-font-size: 18px;
+  --t4-line-height: 28px;
+  --t5-font-size: 16px;
+  --t5-line-height: 24px;
+  --t6-font-size: 14px;
+  --t6-line-height: 24px;
+  --t7-font-size: 13px;
+  --t7-line-height: 20px;
+  --t8-font-size: 12px;
+  --t8-line-height: 18px;
+  --t9-font-size: 11px;
+  --t9-line-height: 16px;
+  /* ----- E : FONT SCALE ----- */
+}

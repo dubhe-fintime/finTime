@@ -1,0 +1,9 @@
+<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill="none">
+
+ <g>
+  <title>Layer 1</title>
+  <circle id="svg_1" fill="#CE7975" r="10.5" cy="12" cx="12"/>
+  <path id="svg_2" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" stroke="white" d="m8,8l8,8"/>
+  <path id="svg_3" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" stroke="white" d="m16,8l-8,8"/>
+ </g>
+</svg>

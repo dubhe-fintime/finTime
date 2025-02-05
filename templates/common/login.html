@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="{{ url_for('static', filename='assets/images/favicon-32x32.png') }}" type="image/png">
+  <title>Alioth - Chat | 로그인</title>
+  <link rel="icon" href="{{ url_for('static', filename='assets/images/favicon-32x32.png') }}" type="image/png">
+  <link href="{{ url_for('static', filename='style/fonts.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='style/common.css') }}" rel="stylesheet" />
+  <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/crypto-js.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/sha256.js') }}"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      font-family: "NotoSansKR";
+      letter-spacing: -0.5px;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: "NotoSans";
+    }
+
+    .wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background-color: #ebeff5;
+    }
+
+    .login-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      box-shadow: 0px 0px 28px 0px rgba(29, 35, 52, 0.1);
+      position: relative;
+      top: 50%;
+      left: 50%;
+      z-index: 3;
+      width: 100%;
+      max-width: 560px;
+      height: 492px;
+      background-color: #ffffff;
+      transform: translate(-50%, -50%);
+      border-radius: 20px;
+      transform-style: preserve-3d;
+    }
+
+    .login-area::after,
+    .login-area::before {
+      display: block;
+      position: absolute;
+      left: 50%;
+      background-repeat: no-repeat;
+      background-size: cover;
+      content: "";
+    }
+
+    .login-area::after {
+      top: -46px;
+      z-index: -1;
+      width: 58px;
+      height: 58px;
+      background-image: url('{{ url_for("static", filename="assets/images/dubot.png") }}');
+      transform: translateX(-50%) translateZ(-1px);
+      -webkit-transform: translateX(-50%) translateZ(-1px);
+      -moz-transform: translateX(-50%) translateZ(-1px);
+      -ms-transform: translateX(-50%) translateZ(-1px);
+      -o-transform: translateX(-50%) translateZ(-1px);
+    }
+
+    .login-area::before {
+      top: -12px;
+      z-index: 2;
+      width: 69px;
+      height: 16px;
+      background-image: url('{{ url_for("static", filename="assets/images/hand.png") }}');
+      transform: translateX(-50%);
+      -webkit-transform: translateX(-50%);
+      -moz-transform: translateX(-50%);
+      -ms-transform: translateX(-50%);
+      -o-transform: translateX(-50%);
+    }
+
+    .main-logo {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 36px;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      margin: 40px auto 0;
+      padding: 10px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-form input {
+      padding: 0 12px;
+      border: 1px solid #e1e6ec;
+      height: 56px;
+      line-height: 56px;
+      border-radius: 12px;
+    }
+
+    .login-form input::placeholder {
+      color: #b9c1c9;
+    }
+
+    .login-form input:focus {
+      outline-width: 1px;
+      outline-style: solid;
+      outline-color: #2d41ad;
+    }
+
+    .login-form input+input {
+      margin-top: 16px;
+    }
+
+    .login-form input+button {
+      margin-top: 32px;
+    }
+
+    .login-button {
+      border: 0;
+      height: 56px;
+      background-color: #2d41ad;
+      font-size: 18px;
+      line-height: 56px;
+      color: #ffffff;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .login-button:hover {
+      background-color: #243698;
+    }
+
+    @media all and (max-width: 400px) {
+      .login-form {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <main class="login-area">
+      <h1 class="main-logo">Admin Login</h1>
+      <form class="login-form">
+        <input type="text" name="username" id="id" placeholder="Username" required autocomplete="username">
+        <input type="password" id="pwd" name="password" placeholder="Password" autocomplete="current-password"
+          required />
+        <button class="login-button" onclick="login(event)">로그인</button>
+      </form>
+    </main>
+  </div>
+</body>
+<script>
+
+  // 로그인 실패 모달창
+  // var a_msg = "{{alert_message}}";
+  // if(a_msg){
+  //    $('.login-area').css('z-index',0)
+  //    values = `<p>${a_msg}</p>`
+  //     OpenModal('ID,PW 오류',"",true,"","","확인","","","sm",values)
+  // }
+
+  //// SHA-256 해시 생성 함수
+  function generateSHA256(input) {
+    return CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);
+  }
+
+  function login(event) {
+
+    event.preventDefault();
+
+    let dataObject = {
+      'id': $("#id").val(),
+      "pw": generateSHA256($("#pwd").val())
+    }
+
+    $.ajax({
+      url: "{{domain}}:{{port}}/adminLogin",
+      type: "POST",
+      contentType: "application/json",
+      dataType: "json",
+      data: JSON.stringify(dataObject),
+      success: function (response) {
+        console.log(response)
+        if (response[0] == "11111") {
+          $('.login-area').css('z-index', 0)
+          values = `<p>접근 거부: 사용 여부 및 아이디 확인바람</p>`
+          OpenModal('ID,PW 오류', "", true, "", "", "확인", "", "", "sm", values)
+        } else if (response[0] == "00000") {
+          window.location.href = "{{url_for('adminMain')}}"
+        }
+
+      }
+    })
+  }
+
+
+</script>
+
+</html>
