@@ -1,9 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 
-async def get381Data():
-    # 국민카드 이벤트 페이지 URL
-    url = "https://card.kbcard.com/BON/DVIEW/HBBMCXCRVNEC0002"
+async def get209Data():
+    # 유안타증권 이벤트 페이지 URL
+    url = "https://www.myasset.com/myasset/hello/event/CU_0203000_T1.cmd"
+    detailUrl = "https://www.myasset.com"
 
     # 웹페이지 요청
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -25,18 +26,22 @@ async def get381Data():
         #print(li_tags)
         print(f"이벤트 개수: {len(li_tags)}")  # 몇 개의 이벤트가 검색되는지 확인
         for li in li_tags:
-            title = li.find("span", class_="store").text.strip() + " " + li.find("span", class_="subject").text.strip() # 이벤트 제목
-            date = li.find("span", class_="date").text.strip()  # 이벤트 기간
+            title = li.find("p", class_="tit").text.strip() + " " + li.find("p", class_="txt").text.strip() # 이벤트 제목
+            date = li.find("em").text.strip()  # 이벤트 기간
             link = li.find("a")["href"]  # 이벤트 상세 링크
+            thumbnail = detailUrl + li.find('img')['src'] if li.find('img')['src'] else "" # 썸네일 이미지 링크
+            link = detailUrl + li.find("a")["href"]  # 이벤트 상세 링크
             if "javascript" in link.lower():  # 대소문자 구분 없이 검사
                 link = ""
 
-            #print(f"이벤트명: {title}")
-            #print(f"이벤트 기간: {date}")
-            #print(f"자세히 보기: {link}\n")
+            print(f"이벤트명: {title}")
+            print(f"이벤트 기간: {date}")
+            print(f"썸네일: {thumbnail}")
+            print(f"자세히 보기: {link}\n")
             event_list.append({
                         "title": title,
                         "date": date,
+                        "thumbnail": thumbnail,
                         "link": link
                     })
         
