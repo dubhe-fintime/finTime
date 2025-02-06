@@ -31,9 +31,9 @@ async def get381Data():
             if "javascript" in link.lower():  # 대소문자 구분 없이 검사
                 link = ""
 
-            #print(f"이벤트명: {title}")
-            #print(f"이벤트 기간: {date}")
-            #print(f"자세히 보기: {link}\n")
+            print(f"이벤트명: {title}")
+            print(f"이벤트 기간: {date}")
+            print(f"자세히 보기: {link}\n")
             event_list.append({
                         "title": title,
                         "date": date,
