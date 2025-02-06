@@ -21,10 +21,17 @@ import configparser
 
 from check_session import check_session
 
-from hanaBank import get081Data
-from ablLife import get437Data
+from finTime_server.corp.assurance import kyoboLife
+
+
+
+#from finTime_server.corp.ablLife import get437Data
+
 
 from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
+from finTime_server.corp.assurance import ablLife
+from finTime_server.corp.bank import hanaBank
+from finTime_server.corp.card import kbcard
 
 # 서버 경로 취득
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -101,7 +108,7 @@ rasa_process = None
 # 하나은행 배치 호출
 @app.route('/test', methods=["POST"])
 async def test():
-    results = await get081Data()
+    results = await hanaBank.get081Data()
     print(results)
     data_to_return = {
         "status_code": 200,  # 응답코드
@@ -113,10 +120,10 @@ async def test():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
-# 하나은행 배치 호출2
+# ABL생명
 @app.route('/test2', methods=["POST"])
 async def test2():
-    results = await get437Data()
+    results = await ablLife.get437Data()
     data_to_return = {
         "status_code": 200,  # 응답코드
         "result": results     # 응답결과
@@ -126,6 +133,21 @@ async def test2():
     response = jsonify(data_to_return)
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
+
+# 교보생명
+@app.route('/test3', methods=["POST"])
+async def test3():
+    results = await hanaBank.get081Data()
+    data_to_return = {
+        "status_code": 200,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
 
 # 에러코드 보는 곳
 @app.errorhandler(404)
@@ -145,7 +167,7 @@ def adminLogin_check():
     username = data['id']
     password = data['pw']
     values = [username, password]
-    results = execute_mysql_query_select("Q27", values)
+    results = execute_mysql_query_select("Q1", )
 
     # 관리자 아이디로 등록이 되지 않았을 경우
     if len(results) < 1 or results[0][1] == 'N':  # N은 사용 여부

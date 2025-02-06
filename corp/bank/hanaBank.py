@@ -23,7 +23,7 @@ async def get081Data():
         print(event)
         li_tags = event.find_all("li")
         #print(li_tags)
-        print(f"이벤트 개수: {len(li_tags)}")  # 몇 개의 이벤트가 검색되는지 확인
+        print(f"이벤트 [081] 개수: {len(li_tags)}")  # 몇 개의 이벤트가 검색되는지 확인
         for li in li_tags:
             title = li.find("p").text.strip()  # 이벤트 제목
             date = li.find("span").text.strip()  # 이벤트 기간
