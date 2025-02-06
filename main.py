@@ -23,7 +23,7 @@ from check_session import check_session
 
 from corp.assurance import kyoboLife,ablLife
 from corp.bank import hanaBank
-from corp.card import kbcard
+from corp.card import kbCard
 
 from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
 
