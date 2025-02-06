@@ -1,60 +1,105 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
-from bs4 import BeautifulSoup
-import time
+import re
+import requests
+
+##############################
+# 제목 : 교보생명
+# 금융사코드 : 436
+# 방식 : API
+# 수집 데이터
+# 제목 : O | 시작일 : O | 종료일 : O | 썸네일 : O 
+# 이미지 : X | 내용 : X | 목록 URL : O | 상세 URL : O
+##############################
+
+
+##############################
+# Service URL = "https://www.kyobo.com/dte/event/find-ingEndEvent"
+# Method = POST
+# body = {
+#  "searchEvtStat": "Y",
+#  "searchTxt": "",
+#  "sortDt": "시작일순",
+#  "offsetIdx": 0,
+#  "searchTypeItem": "S",
+#  "limitIdx": 10,
+#  "dgt_intn_exsr_yn": "Y"
+# }
+##############################
+
 
 async def get433Data():
-    url = "https://www.kyobo.com/dgt/web/event/event-ongoing"
-
-    # 브라우저 설정 (백그라운드 실행)
-    options = Options()
-    options.add_argument("--headless")  # 창을 띄우지 않음
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-
-    # Selenium WebDriver 실행
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=options)
-
-    driver.get(url)
-    time.sleep(1)  # JavaScript가 데이터를 로드할 시간을 줌
-
-    soup = BeautifulSoup(driver.page_source, "html.parser")
-    driver.quit()  # 브라우저 닫기
-
-    # 이벤트 리스트 찾기
-    event_list_html = soup.find(id="ingEventList")
-    print("HTML 내용: " + str(event_list_html))
-    if not event_list_html:
-        print("이벤트 리스트를 찾을 수 없습니다.")
-        return []
-
-    events = event_list_html.find_all("li")
-
+    ######### 기초 설정 Start #############
+    # return 값 넣을 리스트
     event_list = []
-    print(f"이벤트 [433] 개수 : {len(events)}")
+    # API URL
+    url =  "https://www.kyobo.com/dte/event/find-ingEndEvent"
+    # 이미지 파일 URL 기본값
+    img_domain =  "https://www.kyobo.com/file/ajax/display-img?fName="
+    # 상세페이지 URL 기본값
+    detail_domain =  "https://www.kyobo.com/dgt/web/event/event-detail"
+    # 목록 URL 기본값
+    list_domain =  "https://www.kyobo.com/dgt/web/event/event-ongoing"
+    ######### 기초 설정 END ##############
 
-    for event in events:
-        title_tag = event.find("strong", class_="tit")
-        date_tag = event.find("div", class_="period")
-        img_tag = event.find("div", class_="thumb").find("img")
+    try:
+        headers = {"User-Agent": "Mozilla/5.0"}
+        data = {
+            "searchEvtStat": "Y",
+            "searchTxt": "",
+            "sortDt": "시작일순",
+            "offsetIdx": 0,
+            "searchTypeItem": "S",
+            "limitIdx": 10,
+            "dgt_intn_exsr_yn": "Y",
+        }
+        # 웹페이지 요청
+        response = requests.post(url, headers=headers,json=data)
+        response.raise_for_status()  
 
-        if title_tag and date_tag and img_tag:
-            title = title_tag.text.strip()
-            date = date_tag.text.strip()
-            img_url = img_tag.get("src")
+        #응답 데이터 가공
+        target_data = response.json()["body"]["list"]
+
+        for element in target_data:
+            start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', element["evtPrd"])
+            #썸네일 
+            thumbNail = "/".join([
+                img_domain,
+                element['moDgtAtcFlDtyDvCd'],
+                element['moThemRegDate'],
+                element['moThemTmpFileNm']
+            ])
+            #상세페이지 
+            detail = "/".join([
+                detail_domain,
+                str(element['dgtEvntBubdSeqtId'])
+            ])
 
             event_list.append({
-                "title": title,
-                "date": date,
-                "img_url": img_url
+                "title": element['dgtEvntBubdTitlNm'],
+                "startDt": start_date,
+                "endDt": end_date,
+                "thumbNail": thumbNail,
+                "listURL": list_domain,
+                "detailURL": detail
             })
 
-            print(f"이벤트명: {title}")
-            print(f"이벤트 기간: {date}")
-            print(f"이미지 URL: {img_url}")
-            print("-")
+            # 확인용
+            # print(f"제목 : {element['dgtEvntBubdTitlNm']}")
+            # print(f"시작 : {start_date}")
+            # print(f"종료 : {end_date}")
+            # print(f"썸네일URL: {thumbNail}")
+            # print(f"상세페이지URL: {detail}")
+            # print(f"이벤트목록URL: {url}")
+            # print("-")
 
-    return event_list
+        print(f"교보생명 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
+        print("최종 결과 >>")
+        print(event_list)
+        return event_list
+
+    except requests.exceptions.RequestException as e:
+        print(f"교보생명 오류 발생: {e}")
+        return "Fail"
+
+
+
+
