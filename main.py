@@ -21,7 +21,7 @@ import configparser
 
 from check_session import check_session
 
-from finTime_server.corp.assurance import kyoboLife
+from corp.assurance import kyoboLife
 
 
 
@@ -29,9 +29,9 @@ from finTime_server.corp.assurance import kyoboLife
 
 
 from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
-from finTime_server.corp.assurance import ablLife
-from finTime_server.corp.bank import hanaBank
-from finTime_server.corp.card import kbcard
+from corp.assurance import ablLife
+from corp.bank import hanaBank
+from corp.card import kbcard
 
 # 서버 경로 취득
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -137,7 +137,7 @@ async def test2():
 # 교보생명
 @app.route('/test3', methods=["POST"])
 async def test3():
-    results = await hanaBank.get081Data()
+    results = await kyoboLife.get433Data()
     data_to_return = {
         "status_code": 200,  # 응답코드
         "result": results     # 응답결과
