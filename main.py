@@ -21,17 +21,11 @@ import configparser
 
 from check_session import check_session
 
-from corp.assurance import kyoboLife
-
-
-
-#from finTime_server.corp.ablLife import get437Data
-
-
-from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
-from corp.assurance import ablLife
+from corp.assurance import kyoboLife,ablLife
 from corp.bank import hanaBank
 from corp.card import kbcard
+
+from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
 
 # 서버 경로 취득
 script_dir = os.path.dirname(os.path.abspath(__file__))
