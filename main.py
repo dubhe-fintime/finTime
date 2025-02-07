@@ -176,7 +176,7 @@ async def test5():
 # 흥국생명
 @app.route('/test6', methods=["POST"])
 async def test6():
-    results = await heungkukLife.get457Data()
+    results = await heungkuklife.get457Data()
     data_to_return = {
         "status_code": 200,  # 응답코드
         "result": results     # 응답결과
