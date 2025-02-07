@@ -21,7 +21,7 @@ import configparser
 
 from check_session import check_session
 
-from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkukLife,kdbLife,samsungLife,hanhwaLife
+from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,kdbLife,samsungLife,hanhwaLife
 from corp.assurance import samsungFire,heungkukFire,kbInsure
 from corp.bank import hanaBank
 from corp.card import kbCard
