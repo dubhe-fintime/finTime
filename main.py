@@ -21,7 +21,8 @@ import configparser
 
 from check_session import check_session
 
-from corp.assurance import kyoboLife,ablLife
+from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkukLife,kdbLife,samsungLife,hanhwaLife
+from corp.assurance import samsungFire,heungkukFire,kbInsure
 from corp.bank import hanaBank
 from corp.card import kbCard
 
@@ -114,6 +115,8 @@ async def test():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
+################## 보험 START #############################
+
 # ABL생명
 @app.route('/test2', methods=["POST"])
 async def test2():
@@ -141,6 +144,52 @@ async def test3():
     response = jsonify(data_to_return)
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
+
+# 동양생명
+@app.route('/test4', methods=["POST"])
+async def test4():
+    results = await dongyangLife.get402Data()
+    data_to_return = {
+        "status_code": 200,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 한화생명
+@app.route('/test5', methods=["POST"])
+async def test5():
+    results = await hanhwaLife.get432Data()
+    data_to_return = {
+        "status_code": 200,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 흥국생명
+@app.route('/test6', methods=["POST"])
+async def test6():
+    results = await heungkukLife.get457Data()
+    data_to_return = {
+        "status_code": 200,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+
+################## 보험 END ###############################
+
 
 
 # 에러코드 보는 곳

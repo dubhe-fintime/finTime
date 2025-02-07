@@ -3,7 +3,7 @@ import time
 import datetime
 import schedule
 import os
-from main import test, test2, test3, app  # Flask 앱을 임포트
+from main import test, test2, test3, test4, test5, test6, app  # Flask 앱을 임포트
 
 # 비동기 작업 함수
 async def my_batch_job():
@@ -19,7 +19,10 @@ async def my_batch_job():
     tasks = {
         "test": test(),
         "test2": test2(),
-        "test3": test3()
+        "test3": test3(),
+        "test4": test4(),
+        "test5": test5(),
+        "test6": test6()
     }
 
     try:
