@@ -35,8 +35,13 @@ async def get402Data():
         # 요소 찾기 
         container = soup.find_all("div" ,class_="list-item")
         for element in container:
-            temp_date = element.find("span",class_="").text.replace('.', '-')
-            start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', temp_date)
+            temp_date = element.find("span", class_="").text.replace('.', '-') if element.find("span", class_="") else ""
+            if temp_date != "":
+                start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', temp_date)
+            else:
+                start_date, end_date = "", ""
+
+
             detail = detail_domain +element.find("a")["onclick"].split('(')[1].split(')')[0]
 
             #확인용
@@ -61,7 +66,7 @@ async def get402Data():
         print(event_list)
         return event_list
         
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         print(f"동양생명 오류 발생: {e}")
         return "Fail"
 
