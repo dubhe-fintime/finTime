@@ -68,5 +68,5 @@ async def get432Data():
         
     except Exception  as e:
         print(f"흥국생명 오류 발생: {e}")
-        return [{"ERROR": e}]
+        return {"ERROR": str(e)}
 
