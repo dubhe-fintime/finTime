@@ -24,7 +24,7 @@ async def get432Data():
     ######### 기초 설정 END ##############
     try:
         # 웹페이지 요청
-        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, verify=False)
         print(response.encoding)
         response.raise_for_status()  # 오류 발생 시 예외 처리
         soup = BeautifulSoup(response.text, 'html.parser')
