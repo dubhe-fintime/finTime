@@ -180,18 +180,10 @@ async def test3():
 @app.route('/test4', methods=["POST"])
 async def test4():
     results = await dongyangLife.get402Data()
-
-    if isinstance(results, list) and "ERROR" in results:
-        print("####################")
-        print("####################")
-        print("####################")
-        data_to_return = {
-            "status_code": 500,  # 응답코드
-            "fin_id": "T000000004",  # 임의의 Task ID
-            "result": results  # 오류 메시지
-        }
-        return jsonify(data_to_return)
-
+    print("#########################################")
+    print(results)
+    print("#########################################")
+    print("#########################################")
     data_to_return = {
         "status_code": 200,  # 응답코드
         "fin_id": "T000000004", # TASK ID 지정
