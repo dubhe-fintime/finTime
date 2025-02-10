@@ -69,6 +69,6 @@ async def get402Data():
     except Exception as e:
         print(f"동양생명 오류 발생: {e}")
         #return [{"ERROR": e}]
-        return {"ERROR": str(e)} 
+        return [{"ERROR": str(e)}] 
 
 
