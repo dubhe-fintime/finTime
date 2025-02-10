@@ -51,7 +51,7 @@ async def my_batch_job():
                     log_message = f"[{task_time}] {task_name} 실행 실패: {response}"
                     print(f"###################################{log_message}")
                     # 배치 로그 DB 저장
-                    set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, "FAIL", str(response))
+                    set_batch_log(BATCH_ID , BATCH_NM, '', task_name, now, task_time, "FAIL", str(response))
                 else:
                     res = response.get_json()
                     #res_json = json.dump(res['result'], ensure_ascii=False, indent=4)
