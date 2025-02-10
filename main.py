@@ -180,10 +180,6 @@ async def test3():
 @app.route('/test4', methods=["POST"])
 async def test4():
     results = await dongyangLife.get402Data()
-    print("#########################################")
-    print(results)
-    print("#########################################")
-    print("#########################################")
     status = 200
     for item in results:
         if 'ERROR' in item:
@@ -203,16 +199,13 @@ async def test4():
 @app.route('/test5', methods=["POST"])
 async def test5():
     results = await hanhwaLife.get432Data()
-    if isinstance(results, dict) and "ERROR" in results:
-        data_to_return = {
-            "status_code": 500,  # 응답코드
-            "fin_id": "T000000005",  # 임의의 Task ID
-            "result": results  # 오류 메시지
-        }
-        return jsonify(data_to_return)
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
     
     data_to_return = {
-        "status_code": 200,  # 응답코드
+        "status_code": status,  # 응답코드
         "fin_id": "T000000005", # TASK ID 지정
         "result": results     # 응답결과
     }
