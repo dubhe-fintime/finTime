@@ -156,7 +156,7 @@ async def test3():
 async def test4():
     results = await dongyangLife.get402Data()
 
-    if isinstance(results, dict) and "ERROR" in results:
+    if isinstance(results, Exception) and "ERROR" in results:
         data_to_return = {
             "status_code": 500,  # 응답코드
             "fin_id": "T000000004",  # 임의의 Task ID
