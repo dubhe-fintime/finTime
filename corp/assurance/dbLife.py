@@ -50,5 +50,5 @@ async def get457Data():
 
     except requests.exceptions.RequestException as e:
         print(f"DB생명 오류 발생: {e}")
-        return "Fail"
+        return [{"ERROR": e}]
 

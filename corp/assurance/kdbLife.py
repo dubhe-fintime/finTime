@@ -88,4 +88,4 @@ async def get458Data():
 
     except Exception as e:
         print(f"KDB생명 오류 발생: {e}")
-        return e
+        return [{"ERROR": e}]
