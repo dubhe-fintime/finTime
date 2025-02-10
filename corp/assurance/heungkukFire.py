@@ -56,5 +56,5 @@ async def get403Data():
 
     except Exception as e:
         print(f"흥국화재 오류 발생: {e}")
-        return e
+        return [{"ERROR": e}]
 

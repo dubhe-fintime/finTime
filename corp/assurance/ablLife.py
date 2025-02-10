@@ -64,4 +64,4 @@ async def get437Data():
         
     except Exception as e:
         print(f"ABL생명 오류 발생: {e}")
-        return e
+        return [{"ERROR": e}]

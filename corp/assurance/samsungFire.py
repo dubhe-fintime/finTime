@@ -60,7 +60,7 @@ async def get441Data():
 
     except Exception as e:
         print(f"삼성화재 오류 발생: {e}")
-        return e
+        return [{"ERROR": e}]
 
 
 
