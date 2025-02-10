@@ -23,8 +23,8 @@ import configparser
 
 from check_session import check_session
 
-from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,kdbLife,samsungLife,hanhwaLife,miraeAssetLife
-from corp.assurance import samsungFire,heungkukFire,kbInsure,nhInsure
+from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,kdbLife,samsungLife,hanhwaLife
+from corp.assurance import samsungFire,heungkukFire,kbInsure
 from corp.bank import hanaBank
 from corp.card import kbCard
 
@@ -272,41 +272,12 @@ async def test11():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
-# 미래에셋생명
-@app.route('/test12', methods=["POST"])
-async def test12():
-    results = await miraeAssetLife.get431Data()
-    data_to_return = {
-        "status_code": 200,  # 응답코드
-        "fin_id": "T000000012", # TASK ID 지정
-        "result": results     # 응답결과
-    }
-    
-    # Flask의 jsonify를 사용하여 응답 생성
-    response = jsonify(data_to_return)
-    response.status_code = data_to_return["status_code"]  # status_code 지정
-    return response
-
-# NH손해보험
-@app.route('/test13', methods=["POST"])
-async def test13():
-    results = await nhInsure.get449Data()
-    data_to_return = {
-        "status_code": 200,  # 응답코드
-        "fin_id": "T000000013", # TASK ID 지정
-        "result": results     # 응답결과
-    }
-    
-    # Flask의 jsonify를 사용하여 응답 생성
-    response = jsonify(data_to_return)
-    response.status_code = data_to_return["status_code"]  # status_code 지정
-    return response
-
 
 ################## 보험 END ###############################
 # SET BATCH LOG
 def set_batch_log(batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data):
-    values = (batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data)
+    result_data_str = json.dumps(result_data, ensure_ascii=False)
+    values = (batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data_str)
     execute_mysql_query_insert("Q1",values) # BATCH LOG 등록
 
 # SET EVENT LOG
