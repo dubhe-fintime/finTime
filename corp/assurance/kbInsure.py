@@ -63,9 +63,9 @@ async def get444Data():
         print(event_list)
         return event_list
 
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         print(f"KB손해보험 오류 발생: {e}")
-        return "Fail"
+        return e
 
 
 

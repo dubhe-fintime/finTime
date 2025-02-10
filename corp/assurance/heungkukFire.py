@@ -54,8 +54,7 @@ async def get403Data():
         print(event_list)
         return event_list
 
-        
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         print(f"흥국화재 오류 발생: {e}")
-        return "Fail"
+        return e
 

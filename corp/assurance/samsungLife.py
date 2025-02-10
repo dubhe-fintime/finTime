@@ -86,6 +86,6 @@ async def get452Data():
         print(event_list)
         return event_list       
 
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         print(f"삼성생명 오류 발생: {e}")
-        return "Fail"
+        return e

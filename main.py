@@ -149,12 +149,10 @@ async def test3():
 @app.route('/test4', methods=["POST"])
 async def test4():
     results = await dongyangLife.get402Data()
-    print(f"test4 : {results}")
     data_to_return = {
         "status_code": 200,  # 응답코드
         "result": results     # 응답결과
     }
-    
     # Flask의 jsonify를 사용하여 응답 생성
     response = jsonify(data_to_return)
     response.status_code = data_to_return["status_code"]  # status_code 지정
@@ -164,7 +162,7 @@ async def test4():
 @app.route('/test5', methods=["POST"])
 async def test5():
     results = await hanhwaLife.get432Data()
-    print(f"test5 : {results}")
+    print(results)
     data_to_return = {
         "status_code": 200,  # 응답코드
         "result": results     # 응답결과
@@ -189,6 +187,76 @@ async def test6():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
+# KDB생명
+@app.route('/test7', methods=["POST"])
+async def test7():
+    results = await kdbLife.get458Data()
+    data_to_return = {
+        "status_code": 200,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 삼성생명
+@app.route('/test8', methods=["POST"])
+async def test8():
+    results = await samsungLife.get452Data()
+    data_to_return = {
+        "status_code": 200,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 삼성화재
+@app.route('/test9', methods=["POST"])
+async def test9():
+    results = await samsungFire.get441Data()
+    data_to_return = {
+        "status_code": 200,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 흥국화재
+@app.route('/test10', methods=["POST"])
+async def test10():
+    results = await heungkukFire.get403Data()
+    data_to_return = {
+        "status_code": 200,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# KB손해보험
+@app.route('/test11', methods=["POST"])
+async def test11():
+    results = await kbInsure.get444Data()
+    data_to_return = {
+        "status_code": 200,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
 
 ################## 보험 END ###############################
 
@@ -202,8 +270,8 @@ def page_not_found(e):
 # 관리자 index 화면 호출
 @app.route("/")
 def adminLogin():
-    return render_template("common/login.html", domain=domain, port=port)
-    #return render_template("page/test.html", domain=domain, port=port)
+    #return render_template("common/login.html", domain=domain, port=port)
+    return render_template("page/test.html", domain=domain, port=port)
 
 # 관리자 로그인 화면 호출
 @app.route('/adminLogin', methods=["POST"])
