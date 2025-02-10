@@ -149,7 +149,6 @@ async def test3():
     # Flask의 jsonify를 사용하여 응답 생성
     response = jsonify(data_to_return)
     response.status_code = data_to_return["status_code"]  # status_code 지정
-    response.finId = "T000000003" # TASK ID 지정
     return response
 
 # 동양생명
@@ -278,7 +277,7 @@ async def test12():
     results = await miraeAssetLife.get431Data()
     data_to_return = {
         "status_code": 200,  # 응답코드
-        "fin_id": "T000000011", # TASK ID 지정
+        "fin_id": "T000000012", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -293,7 +292,7 @@ async def test13():
     results = await nhInsure.get449Data()
     data_to_return = {
         "status_code": 200,  # 응답코드
-        "fin_id": "T000000011", # TASK ID 지정
+        "fin_id": "T000000013", # TASK ID 지정
         "result": results     # 응답결과
     }
     
