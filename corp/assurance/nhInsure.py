@@ -56,7 +56,7 @@ async def get449Data():
 
     except Exception as e:
         print(f"NH손해보험 오류 발생: {e}")
-        return [{"ERROR": e}]
+        return [{"ERROR": str(e)}]
 
 
 

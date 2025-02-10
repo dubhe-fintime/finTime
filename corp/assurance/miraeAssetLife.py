@@ -75,7 +75,7 @@ async def get431Data():
     
     except Exception as e:
         print(f"미래에셋생명 오류 발생: {e}")
-        return [{"ERROR": e}]
+        return [{"ERROR": str(e)}]
 
 
 

@@ -106,16 +106,13 @@ rasa_process = None
 @app.route('/test1', methods=["POST"])
 async def test1():
     results = await hanaBank.get081Data()
-    if isinstance(results, dict) and "ERROR" in results:
-        data_to_return = {
-            "status_code": 500,  # 응답코드
-            "fin_id": "T000000001",  # 임의의 Task ID
-            "result": results  # 오류 메시지
-        }
-        return jsonify(data_to_return)
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
     
     data_to_return = {
-        "status_code": 200,  # 응답코드
+        "status_code": status,  # 응답코드
         "fin_id": "T000000001", # TASK ID 지정
         "result": results     # 응답결과
 
@@ -133,16 +130,13 @@ async def test1():
 async def test2():
     results = await ablLife.get437Data()
     
-    if isinstance(results, dict) and "ERROR" in results:
-        data_to_return = {
-            "status_code": 500,  # 응답코드
-            "fin_id": "T000000002",  # 임의의 Task ID
-            "result": results  # 오류 메시지
-        }
-        return jsonify(data_to_return)
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
     
     data_to_return = {
-        "status_code": 200,  # 응답코드
+        "status_code": status,  # 응답코드
         "fin_id": "T000000002", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -157,16 +151,13 @@ async def test2():
 async def test3():
     results = await kyoboLife.get433Data()
 
-    if isinstance(results, dict) and "ERROR" in results:
-        data_to_return = {
-            "status_code": 500,  # 응답코드
-            "fin_id": "T000000003",  # 임의의 Task ID
-            "result": results  # 오류 메시지
-        }
-        return jsonify(data_to_return)
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
     
     data_to_return = {
-        "status_code": 200,  # 응답코드
+        "status_code": status,  # 응답코드
         "fin_id": "T000000003", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -219,16 +210,13 @@ async def test5():
 @app.route('/test6', methods=["POST"])
 async def test6():
     results = await heungkuklife.get457Data()
-    if isinstance(results, dict) and "ERROR" in results:
-        data_to_return = {
-            "status_code": 500,  # 응답코드
-            "fin_id": "T000000006",  # 임의의 Task ID
-            "result": results  # 오류 메시지
-        }
-        return jsonify(data_to_return)
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
     
     data_to_return = {
-        "status_code": 200,  # 응답코드
+        "status_code": status,  # 응답코드
         "fin_id": "T000000006", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -242,16 +230,13 @@ async def test6():
 @app.route('/test7', methods=["POST"])
 async def test7():
     results = await kdbLife.get458Data()
-    if isinstance(results, dict) and "ERROR" in results:
-        data_to_return = {
-            "status_code": 500,  # 응답코드
-            "fin_id": "T000000007",  # 임의의 Task ID
-            "result": results  # 오류 메시지
-        }
-        return jsonify(data_to_return)
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
     
     data_to_return = {
-        "status_code": 200,  # 응답코드
+        "status_code": status,  # 응답코드
         "fin_id": "T000000007", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -265,16 +250,13 @@ async def test7():
 @app.route('/test8', methods=["POST"])
 async def test8():
     results = await samsungLife.get452Data()
-    if isinstance(results, dict) and "ERROR" in results:
-        data_to_return = {
-            "status_code": 500,  # 응답코드
-            "fin_id": "T000000008",  # 임의의 Task ID
-            "result": results  # 오류 메시지
-        }
-        return jsonify(data_to_return)
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
     
     data_to_return = {
-        "status_code": 200,  # 응답코드
+        "status_code": status,  # 응답코드
         "fin_id": "T000000008", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -288,16 +270,13 @@ async def test8():
 @app.route('/test9', methods=["POST"])
 async def test9():
     results = await samsungFire.get441Data()
-    if isinstance(results, dict) and "ERROR" in results:
-        data_to_return = {
-            "status_code": 500,  # 응답코드
-            "fin_id": "T000000009",  # 임의의 Task ID
-            "result": results  # 오류 메시지
-        }
-        return jsonify(data_to_return)
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
     
     data_to_return = {
-        "status_code": 200,  # 응답코드
+        "status_code": status,  # 응답코드
         "fin_id": "T000000009", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -311,16 +290,13 @@ async def test9():
 @app.route('/test10', methods=["POST"])
 async def test10():
     results = await heungkukFire.get403Data()
-    if isinstance(results, dict) and "ERROR" in results:
-        data_to_return = {
-            "status_code": 500,  # 응답코드
-            "fin_id": "T000000010",  # 임의의 Task ID
-            "result": results  # 오류 메시지
-        }
-        return jsonify(data_to_return)
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
     
     data_to_return = {
-        "status_code": 200,  # 응답코드
+        "status_code": status,  # 응답코드
         "fin_id": "T000000010", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -334,16 +310,13 @@ async def test10():
 @app.route('/test11', methods=["POST"])
 async def test11():
     results = await kbInsure.get444Data()
-    if isinstance(results, dict) and "ERROR" in results:
-        data_to_return = {
-            "status_code": 500,  # 응답코드
-            "fin_id": "T000000011",  # 임의의 Task ID
-            "result": results  # 오류 메시지
-        }
-        return jsonify(data_to_return)
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
     
     data_to_return = {
-        "status_code": 200,  # 응답코드
+        "status_code": status,  # 응답코드
         "fin_id": "T000000011", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -357,16 +330,13 @@ async def test11():
 @app.route('/test12', methods=["POST"])
 async def test12():
     results = await miraeAssetLife.get431Data()
-    if isinstance(results, dict) and "ERROR" in results:
-        data_to_return = {
-            "status_code": 500,  # 응답코드
-            "fin_id": "T000000012",  # 임의의 Task ID
-            "result": results  # 오류 메시지
-        }
-        return jsonify(data_to_return)
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
     
     data_to_return = {
-        "status_code": 200,  # 응답코드
+        "status_code": status,  # 응답코드
         "fin_id": "T000000012", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -380,16 +350,13 @@ async def test12():
 @app.route('/test13', methods=["POST"])
 async def test13():
     results = await nhInsure.get449Data()
-    if isinstance(results, dict) and "ERROR" in results:
-        data_to_return = {
-            "status_code": 500,  # 응답코드
-            "fin_id": "T000000013",  # 임의의 Task ID
-            "result": results  # 오류 메시지
-        }
-        return jsonify(data_to_return)
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
     
     data_to_return = {
-        "status_code": 200,  # 응답코드
+        "status_code": status,  # 응답코드
         "fin_id": "T000000013", # TASK ID 지정
         "result": results     # 응답결과
     }

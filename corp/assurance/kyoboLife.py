@@ -98,7 +98,7 @@ async def get433Data():
 
     except requests.exceptions.RequestException as e:
         print(f"교보생명 오류 발생: {e}")
-        return [{"ERROR": e}]
+        return [{"ERROR": str(e)}]
 
 
 
