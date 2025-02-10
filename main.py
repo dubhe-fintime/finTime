@@ -184,8 +184,13 @@ async def test4():
     print(results)
     print("#########################################")
     print("#########################################")
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+       
     data_to_return = {
-        "status_code": 200,  # 응답코드
+        "status_code": status,  # 응답코드
         "fin_id": "T000000004", # TASK ID 지정
         "result": results     # 응답결과
     }
