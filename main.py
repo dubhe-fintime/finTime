@@ -149,6 +149,7 @@ async def test3():
 @app.route('/test4', methods=["POST"])
 async def test4():
     results = await dongyangLife.get402Data()
+    print(f"test4 : {results}")
     data_to_return = {
         "status_code": 200,  # 응답코드
         "result": results     # 응답결과
@@ -163,6 +164,7 @@ async def test4():
 @app.route('/test5', methods=["POST"])
 async def test5():
     results = await hanhwaLife.get432Data()
+    print(f"test5 : {results}")
     data_to_return = {
         "status_code": 200,  # 응답코드
         "result": results     # 응답결과
@@ -200,8 +202,8 @@ def page_not_found(e):
 # 관리자 index 화면 호출
 @app.route("/")
 def adminLogin():
-    #return render_template("common/login.html", domain=domain, port=port)
-    return render_template("page/test.html", domain=domain, port=port)
+    return render_template("common/login.html", domain=domain, port=port)
+    #return render_template("page/test.html", domain=domain, port=port)
 
 # 관리자 로그인 화면 호출
 @app.route('/adminLogin', methods=["POST"])
