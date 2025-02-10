@@ -155,6 +155,7 @@ async def test3():
 @app.route('/test4', methods=["POST"])
 async def test4():
     results = await dongyangLife.get402Data()
+    print(f"################%%%%%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@{results}")
     data_to_return = {
         "status_code": 200,  # 응답코드
         "fin_id": "T000000004", # TASK ID 지정
@@ -163,6 +164,7 @@ async def test4():
     # Flask의 jsonify를 사용하여 응답 생성
     response = jsonify(data_to_return)
     response.status_code = data_to_return["status_code"]  # status_code 지정
+    print(f"################@@@@@@@@@@@@@@@@@@@@@@@@@@@@@{response}")
     return response
 
 # 한화생명
