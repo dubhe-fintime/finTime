@@ -4,7 +4,9 @@ import datetime
 import schedule
 import os
 import json
-from main import set_batch_log, test1, test2, test3, test4, test5, test6,test7,test8,test9,test10,test11, app  # Flask 앱을 임포트
+from main import set_batch_log, app  # Flask 앱을 임포트
+from main import test1, test2, test3, test4, test5, test6,test7,test8,test9,test10
+from main import test11,test12,test13
 
 BATCH_ID = "B000000001"
 BATCH_NM = "이벤트 메인 배치"
@@ -30,7 +32,9 @@ async def my_batch_job():
         "samsung_life": test8(),
         "samsung_fire": test9(),
         "heungkuk_fire": test10(),
-        "kb_insurance": test11()
+        "kb_insurance": test11(),
+        "miraeasset_life": test12(),
+        "kb_insurance": test13()
     }
 
     try:
