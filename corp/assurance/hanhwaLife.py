@@ -32,8 +32,7 @@ async def get432Data():
         # 요소 찾기
         container = soup.find("div", class_="eventList")
         for element in container.find_all("li"):
-            start_date, end_date = "", ""
-            # start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', element.find_all("dd")[-1].text)
+            start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', element.find_all("dd")[-1].text)
 
             #상세페이지 (a태그중 마지막 &가  "¤" 잘못 인코딩 될 경우)
             detail = "/".join([
