@@ -159,6 +159,7 @@ async def test4():
     if isinstance(results, dict) and "ERROR" in results:
         
         data_to_return = {
+            "status_code": 500,  # 응답코드
             "fin_id": "T000000004",  # 임의의 Task ID
             "result": results  # 오류 메시지
         }
