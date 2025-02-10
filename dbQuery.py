@@ -17,8 +17,10 @@ def selectQuery(qType, values):
     # if len(values) > 0:
     #     print(values)
     # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@E")
-    if qType == "Q1": # 챗봇 Key mapping data
-        query = "SELECT name FROM test_talbe"
+    if qType == "Q1": # BACTH LOG 등록
+        query = "INSERT INTO BATCH_LOG (BATCH_ID, BATCH_NM, TASK_ID, TASK_NM, ST_DATE, ED_DATE, STATUS, RESULT_DATA) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+    
+    
 
 
 

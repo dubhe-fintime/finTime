@@ -17,6 +17,8 @@ from datetime import datetime
 
 import os
 
+import json
+
 import configparser
 
 from check_session import check_session
@@ -101,13 +103,15 @@ socketio = SocketIO(app)
 rasa_process = None
 
 # 하나은행 배치 호출
-@app.route('/test', methods=["POST"])
-async def test():
+@app.route('/test1', methods=["POST"])
+async def test1():
     results = await hanaBank.get081Data()
     print(results)
     data_to_return = {
         "status_code": 200,  # 응답코드
+        "fin_id": "T000000001", # TASK ID 지정
         "result": results     # 응답결과
+
     }
     
     # Flask의 jsonify를 사용하여 응답 생성
@@ -123,6 +127,7 @@ async def test2():
     results = await ablLife.get437Data()
     data_to_return = {
         "status_code": 200,  # 응답코드
+        "fin_id": "T000000002", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -137,12 +142,14 @@ async def test3():
     results = await kyoboLife.get433Data()
     data_to_return = {
         "status_code": 200,  # 응답코드
+        "fin_id": "T000000003", # TASK ID 지정
         "result": results     # 응답결과
     }
     
     # Flask의 jsonify를 사용하여 응답 생성
     response = jsonify(data_to_return)
     response.status_code = data_to_return["status_code"]  # status_code 지정
+    response.finId = "T000000003" # TASK ID 지정
     return response
 
 # 동양생명
@@ -151,6 +158,7 @@ async def test4():
     results = await dongyangLife.get402Data()
     data_to_return = {
         "status_code": 200,  # 응답코드
+        "fin_id": "T000000004", # TASK ID 지정
         "result": results     # 응답결과
     }
     # Flask의 jsonify를 사용하여 응답 생성
@@ -165,6 +173,7 @@ async def test5():
     print(results)
     data_to_return = {
         "status_code": 200,  # 응답코드
+        "fin_id": "T000000005", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -179,6 +188,7 @@ async def test6():
     results = await heungkuklife.get457Data()
     data_to_return = {
         "status_code": 200,  # 응답코드
+        "fin_id": "T000000006", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -193,6 +203,7 @@ async def test7():
     results = await kdbLife.get458Data()
     data_to_return = {
         "status_code": 200,  # 응답코드
+        "fin_id": "T000000007", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -207,6 +218,7 @@ async def test8():
     results = await samsungLife.get452Data()
     data_to_return = {
         "status_code": 200,  # 응답코드
+        "fin_id": "T000000008", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -221,6 +233,7 @@ async def test9():
     results = await samsungFire.get441Data()
     data_to_return = {
         "status_code": 200,  # 응답코드
+        "fin_id": "T000000009", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -235,6 +248,7 @@ async def test10():
     results = await heungkukFire.get403Data()
     data_to_return = {
         "status_code": 200,  # 응답코드
+        "fin_id": "T000000010", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -249,6 +263,7 @@ async def test11():
     results = await kbInsure.get444Data()
     data_to_return = {
         "status_code": 200,  # 응답코드
+        "fin_id": "T000000011", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -259,7 +274,16 @@ async def test11():
 
 
 ################## 보험 END ###############################
+# SET BATCH LOG
+def set_batch_log(batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data):
+    result_data_str = json.dumps(result_data, ensure_ascii=False)
+    values = (batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data_str)
+    execute_mysql_query_insert("Q1",values) # BATCH LOG 등록
 
+# SET EVENT LOG
+def set_event_data():
+    values = []
+    execute_mysql_query_insert("Q1",values) # BATCH LOG 등록
 
 
 # 에러코드 보는 곳

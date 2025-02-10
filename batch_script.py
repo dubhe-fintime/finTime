@@ -3,8 +3,11 @@ import time
 import datetime
 import schedule
 import os
-from main import test, test2, test3, test4, test5, test6,test7,test8,test9,test10,test11, app  # Flask 앱을 임포트
+import json
+from main import set_batch_log, test1, test2, test3, test4, test5, test6,test7,test8,test9,test10,test11, app  # Flask 앱을 임포트
 
+BATCH_ID = "B000000001"
+BATCH_NM = "이벤트 메인 배치"
 # 비동기 작업 함수
 async def my_batch_job():
     # logs 폴더 경로 설정 (현재 실행 경로의 한 단계 위)
@@ -17,17 +20,17 @@ async def my_batch_job():
 
     # 실행할 작업 정의
     tasks = {
-        "test": test(),
-        "test2": test2(),
-        "test3": test3(),
-        "test4": test4(),
-        "test5": test5(),
-        "test6": test6(),
-        "test7": test7(),
-        "test8": test8(),
-        "test9": test9(),
-        "test10": test10(),
-        "test11": test11()
+        "hana_bank": test1(),
+        "abl_life": test2(),
+        "kyobo_life": test3(),
+        "dongnyang_life": test4(),
+        "hanhwa_life": test5(),
+        "heungkuk_life": test6(),
+        "kdb_life": test7(),
+        "samsung_life": test8(),
+        "samsung_fire": test9(),
+        "heungkuk_fire": test10(),
+        "kb_insurance": test11()
     }
 
     try:
@@ -39,13 +42,18 @@ async def my_batch_job():
             # 응답 처리 및 로그 기록
             for (task_name, response) in zip(task_futures.keys(), responses):
                 task_time = datetime.datetime.now()
-
+                
                 if isinstance(response, Exception):
                     log_message = f"[{task_time}] {task_name} 실행 실패: {response}"
+                    # 배치 로그 DB 저장
+                    set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, "FAIL", "")
                 else:
                     res = response.get_json()
+                    #res_json = json.dump(res['result'], ensure_ascii=False, indent=4)
                     status = "SUCCESS" if res['status_code'] == 200 else "FAIL"
                     log_message = f"[{task_time}] {task_name} 실행 완료 - 상태: {status}, 응답: {res['result']}"
+                    # 배치 로그 DB 저장
+                    set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, status, res['result'])
 
                 print(log_message)
 
