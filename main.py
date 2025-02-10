@@ -276,8 +276,7 @@ async def test11():
 ################## 보험 END ###############################
 # SET BATCH LOG
 def set_batch_log(batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data):
-    result_data_str = json.dumps(result_data, ensure_ascii=False)
-    values = (batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data_str)
+    values = (batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data)
     execute_mysql_query_insert("Q1",values) # BATCH LOG 등록
 
 # SET EVENT LOG

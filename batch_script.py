@@ -46,14 +46,14 @@ async def my_batch_job():
                 if isinstance(response, Exception):
                     log_message = f"[{task_time}] {task_name} 실행 실패: {response}"
                     # 배치 로그 DB 저장
-                    set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, "FAIL", "")
+                    set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, "FAIL", response)
                 else:
                     res = response.get_json()
                     #res_json = json.dump(res['result'], ensure_ascii=False, indent=4)
                     status = "SUCCESS" if res['status_code'] == 200 else "FAIL"
                     log_message = f"[{task_time}] {task_name} 실행 완료 - 상태: {status}, 응답: {res['result']}"
                     # 배치 로그 DB 저장
-                    set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, status, res['result'])
+                    set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, status, json.dumps(res['result'], ensure_ascii=False))
 
                 print(log_message)
 
