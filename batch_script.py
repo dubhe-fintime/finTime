@@ -34,7 +34,7 @@ async def my_batch_job():
         "heungkuk_fire": test10(),
         "kb_insurance": test11(),
         "miraeasset_life": test12(),
-        "kb_insurance": test13()
+        "nh_insurance": test13()
     }
 
     try:
