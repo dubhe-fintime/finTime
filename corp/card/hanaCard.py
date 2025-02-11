@@ -18,6 +18,7 @@ class TLSAdapter(HTTPAdapter):
     def init_poolmanager(self, *args, **kwargs):
         context = ssl.create_default_context()
         context.set_ciphers("DEFAULT@SECLEVEL=1")  # 보안 수준 낮춤
+        context.check_hostname = False  # SSL 인증서 검증 비활성화
         kwargs["ssl_context"] = context
         super().init_poolmanager(*args, **kwargs)
 
