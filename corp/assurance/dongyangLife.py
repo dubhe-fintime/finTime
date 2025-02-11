@@ -35,8 +35,7 @@ def get402Data():
     # 요소 찾기 
     container = soup.find("div" ,class_="list")
     for element in container.find_all("div",class_="list-item"):
-        print(element)
-        print(element.find("span", class_=""))
+        print(element.find("div", class_="date-area").find("span"))
         detail = detail_domain +element.find("a")["onclick"].split('(')[1].split(')')[0]
         start_date= ""
         end_date= ""
