@@ -54,8 +54,6 @@ async def get441Data():
 
 
         print(f"삼성화재 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
-        print("최종 결과 >>")
-        print(event_list)
         return event_list
 
     except Exception as e:

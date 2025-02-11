@@ -50,8 +50,6 @@ async def get449Data():
             # print(f"목록URL : {url}")        
 
         print(f"NH손해보험 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
-        print("최종 결과 >>")
-        print(event_list)
         return event_list
 
     except Exception as e:

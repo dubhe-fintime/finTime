@@ -69,8 +69,6 @@ async def get041Data():
             # print(f"이벤트목록URL : {list_domain}")        
 
         print(f"우리카드 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
-        print("최종 결과 >>")
-        print(event_list)
         return event_list
 
     except requests.exceptions.RequestException as e:

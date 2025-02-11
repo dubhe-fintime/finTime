@@ -52,7 +52,6 @@ async def get365Data():
 
         #응답 데이터 가공
         target_data = response.json()["listPeiHPPPrgEvnInqrDVO"]
-        print(target_data)
         
         for element in target_data:
             start_date, end_date = [re.sub(r"(\d{4})(\d{2})(\d{2})", r"\1-\2-\3", x) for x in [element['cmsCmpStrtdt'], element['cmsCmpEnddt']]]
@@ -75,8 +74,6 @@ async def get365Data():
             # print(f"상세URL : {detail_domain+str(element['cmsId'])}")
 
         print(f"삼성카드 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
-        print("최종 결과 >>")
-        print(event_list)
         return event_list
 
     except Exception as e:

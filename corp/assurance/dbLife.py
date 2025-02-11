@@ -44,8 +44,6 @@ async def get457Data():
             })
 
         print(f"DB생명 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
-        print("최종 결과 >>")
-        print(event_list)
         return event_list
 
     except requests.exceptions.RequestException as e:

@@ -31,9 +31,7 @@ async def get381Data():
         #요소 찾기
         events = soup.find_all("div", class_="eventListWrap")
         for event in events:
-            print(event)
             li_tags = event.find_all("li")
-            print(f"이벤트 개수: {len(li_tags)}")  # 몇 개의 이벤트가 검색되는지 확인
             for li in li_tags:
                 title = li.find("span", class_="store").text.strip() + " " + li.find("span", class_="subject").text.strip() # 이벤트 제목
                 
@@ -59,9 +57,7 @@ async def get381Data():
                 # print(f'목록URL : {url}')
                 # print(f"상세URL: {return_detail}")
 
-        print(f"KB카드 완료 | 이벤트 개수 : {len(event_list)}")
-        print("최종 결과 >>")
-        print(event_list)           
+        print(f"KB카드 완료 | 이벤트 개수 : {len(event_list)}")         
         return event_list
     except Exception as e:
         print(f"KB카드 오류 발생: {e}")

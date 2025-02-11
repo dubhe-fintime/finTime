@@ -59,8 +59,6 @@ async def get444Data():
             # print(f'상세URL : {domain+"/"+detail_domain}')
 
         print(f"KB손해보험 완료 | 이벤트 개수 : {len(event_list)}")
-        print("최종 결과 >>")
-        print(event_list)
         return event_list
 
     except Exception as e:
