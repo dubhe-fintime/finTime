@@ -137,8 +137,8 @@ async def card1():
     
     data_to_return = {
         "status_code": status,  # 응답코드
-        "bank_cd": "437",
-        "fin_id": "T000000002", # TASK ID 지정
+        "bank_cd": "361",
+        "fin_id": "T000000014", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -158,8 +158,8 @@ async def card2():
     
     data_to_return = {
         "status_code": status,  # 응답코드
-        "bank_cd": "437",
-        "fin_id": "T000000002", # TASK ID 지정
+        "bank_cd": "374",
+        "fin_id": "T000000015", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -179,8 +179,8 @@ async def card3():
     
     data_to_return = {
         "status_code": status,  # 응답코드
-        "bank_cd": "437",
-        "fin_id": "T000000002", # TASK ID 지정
+        "bank_cd": "381",
+        "fin_id": "T000000016", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -200,8 +200,8 @@ async def card4():
     
     data_to_return = {
         "status_code": status,  # 응답코드
-        "bank_cd": "437",
-        "fin_id": "T000000002", # TASK ID 지정
+        "bank_cd": "365",
+        "fin_id": "T000000017", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -221,8 +221,8 @@ async def card5():
     
     data_to_return = {
         "status_code": status,  # 응답코드
-        "bank_cd": "437",
-        "fin_id": "T000000002", # TASK ID 지정
+        "bank_cd": "441",
+        "fin_id": "T000000018", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -243,7 +243,7 @@ async def card6():
     data_to_return = {
         "status_code": status,  # 응답코드
         "bank_cd": "437",
-        "fin_id": "T000000002", # TASK ID 지정
+        "fin_id": "T000000019", # TASK ID 지정
         "result": results     # 응답결과
     }
     
