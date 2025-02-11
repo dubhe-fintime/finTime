@@ -113,6 +113,7 @@ async def test1():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "bank_cd": "081",
         "fin_id": "T000000001", # TASK ID 지정
         "result": results     # 응답결과
 
@@ -137,6 +138,7 @@ async def test2():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "bank_cd": "437",
         "fin_id": "T000000002", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -158,6 +160,7 @@ async def test3():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "bank_cd": "433",
         "fin_id": "T000000003", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -178,6 +181,7 @@ async def test4():
        
     data_to_return = {
         "status_code": status,  # 응답코드
+        "bank_cd": "402",
         "fin_id": "T000000004", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -197,6 +201,7 @@ async def test5():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "bank_cd": "432",
         "fin_id": "T000000005", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -217,6 +222,7 @@ async def test6():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "bank_cd": "457",
         "fin_id": "T000000006", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -237,6 +243,7 @@ async def test7():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "bank_cd": "458",
         "fin_id": "T000000007", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -257,6 +264,7 @@ async def test8():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "bank_cd": "452",
         "fin_id": "T000000008", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -277,6 +285,7 @@ async def test9():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "bank_cd": "441",
         "fin_id": "T000000009", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -297,6 +306,7 @@ async def test10():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "bank_cd": "403",
         "fin_id": "T000000010", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -317,6 +327,7 @@ async def test11():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "bank_cd": "444",
         "fin_id": "T000000011", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -337,6 +348,7 @@ async def test12():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "bank_cd": "431",
         "fin_id": "T000000012", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -357,6 +369,7 @@ async def test13():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "bank_cd": "449",
         "fin_id": "T000000013", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -376,10 +389,16 @@ def set_batch_log(batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status
     values = (batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data_str)
     execute_mysql_query_insert("Q1",values) # BATCH LOG 등록
 
-# SET EVENT LOG
-def set_event_data():
-    values = []
-    execute_mysql_query_insert("Q1",values) # BATCH LOG 등록
+# SET BATCH 데이터
+def set_batch_rst(bank_cd, title, evt_id, startDt, endDt, thumbNail, image, noti, listURL, detailURL):
+    values = (bank_cd, title, evt_id, startDt, endDt, thumbNail, image, noti, listURL, detailURL)
+    #execute_mysql_query_delete('Q3', []) # BATCH 데이터 전체 삭제
+    execute_mysql_query_insert("Q2",values) # BATCH 데이터 등록
+
+# SET BATCH 데이터 삭제
+def del_batch_rst(cnt):
+    if cnt == 1:
+        execute_mysql_query_delete('Q3', []) # BATCH 데이터 전체 삭제
 
 
 # 에러코드 보는 곳

@@ -4,7 +4,7 @@ import datetime
 import schedule
 import os
 import json
-from main import set_batch_log, app  # Flask 앱을 임포트
+from main import set_batch_log, set_batch_rst, del_batch_rst, app  # Flask 앱을 임포트
 from main import test1, test2, test3, test4, test5, test6,test7,test8,test9,test10
 from main import test11,test12,test13
 
@@ -42,14 +42,14 @@ async def my_batch_job():
             # 비동기 작업 실행
             task_futures = {name: asyncio.create_task(func) for name, func in tasks.items()}
             responses = await asyncio.gather(*task_futures.values(), return_exceptions=True)
-
+            cnt = 0 # 배치 결과 정상 처리 건수
             # 응답 처리 및 로그 기록
             for (task_name, response) in zip(task_futures.keys(), responses):
+                
                 task_time = datetime.datetime.now()
                 
                 if isinstance(response, Exception):
                     log_message = f"[{task_time}] {task_name} 실행 실패: {response}"
-                    print(f"###################################{log_message}")
                     # 배치 로그 DB 저장
                     set_batch_log(BATCH_ID , BATCH_NM, '', task_name, now, task_time, "FAIL", str(response))
                 else:
@@ -57,6 +57,12 @@ async def my_batch_job():
                     #res_json = json.dump(res['result'], ensure_ascii=False, indent=4)
                     status = "SUCCESS" if res['status_code'] == 200 else "FAIL"
                     log_message = f"[{task_time}] {task_name} 실행 완료 - 상태: {status}, 응답: {res['result']}"
+                    if res['status_code'] == 200:
+                        cnt = cnt+1
+                        # 배치 등록 데이터 삭제 (최초시에만)
+                        del_batch_rst(cnt)
+                        #COR_NO, EVT_TITLE, EVT_ID, EVT_ST_DATE, EVT_ED_DATE, EVT_THUMBNAIL, EVT_IMG, EVT_NOTI, EVT_LIST_LINK, EVT_DT_LINK 
+                        set_batch_rst(res['bank_cd'] , res['result'][0].get('title',""), "", res['result'][0].get('startDt',None) or None, res['result'][0].get('endDt',None) or None, res['result'][0].get('thumbNail',""), res['result'][0].get('image',""), res['result'][0].get('noti',""), res['result'][0].get('listURL',""), res['result'][0].get('detailURL',""))    
                     # 배치 로그 DB 저장
                     set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, status, res['result'])
 
