@@ -17,23 +17,46 @@
     <main class="main-area">
       <h2 class="title">금융사 정보 관리</h2>
       <form class="search-form">
-        <div class="select-box md">
-          <strong class="label" onclick="ClickSelectLabel('corNm')" id="corNm" name="corNm">기관명</strong>
+        <div class="input-wrap">
+          <input id="searchInput" class="input" placeholder="기관명 입력 후 검색" />
+          <span class="delete-btn"></span>
+        </div>
+        <div class="select-box md" style="margin-left: 16px;">
+          <strong class="label" onclick="ClickSelectLabel('corGp')" id="corGp" name="corGp">전체</strong>
           <ul class="options type">
-            <li class="option" onclick="ClickSelectOption('corNm','기관명','corNm')">
-              기관명
+            <li class="option" onclick="ClickSelectOption('corGp','전체','')">
+              전체
             </li>
-            <li class="option" onclick="ClickSelectOption('corNm','기관그룹','corGp')">
-              기관그룹
+            <li class="option" onclick="ClickSelectOption('corGp','은행','bank')">
+              은행
+            </li>
+            <li class="option" onclick="ClickSelectOption('corGp','카드','card')">
+              카드
+            </li>
+            <li class="option" onclick="ClickSelectOption('corGp','증권','stock')">
+              증권
+            </li>
+            <li class="option" onclick="ClickSelectOption('corGp','보험','assr')">
+              보험
             </li>
             <!-- <li class="option" onclick="ClickSelectOption('corNm','그룹코드','groupID')">
               그룹코드
             </li> -->
           </ul>
         </div>
-        <div class="input-wrap">
-          <input id="searchInput" class="input" placeholder="기관명, 기관그룹 입력 후 검색" />
-          <span class="delete-btn"></span>
+        <div class="select-box md" style="margin-left: 16px;">
+          <strong class="label" onclick="ClickSelectLabel('useYn')" id="useYn" name="useYn">전체</strong>
+          <ul class="options type">
+            <li class="option" onclick="ClickSelectOption('useYn','전체','useAll')">
+              전체
+            </li>
+            <li class="option" onclick="ClickSelectOption('useYn','사용','useY')">
+              사용
+            </li>
+            <li class="option" onclick="ClickSelectOption('useYn','미사용','useN')">
+              미사용
+            </li>
+          </ul>
         </div>
         <button id="searchBtn" class="btn primary md search-btn">검색</button>
       </form>
@@ -51,6 +74,8 @@
             <col />
             <col />
             <col />
+            <col width="80px" />
+            <col />
             <col />
           </colgroup>
           <thead class="thead type2">
@@ -59,6 +84,8 @@
               <th>기관그룹</th>
               <th>기관명</th>
               <th>기관설명</th>
+              <th>대표이미지</th>
+              <th>썸네일이미지</th>
               <th>사용여부</th>
               <th>최초등록일</th>
               <th>최종수정일</th>
@@ -108,11 +135,11 @@
                           <li class="option" onclick="ClickSelectOption('corGrpSel','은행','bankSel')">
                             은행
                           </li>
-                          <li class="option" onclick="ClickSelectOption('corGrpSel','증권','stockSel')">
-                            증권
-                          </li>
                           <li class="option" onclick="ClickSelectOption('corGrpSel','카드','cardSel')">
                             카드
+                          </li>
+                          <li class="option" onclick="ClickSelectOption('corGrpSel','증권','stockSel')">
+                            증권
                           </li>
                           <li class="option" onclick="ClickSelectOption('corGrpSel','보험','assrSel')">
                             보험
