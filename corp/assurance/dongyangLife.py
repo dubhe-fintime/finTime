@@ -1,6 +1,7 @@
 import requests
 import re
 from bs4 import BeautifulSoup
+import traceback
 
 ##############################
 # 제목 : 동양생명
@@ -29,23 +30,19 @@ def get402Data():
     response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
     response.raise_for_status()  # 오류 발생 시 예외 처리
     soup = BeautifulSoup(response.text, 'html.parser')
-    print(f"1>>>>>>>>>>>>>>>>{soup}")
+
     
     # 요소 찾기 
-    container = soup.find_all("div" ,class_="list-item")
-    print(f"2>>>>>>>>>>>>>>>>{container}")
-    for element in container:
-        print(f"2>>>>>>>>>>>>>>>>{element.find("span", class_="")}")
+    container = soup.find("div" ,class_="list")
+    for element in container.find_all("div",class_="list-item"):
+        temp_date = element.find("span", class_="").text.replace('.', '-')  if element.find("span", class_="") else ""
+        if temp_date != "":
+            start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', temp_date)
+        else:
+            start_date, end_date = element.find("span", class_=""), element.find("span", class_="").text
+        detail = detail_domain +element.find("a")["onclick"].split('(')[1].split(')')[0]
 
-        # temp_date = element.find("span", class_="").text.replace('.', '-')  if element.find("span", class_="") else ""
-        # if temp_date != "":
-        #     start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', temp_date)
-        # else:
-        #     start_date, end_date = element.find("span", class_=""), element.find("span", class_="").text
-
-        # detail = detail_domain +element.find("a")["onclick"].split('(')[1].split(')')[0]
-
-        # #확인용
+        #확인용
         # print(f"제목 :{element.find('h4').text}")
         # print(f"시작 :{start_date}")
         # print(f"종료 :{end_date}")
@@ -53,14 +50,17 @@ def get402Data():
         # print(f"목록URL :{url}")
         # print(f"상세URL :{detail}")
 
-        # event_list.append({
-        #     "title": element.find('h4').text.strip(),
-        #     "startDt": start_date,
-        #     "endDt": end_date,
-        #     "thumbNail": domain+element.find('img')['src'],
-        #     "listURL": url,
-        #     "detailURL": detail
-        # })
+
+        event_list.append({
+            "title": element.find('h4').text.strip(),
+            "startDt": start_date,
+            "endDt": end_date,
+            "thumbNail": domain+element.find('img')['src'],
+            "listURL": url,
+            "detailURL": detail
+        })
+
+
 
     print(f"동양생명 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
     print("최종 결과 >>")
