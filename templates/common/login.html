@@ -197,27 +197,26 @@
     }
 
     $.ajax({
-      url: "{{domain}}:{{port}}/adminLogin",
+      url: "{{domain}}/adminLogin",
       type: "POST",
       contentType: "application/json",
       dataType: "json",
       data: JSON.stringify(dataObject),
       success: function (response) {
         console.log(response)
-        // if (response[0] == "11111") {
-        //   $('.login-area').css('z-index', 0)
-        //   values = `<p>접근 거부: 사용 여부 및 아이디 확인바람</p>`
-        //   OpenModal('ID,PW 오류', "", true, "", "", "확인", "", "", "sm", values)
-        // } else if (response[0] == "00000") {
-        //   window.location.href = "{{url_for('adminMain')}}"
-        // }
-        window.location.href = "{{url_for('adminMain')}}"
+        if (response[0] == "11111") {
+          $('.login-area').css('z-index', 0)
+          values = `<p>접근 거부: 사용 여부 및 아이디 확인바람</p>`
+          OpenModal('ID,PW 오류', "", true, "", "", "확인", "", "", "sm", values)
+        } else if (response[0] == "00000") {
+          window.location.href = "{{url_for('adminMain')}}"
+        }
       },
       fail: function (response) {
         window.location.href = "{{url_for('adminMain')}}" 
       }
 
-    })
+   })
   }
 
 
