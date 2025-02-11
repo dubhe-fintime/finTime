@@ -537,39 +537,44 @@ def del_batch_rst(cnt):
 def page_not_found(e):
     return render_template('common/customError.html'), 404
 
+# 관리자관련 수정 시작 KCR 250211
 # 관리자 index 화면 호출
 @app.route("/")
 def adminLogin():
-    #return render_template("common/login.html", domain=domain, port=port)
-    return render_template("page/test.html", domain=domain, port=port)
+    return render_template("common/login.html", domain=domain, port=port)
+    #return render_template("page/test.html", domain=domain, port=port)
 
 # 관리자 로그인 화면 호출
 @app.route('/adminLogin', methods=["POST"])
 def adminLogin_check():
-    data = request.get_json()
-    username = data['id']
-    password = data['pw']
-    values = [username, password]
-    results = execute_mysql_query_select("Q1", )
+    # 로그인 시 무조건 성공 리턴
+    return [success]
+    # 로그인 기능 없으므로 주석 시작 kcr 250211
+    # data = request.get_json()
+    # username = data['id']
+    # password = data['pw']
+    # values = [username, password]
+    # results = execute_mysql_query_select("Q1", )
 
-    # 관리자 아이디로 등록이 되지 않았을 경우
-    if len(results) < 1 or results[0][1] == 'N':  # N은 사용 여부
-        # message = "접근 거부: 사용 여부 및 아이디 확인바람"
-        message = "접근 거부: 사용 여부 및 아이디 확인바람"
-        return [error]
-    else:
+    # # 관리자 아이디로 등록이 되지 않았을 경우
+    # if len(results) < 1 or results[0][1] == 'N':  # N은 사용 여부
+    #     # message = "접근 거부: 사용 여부 및 아이디 확인바람"
+    #     message = "접근 거부: 사용 여부 및 아이디 확인바람"
+    #     return [error]
+    # else:
 
-        # 로그인시 세션 생성
-        session['username'] = username
-        session['usergroup'] = results[0][2]
-        session.permanent = True
-        logger.info(f'Connect || ID -- {username}')
+    #     # 로그인시 세션 생성
+    #     session['username'] = username
+    #     session['usergroup'] = results[0][2]
+    #     session.permanent = True
+    #     logger.info(f'Connect || ID -- {username}')
 
-        temp_time = datetime.now()
-        formatted_datetime = temp_time.strftime("%Y-%m-%d %H:%M:%S")
-        session['start_time'] = formatted_datetime
-        # print(session['start_time'])
-        return [success]
+    #     temp_time = datetime.now()
+    #     formatted_datetime = temp_time.strftime("%Y-%m-%d %H:%M:%S")
+    #     session['start_time'] = formatted_datetime
+    #     # print(session['start_time'])
+    #     return [success]
+    # 로그인 기능 없으므로 주석 종료 kcr 250211
 
 # 클라이언트 로그인 API
 @app.route('/clientLogin', methods=["POST"])
@@ -586,17 +591,42 @@ def clientLogin_check():
 # 관리자 메인 화면 호출
 @app.route("/adminMain")
 def adminMain():
-    result = check_session(session)
-    if result == config['CODE']['session_fail']:
-        session_data = None
-        return render_template("common/LNB.html", domain=domain, port=port, session=session_data)
-    else:
-        session_data = session.get('username')
-        session_start_time = session.get('start_time')
-        session_time = session.get('time')
-        return render_template("common/LNB.html", domain=domain, port=port, session=session_data, starttime=session_start_time, time=session_time)
+    return render_template("common/LNB.html", domain=domain, port=port)
+    # 로그인 기능 없으므로 주석 시작 kcr 250211
+    # result = check_session(session)
+    # if result == config['CODE']['session_fail']:
+    #     session_data = None
+    #     return render_template("common/LNB.html", domain=domain, port=port, session=session_data)
+    # else:
+    #     session_data = session.get('username')
+    #     session_start_time = session.get('start_time')
+    #     session_time = session.get('time')
+    #     return render_template("common/LNB.html", domain=domain, port=port, session=session_data, starttime=session_start_time, time=session_time)
+    # 로그인 기능 없으므로 주석 종료 kcr 250211
 
+# 관리자 금융사 관리 화면 호출
+@app.route("/financeManage")
+def financeManage():
+    return render_template("financeManage/financeManage.html", domain=domain, port=port)
 
+# 관리자 스크래핑 데이터 관리 화면 호출
+@app.route("/scrapingManage")
+def scrapingManage():
+    return render_template("scrapingManage/scrapingManage.html", domain=domain, port=port)
+
+# 관리자 스크래핑 데이터 관리 화면 호출
+@app.route("/contentsManage")
+def contentsManage():
+    return render_template("contentsManage/contentsManage.html", domain=domain, port=port)
+
+# 로그아웃 기능
+@app.route('/logout', methods=['POST'])
+def logout():
+    # data = request.get_json()
+    # if session.get('username') == data:
+    #     session.pop('username', None)
+    return [success]
+# 관리자관련 수정 끝 KCR 250211
 # Admin main contents 노출 화면 (구글 표)
 @app.route("/adminMainContents")
 def adminMainContents():

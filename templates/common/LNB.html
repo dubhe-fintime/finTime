@@ -22,8 +22,8 @@
         <h1 onclick="loadContent('/adminMainContents')" style="cursor: pointer;">AIdu Chat Admin</h1>
       </header>
       <!-- S : INFO BOX -->
-      <div class="info-box">
-        <div class="top">
+      <div class="info-box" style="display:none">
+        <div class="top"> -- 
           <div class="id">ID: {{ session }}</div>
           <button class="time-extend-btn" onclick="resetRemainingTime()">시간 연장</button>
         </div>
@@ -40,68 +40,23 @@
       <!-- S : LNB -->
       <nav class="lnb">
         <div class="menu">
-          <strong class="depth1 ico-intent" onclick="ToggleMenu('intentList')" id="intentList">인텐트 현황</strong>
+          <strong class="depth1 ico-intent" onclick="ToggleMenu('financeManage')" id="financeManage">금융사 현황</strong>
           <ul class="depth2">
-            <li><a class="depth3" href="#" onclick="loadContent('/intentMange',this)">인텐트 현황/관리</a></li>
+            <li><a class="depth3" href="#" onclick="loadContent('/financeManage',this)">금융사 정보 관리</a></li>
           </ul>
         </div>
         <div class="menu">
-          <strong class="depth1 ico-add" onclick="ToggleMenu('intentAdd')" id="intentAdd">인텐트 추가</strong>
+          <strong class="depth1 ico-card" onclick="ToggleMenu('scrapingManage')" id="scrapingManage">스크래핑 관리</strong>
           <ul class="depth2">
-            <li>
-              <a class="depth3" href="#" onclick="loadContent('/intentRegister',this)">인텐트 / 유사 질의어 추가</a>
-            </li>
-          </ul>
-        </div>
-        <div class="menu">
-          <strong class="depth1 ico-edu" onclick="ToggleMenu('eduManagement')" id="eduManagement">학습 관리</strong>
-          <ul class="depth2">
-            <li><a class="depth3" href="#" onclick="loadContent('/train',this)">학습 대기 인텐트</a></li>
-            <li><a class="depth3" href="#" onclick="loadContent('/hypotheticStudy',this)">학습 시뮬레이션</a></li>
-          </ul>
-        </div>
-        <div class="menu">
-          <strong class="depth1 ico-card" onclick="ToggleMenu('cardManagement')" id="cardManagement">카드 관리</strong>
-          <ul class="depth2">
-            <li><a class="depth3" href="#" onclick="loadContent('/cardRegister',this)">신규 카드 추가</a></li>
+            <li><a class="depth3" href="#" onclick="loadContent('/scrapingManage',this)">스크래핑 데이터 관리</a></li>
             <!-- <li><a href="#" onclick="loadContent('/cardInfo')">카드 정보 관리</a></li> -->
           </ul>
         </div>
         <div class="menu">
-          <strong class="depth1 ico-scenario" onclick="ToggleMenu('scenManagement')" id="scenManagement">시나리오
+          <strong class="depth1 ico-scenario" onclick="ToggleMenu('contentsManage')" id="contentsManage">컨텐츠
             관리</strong>
           <ul class="depth2">
-            <li><a class="depth3" href="#" onclick="loadContent('/InsertScenario',this)">시나리오 추가</a></li>
-            <li><a class="depth3" href="#" onclick="loadContent('/scenarioMange',this)">시나리오 관리</a></li>
-          </ul>
-        </div>
-        <div class="menu">
-          <strong class="depth1 ico-etc" onclick="ToggleMenu('etcManagement')" id="etcManagement">기타 관리</strong>
-          <ul class="depth2">
-            <li><a class="depth3" href="#" onclick="loadContent('/forbiddenWord',this)">비속어 관리</a></li>
-            <li><a class="depth3" href="#" onclick="loadContent('/command_word',this)">명령어 관리</a></li>
-            <li><a class="depth3" href="#" onclick="loadContent('/groupCode',this)">코드 관리</a></li>
-            <li><a class="depth3" href="#" onclick="loadContent('/notice',this)">실시간 공지</a></li>
-            <!-- <li><a href="#" onclick="loadContent('/cardTypeManage')">카드 유형 관리</a></li> -->
-          </ul>
-        </div>
-        <div class="menu">
-          <strong class="depth1 ico-total" onclick="ToggleMenu('graph'); " id="graph">통계</strong>
-          <ul class="depth2">
-            <li><a class="depth3" href="#" onclick="loadContent('/access',this)">접속 통계</a></li>
-            <li><a class="depth3" href="#" onclick="loadContent('/usage',this)">이용 통계</a></li>
-            <li><a class="depth3" href="#" onclick="loadContent('/error',this)">오류 통계</a></li>
-            <li><a class="depth3" href="#" onclick="loadContent('/edu',this)">학습 통계</a></li>
-            <!-- <li><a href="#" onclick="loadContent('/cardTypeManage')">카드 유형 관리</a></li> -->
-          </ul>
-        </div>
-        <div class="menu">
-          <strong class="depth1 ico-access" onclick="ToggleMenu('accessManagement');" id="accessManagement">접속
-            관리</strong>
-          <ul class="depth2">
-            <li><a class="depth3" href="#" onclick="loadContent('/adminGroupMange',this)">그룹 관리</a></li>
-            <li><a class="depth3" href="#" onclick="loadContent('/userMange',this)">유저 관리</a></li>
-
+            <li><a class="depth3" href="#" onclick="loadContent('/contentsManage',this)">컨텐츠 관리</a></li>
           </ul>
         </div>
       </nav>
@@ -212,10 +167,9 @@
       dataType: "json",
       data: JSON.stringify(session_check),
       success: function (response) {
-        if (response[0] == "00000") {
-          values = `<p>로그아웃 되었습니다.</p>`
-          OpenModal("완료", "", true, "", `top.location.href="/"`, "확인", "", "", "md", values)
-        }
+        values = `<p>로그아웃 되었습니다.</p>`
+        OpenModal("완료", "", true, "", `top.location.href="/"`, "확인", "", "", "md", values)
+        
 
       }, error: function (xhr, error, status) {
         console.log(error)
