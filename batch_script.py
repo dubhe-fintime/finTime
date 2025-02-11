@@ -72,7 +72,20 @@ async def my_batch_job():
                             del_batch_rst(cnt)
 
                             # 스크레핑 결과 정보 DB 저장
-                            set_batch_rst(res['bank_cd'] , res['result'][0].get('title',""), "", res['result'][0].get('startDt',None) or None, res['result'][0].get('endDt',None) or None, res['result'][0].get('thumbNail',""), res['result'][0].get('image',""), res['result'][0].get('noti',""), res['result'][0].get('listURL',""), res['result'][0].get('detailURL',""))    
+                            for event in res['result']:
+                                set_batch_rst(
+                                    res['bank_cd'],
+                                    event.get('title', ""),
+                                    "",
+                                    event.get('startDt', None) or None,
+                                    event.get('endDt', None) or None,
+                                    event.get('thumbNail', ""),
+                                    event.get('image', ""),
+                                    event.get('noti', ""),
+                                    event.get('listURL', ""),
+                                    event.get('detailURL', "")
+                                )
+                            #set_batch_rst(res['bank_cd'] , res['result'][0].get('title',""), "", res['result'][0].get('startDt',None) or None, res['result'][0].get('endDt',None) or None, res['result'][0].get('thumbNail',""), res['result'][0].get('image',""), res['result'][0].get('noti',""), res['result'][0].get('listURL',""), res['result'][0].get('detailURL',""))    
                     
                     # 배치 로그 DB 저장
                     set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, status, res['result'])
