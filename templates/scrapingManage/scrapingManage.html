@@ -16,7 +16,7 @@
   <div class="container">
     <main class="main-area">
       <h2 class="title">스크래핑 데이터 관리</h2>
-      <form class="search-form">
+      <form class="search-form" style ="display:none">
         <div class="select-box md">
           <strong class="label" onclick="ClickSelectLabel('groupName')" id="groupName" name="groupName">그룹 명</strong>
           <ul class="options type">
@@ -35,10 +35,14 @@
           <input id="searchInput" class="input" placeholder="그룹명, 설명 입력 후 검색" />
           <span class="delete-btn"></span>
         </div>
+        <div class="input-wrap">
+          <input id="searchInput1" class="input" placeholder="그룹명, 설명 입력 후 검색" />
+          <span class="delete-btn"></span>
+        </div>
         <button id="searchBtn" class="btn primary md search-btn">검색</button>
       </form>
       <div class="table-area">
-        <div class="flex justify-between align-end">
+        <div class="flex justify-between align-end" style ="display:none">
           <strong class="count"></strong>
           <button class="btn tertiary sm" id="addBtn" onclick=""> + 그룹 추가</button>
         </div>
