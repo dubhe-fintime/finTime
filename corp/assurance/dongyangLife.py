@@ -35,30 +35,32 @@ def get402Data():
     container = soup.find_all("div" ,class_="list-item")
     print(f"2>>>>>>>>>>>>>>>>{container}")
     for element in container:
-        temp_date = element.find("span", class_="").text.replace('.', '-')  if element.find("span", class_="") else ""
-        if temp_date != "":
-            start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', temp_date)
-        else:
-            start_date, end_date = element.find("span", class_=""), element.find("span", class_="").text
+        print(f"2>>>>>>>>>>>>>>>>{element.find("span", class_="")}")
 
-        detail = detail_domain +element.find("a")["onclick"].split('(')[1].split(')')[0]
+        # temp_date = element.find("span", class_="").text.replace('.', '-')  if element.find("span", class_="") else ""
+        # if temp_date != "":
+        #     start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', temp_date)
+        # else:
+        #     start_date, end_date = element.find("span", class_=""), element.find("span", class_="").text
 
-        #확인용
-        print(f"제목 :{element.find('h4').text}")
-        print(f"시작 :{start_date}")
-        print(f"종료 :{end_date}")
-        print(f"이미지URL :{domain+element.find('img')['src']} ")
-        print(f"목록URL :{url}")
-        print(f"상세URL :{detail}")
+        # detail = detail_domain +element.find("a")["onclick"].split('(')[1].split(')')[0]
 
-        event_list.append({
-            "title": element.find('h4').text.strip(),
-            "startDt": start_date,
-            "endDt": end_date,
-            "thumbNail": domain+element.find('img')['src'],
-            "listURL": url,
-            "detailURL": detail
-        })
+        # #확인용
+        # print(f"제목 :{element.find('h4').text}")
+        # print(f"시작 :{start_date}")
+        # print(f"종료 :{end_date}")
+        # print(f"이미지URL :{domain+element.find('img')['src']} ")
+        # print(f"목록URL :{url}")
+        # print(f"상세URL :{detail}")
+
+        # event_list.append({
+        #     "title": element.find('h4').text.strip(),
+        #     "startDt": start_date,
+        #     "endDt": end_date,
+        #     "thumbNail": domain+element.find('img')['src'],
+        #     "listURL": url,
+        #     "detailURL": detail
+        # })
 
     print(f"동양생명 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
     print("최종 결과 >>")
