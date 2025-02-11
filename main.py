@@ -33,8 +33,14 @@ from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execu
 # 서버 경로 취득
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
+environment = os.getenv('ENVIRONMENT', 'development')
+
 # ini 정보 취득
-config_path = os.path.join(script_dir, 'config.ini')
+if environment == 'production':
+    config_path = os.path.join(script_dir, 'config.ini')
+else:
+    config_path = os.path.join(script_dir, 'config_development.ini')
+
 config = configparser.ConfigParser()
 config.read(config_path, encoding="utf-8")
 domain = config['SERVER']['domain']
