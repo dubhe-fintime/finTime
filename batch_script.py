@@ -58,11 +58,15 @@ async def my_batch_job():
                     status = "SUCCESS" if res['status_code'] == 200 else "FAIL"
                     log_message = f"[{task_time}] {task_name} 실행 완료 - 상태: {status}, 응답: {res['result']}"
                     if res['status_code'] == 200:
-                        cnt = cnt+1
-                        # 배치 등록 데이터 삭제 (최초시에만)
-                        del_batch_rst(cnt)
-                        #COR_NO, EVT_TITLE, EVT_ID, EVT_ST_DATE, EVT_ED_DATE, EVT_THUMBNAIL, EVT_IMG, EVT_NOTI, EVT_LIST_LINK, EVT_DT_LINK 
-                        set_batch_rst(res['bank_cd'] , res['result'][0].get('title',""), "", res['result'][0].get('startDt',None) or None, res['result'][0].get('endDt',None) or None, res['result'][0].get('thumbNail',""), res['result'][0].get('image',""), res['result'][0].get('noti',""), res['result'][0].get('listURL',""), res['result'][0].get('detailURL',""))    
+                        if isinstance(res['result'], list) and len(res['result']) > 0:
+
+                            cnt = cnt+1
+                            # 스크레핑 결과 정보 DB 삭제(cnt = 1 일때)
+                            del_batch_rst(cnt)
+
+                            # 스크레핑 결과 정보 DB 저장
+                            set_batch_rst(res['bank_cd'] , res['result'][0].get('title',""), "", res['result'][0].get('startDt',None) or None, res['result'][0].get('endDt',None) or None, res['result'][0].get('thumbNail',""), res['result'][0].get('image',""), res['result'][0].get('noti',""), res['result'][0].get('listURL',""), res['result'][0].get('detailURL',""))    
+                    
                     # 배치 로그 DB 저장
                     set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, status, res['result'])
 
