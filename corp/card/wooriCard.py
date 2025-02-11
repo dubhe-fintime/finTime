@@ -46,7 +46,7 @@ async def get041Data():
 
         data = {"bnf02PrgEvntVo":{"evntCtgrNo":"","searchKwrd":"","sortOrd":"orderNew","pageIndex":"1","pageSize":"15","evntItgCfcd":""}}
         # 웹페이지 요청
-        response = requests.post(url, headers=headers,json=data)
+        response = requests.post(url, headers=headers,json=data,verify=False)
         response.raise_for_status()  
 
         #응답 데이터 가공
