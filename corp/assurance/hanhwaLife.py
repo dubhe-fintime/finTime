@@ -1,6 +1,10 @@
 import requests
 import re
+import ssl
+import urllib3
+from requests.adapters import HTTPAdapter
 from bs4 import BeautifulSoup
+
 
 ##############################
 # 제목 : 한화생명
@@ -11,10 +15,19 @@ from bs4 import BeautifulSoup
 # 이미지 : X | 내용 : X | 목록 URL : O | 상세 URL : O
 ##############################
 
+class TLSAdapter(HTTPAdapter):
+    def init_poolmanager(self, *args, **kwargs):
+        context = ssl.create_default_context()
+        context.set_ciphers("DEFAULT@SECLEVEL=1")  # 보안 수준 낮춤
+        context.check_hostname = False  # SSL 인증서 검증 비활성화
+        kwargs["ssl_context"] = context
+        super().init_poolmanager(*args, **kwargs)
+
 async def get432Data():
 
     ######### 기초 설정 Start #############
     # return 값 넣을 리스트
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     event_list = []
     
     # 크롤링URL
@@ -24,10 +37,15 @@ async def get432Data():
     ######### 기초 설정 END ##############
     try:
         # 웹페이지 요청
-        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, verify=False)
-        print(response.encoding)
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+        }
+        session = requests.Session()
+        session.mount("https://", TLSAdapter())
+        response = session.get(url, headers=headers, verify=False)
         response.raise_for_status()  # 오류 발생 시 예외 처리
         soup = BeautifulSoup(response.text, 'html.parser')
+
 
         # 요소 찾기
         container = soup.find("div", class_="eventList")
@@ -64,7 +82,10 @@ async def get432Data():
         print(f"한화생명 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
         return event_list            
         
-    except Exception  as e:
-        print(f"한화생명 오류 발생: {e}")
-        return [{"ERROR": str(e)}] 
+    except requests.exceptions.RequestException as e:
+        print(f"한화생명 요청 오류 발생: {e}")
+        return [{"ERROR": str(e)}]
+    except Exception as e:
+        print(f"한화생명 크롤링 오류 발생: {e}")
+        return [{"ERROR": str(e)}]
 
