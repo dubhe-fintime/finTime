@@ -18,8 +18,8 @@ from bs4 import BeautifulSoup
 class TLSAdapter(HTTPAdapter):
     def init_poolmanager(self, *args, **kwargs):
         context = ssl.create_default_context()
-        context.set_ciphers("DEFAULT@SECLEVEL=1")  # 보안 수준 낮춤
-        context.check_hostname = False  # SSL 인증서 검증 비활성화
+        context.check_hostname = True  # SSL 인증서 검증 비활성화
+        context.verify_mode = ssl.CERT_REQUIRED
         kwargs["ssl_context"] = context
         super().init_poolmanager(*args, **kwargs)
 
@@ -42,8 +42,8 @@ async def get432Data():
         }
         session = requests.Session()
         session.mount("https://", TLSAdapter())
-        
-        response = session.get(url, headers=headers, verify=False,timeout=10)
+
+        response = session.get(url, headers=headers,timeout=10)
         response.raise_for_status()  # 오류 발생 시 예외 처리
         soup = BeautifulSoup(response.text, 'html.parser')
 
