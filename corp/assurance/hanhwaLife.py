@@ -42,7 +42,8 @@ async def get432Data():
         }
         session = requests.Session()
         session.mount("https://", TLSAdapter())
-        response = session.get(url, headers=headers, verify=False)
+        
+        response = session.get(url, headers=headers, verify=False,timeout=10)
         response.raise_for_status()  # 오류 발생 시 예외 처리
         soup = BeautifulSoup(response.text, 'html.parser')
 
