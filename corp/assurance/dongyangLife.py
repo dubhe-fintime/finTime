@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 # 특이사항 : 이미지가 다운로드 URL
 ##############################
 
-async def get402Data():
+def get402Data():
     ######### 기초 설정 Start #############
 
     # return 값 넣을 리스트
@@ -25,17 +25,16 @@ async def get402Data():
     detail_domain =  "https://online.myangel.co.kr/lounge/eventDetl.e1004?EVNT_SEQNO="
 
     ######### 기초 설정 END ##############
-
     # 요청
     response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
     response.raise_for_status()  # 오류 발생 시 예외 처리
-
     soup = BeautifulSoup(response.text, 'html.parser')
-
+    print(f"1>>>>>>>>>>>>>>>>{soup}")
+    
     # 요소 찾기 
     container = soup.find_all("div" ,class_="list-item")
+    print(f"2>>>>>>>>>>>>>>>>{container}")
     for element in container:
-        print(element.find("span", class_=""))
         temp_date = element.find("span", class_="").text.replace('.', '-')  if element.find("span", class_="") else ""
         if temp_date != "":
             start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', temp_date)
@@ -44,13 +43,13 @@ async def get402Data():
 
         detail = detail_domain +element.find("a")["onclick"].split('(')[1].split(')')[0]
 
-        #확인용pyyth
-        # print(f"제목 :{element.find('h4').text}")
-        # print(f"시작 :{start_date}")
-        # print(f"종료 :{end_date}")
-        # print(f"이미지URL :{domain+element.find('img')['src']} ")
-        # print(f"목록URL :{url}")
-        # print(f"상세URL :{detail}")
+        #확인용
+        print(f"제목 :{element.find('h4').text}")
+        print(f"시작 :{start_date}")
+        print(f"종료 :{end_date}")
+        print(f"이미지URL :{domain+element.find('img')['src']} ")
+        print(f"목록URL :{url}")
+        print(f"상세URL :{detail}")
 
         event_list.append({
             "title": element.find('h4').text.strip(),
@@ -66,6 +65,4 @@ async def get402Data():
     print(event_list)
     return event_list
         
-
-
-
+get402Data()
