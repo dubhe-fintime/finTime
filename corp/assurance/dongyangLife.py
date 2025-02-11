@@ -35,12 +35,11 @@ def get402Data():
     # 요소 찾기 
     container = soup.find("div" ,class_="list")
     for element in container.find_all("div",class_="list-item"):
-        temp_date = element.find("span", class_="").text.replace('.', '-')  if element.find("span", class_="") else ""
-        if temp_date != "":
-            start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', temp_date)
-        else:
-            start_date, end_date = element.find("span", class_=""), element.find("span", class_="").text
+        print(element)
+        print(element.find("span", class_=""))
         detail = detail_domain +element.find("a")["onclick"].split('(')[1].split(')')[0]
+        start_date= ""
+        end_date= ""
 
         #확인용
         # print(f"제목 :{element.find('h4').text}")
