@@ -1,5 +1,6 @@
 import re
 import requests
+import ssl
 from bs4 import BeautifulSoup
 
 ##############################
@@ -25,6 +26,11 @@ async def get374Data():
     ######### 기초 설정 END ##############
 
     try:
+        requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
+
+        # 또는 직접 SSL 컨텍스트를 설정해서 요청
+        context = ssl.create_default_context()
+        context.set_ciphers('DEFAULT:@SECLEVEL=1')
         # 웹페이지 요청
         response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"},verify=False)
         response.raise_for_status()  # 오류 발생 시 예외 처리 
