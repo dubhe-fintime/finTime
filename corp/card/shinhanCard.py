@@ -17,7 +17,7 @@ import requests
 ##############################
 
 
-async def get441Data():
+async def get366Data():
     ######### 기초 설정 Start #############
     # return 값 넣을 리스트
     event_list = []

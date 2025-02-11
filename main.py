@@ -213,7 +213,7 @@ async def card4():
 # 신한카드
 @app.route('/card5', methods=["POST"])
 async def card5():
-    results = await shinhanCard.get441Data()
+    results = await shinhanCard.get366Data()
     status = 200
     for item in results:
         if 'ERROR' in item:
@@ -221,7 +221,7 @@ async def card5():
     
     data_to_return = {
         "status_code": status,  # 응답코드
-        "bank_cd": "441",
+        "bank_cd": "366",
         "fin_id": "T000000018", # TASK ID 지정
         "result": results     # 응답결과
     }
@@ -242,7 +242,7 @@ async def card6():
     
     data_to_return = {
         "status_code": status,  # 응답코드
-        "bank_cd": "437",
+        "bank_cd": "041",
         "fin_id": "T000000019", # TASK ID 지정
         "result": results     # 응답결과
     }
