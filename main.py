@@ -7,10 +7,12 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 from datetime import timedelta
 
-from flask import Flask, session, request, render_template, send_file
+from flask import Flask, session, request, render_template, send_file, send_from_directory
 from flask_socketio import SocketIO
 from flask_cors import CORS
 from flask import jsonify
+
+import uuid
 
 import time
 from datetime import datetime
@@ -638,17 +640,79 @@ def logout():
 def adminMainContents():
     return render_template("common/adminMainContents.html", domain=domain, port=port)
 
+
+########################
+# 파일 업로드 / 다운로드 #
+########################
+# 업로드/다운로드 폴더 경로
+UPLOAD_FOLDER = config['FILE']['UPLOAD_PATH']
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# 업로드 폴더 지정
+app.config['FILE_FOLDER'] = UPLOAD_FOLDER
+# 허용할 이미지 확장자
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'PNG', 'JPG', 'JPEG', 'GIF'}
+# 파일 크기 제한 (10MB)
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB
+
+# 파일 목록 가져오기
+@app.route('/files', methods=['GET'])
+def list_files():
+    files = os.listdir(app.config['FILE_FOLDER'])
+    return jsonify({"files": files})
+
 # 파일 다운로드
 @app.route('/fileDownload', methods=['POST'])
 def download_file():
     # 클라이언트가 보낸 데이터에서 파일 경로 및 다운로드 경로 가져오기
     file_name = request.form.get('file_name', default='', type=str)
-    file_path = "..//downloads//"+file_name
+    print(file_name)
+    file_path = os.path.join(app.config['FILE_FOLDER'], file_name)
+    
     # 클라이언트에게 파일 다운로드 제안
     response = send_file(file_path, as_attachment=True)
-    print(response)
 
     return response
+
+# 파일 업로드
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    try:
+        if 'file' not in request.files:
+            return jsonify({"error": "파일이 없습니다."}), 400
+
+        file = request.files['file']
+
+        if file.filename == '':
+            return jsonify({"error": "파일명이 비어 있습니다."}), 400
+
+        if file and allowed_file(file.filename):
+            ext = file.filename.rsplit('.', 1)[1].lower()  # 확장자 추출
+            now = datetime.now().strftime("%Y%m%d_%H%M%S")
+            unique_id = uuid.uuid4().hex[:12]  # 12자리 UUID
+            filename = f"{now}_{unique_id}.{ext}" 
+
+            file_path = os.path.join(app.config['FILE_FOLDER'], filename)
+            file.save(file_path)  # 파일 저장
+
+            return jsonify({"message": "파일 업로드 성공", "filename": filename, "original_name": file.filename}), 200
+        else:
+            return jsonify({"error": "허용되지 않은 파일 형식입니다."}), 400
+
+    except Exception as e:
+        # 예외 발생 시 에러 메시지 출력
+        return jsonify({"error": f"파일 업로드 중 오류가 발생했습니다: {str(e)}"}), 50
+    
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# 이미지 미리보기를 하기위한 파일 서빙 처리용
+@app.route('/resources/<path:filename>')
+def get_resource_file(filename):
+    return send_from_directory(app.config['FILE_FOLDER'], filename)
+
+@app.route("/uploadTest")
+def uploadTest():
+    return render_template("common/uploadTest.html", domain=domain, port=port)    
 
 if __name__ == "__main__":
     while True:

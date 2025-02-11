@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이미지 업로드 및 다운로드</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        #upload-form { margin: 20px auto; width: 300px; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        #preview { margin-top: 10px; max-width: 100%; height: auto; display: none; }
+        #file-list { margin-top: 20px; text-align: left; display: inline-block; }
+        .file-item { cursor: pointer; color: blue; text-decoration: underline; margin: 5px 0; }
+    </style>
+</head>
+<body>
+
+    <h2>이미지 파일 업로드</h2>
+    
+    <form id="upload-form">
+        <input type="file" id="file-input" accept="image/*" required>
+        <button type="submit">업로드</button>
+    </form>
+
+    <p id="message"></p>
+    <img id="preview" src="" alt="미리보기">
+
+    <h3>📂 업로드된 파일 목록</h3>
+    <div id="file-list"></div>
+
+    <script>
+
+        // 파일 업로드 & 미리보기
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            let fileInput = document.getElementById('file-input');
+            let file = fileInput.files[0];
+
+            if (!file) {
+                alert("파일을 선택하세요.");
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append("file", file);
+
+            fetch('/upload', {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                let message = document.getElementById('message');
+                if (data.error) {
+                    message.innerText = "❌ " + data.error;
+                    message.style.color = "red";
+                } else {
+                    message.innerText = "✅ 업로드 성공! 파일명: " + data.filename;
+                    message.style.color = "green";
+
+                    // 파일 미리보기
+                    let preview = document.getElementById('preview');
+                    preview.src = "/resources/" + data.filename;
+                    preview.style.display = "block";
+
+                    loadFileList(); // 업로드 후 파일 목록 새로고침
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("업로드 중 오류가 발생했습니다.");
+            });
+        });
+
+        // 파일 목록 (경로에서 모든 파일명 가져오는 형식(임시))
+        function loadFileList() {
+            fetch('/files')
+            .then(response => response.json())
+            .then(data => {
+                let fileListDiv = document.getElementById('file-list');
+                fileListDiv.innerHTML = "";
+
+                data.files.forEach(filename => {
+                    let fileItem = document.createElement('div');
+                    fileItem.className = "file-item";
+                    fileItem.innerText = filename;
+                    fileItem.onclick = () => downloadFile(filename);
+                    fileListDiv.appendChild(fileItem);
+                });
+            })
+            .catch(error => console.error("파일 목록 불러오기 실패:", error));
+        }
+
+        // 파일 다운로드
+        function downloadFile(filename) {
+            let formData = new FormData();
+            formData.append("file_name", filename);
+
+            fetch("/fileDownload", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("파일 다운로드 실패");
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    let url = window.URL.createObjectURL(blob);
+                    let a = document.createElement("a");
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("파일 다운로드 중 오류가 발생했습니다.");
+                });
+        }
+
+        // 페이지 로드 시 파일 목록 불러오기
+        loadFileList();
+    </script>
+
+</body>
+</html>
