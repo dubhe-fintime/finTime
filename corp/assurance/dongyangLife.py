@@ -25,32 +25,20 @@ async def get402Data():
     detail_domain =  "https://online.myangel.co.kr/lounge/eventDetl.e1004?EVNT_SEQNO="
 
     ######### 기초 설정 END ##############
-    try:
+
+    try :
         # 요청
         response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
         response.raise_for_status()  # 오류 발생 시 예외 처리
-        
         soup = BeautifulSoup(response.text, 'html.parser')
+
         
         # 요소 찾기 
-        container = soup.find_all("div" ,class_="list-item")
-        for element in container:
-            print(element.find("span", class_=""))
-            temp_date = element.find("span", class_="").text.replace('.', '-')  if element.find("span", class_="") else ""
-            if temp_date != "":
-                start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', temp_date)
-            else:
-                start_date, end_date = element.find("span", class_=""), element.find("span", class_="").text
-
+        container = soup.find("div" ,class_="list")
+        for element in container.find_all("div",class_="list-item"):
+            start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', element.find("div", class_="date-area").find("span").text.strip().replace(".","-"))
             detail = detail_domain +element.find("a")["onclick"].split('(')[1].split(')')[0]
 
-            #확인용pyyth
-            # print(f"제목 :{element.find('h4').text}")
-            # print(f"시작 :{start_date}")
-            # print(f"종료 :{end_date}")
-            # print(f"이미지URL :{domain+element.find('img')['src']} ")
-            # print(f"목록URL :{url}")
-            # print(f"상세URL :{detail}")
 
             event_list.append({
                 "title": element.find('h4').text.strip(),
@@ -61,12 +49,12 @@ async def get402Data():
                 "detailURL": detail
             })
 
+
+
         print(f"동양생명 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
         return event_list
-        
+    
     except Exception as e:
-        print(f"동양생명 오류 발생: {e}")
-        #return [{"ERROR": e}]
-        return [{"ERROR": str(e)}] 
-
-
+        print(f"KB카드 오류 발생: {e}")
+        return [{"ERROR": e}]
+            

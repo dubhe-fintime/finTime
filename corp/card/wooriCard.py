@@ -1,6 +1,7 @@
 import re
 import requests
 import ssl
+import urllib3
 from requests.adapters import HTTPAdapter
 
 ##############################
@@ -39,6 +40,7 @@ class TLSAdapter(HTTPAdapter):
 
 async def get041Data():
     ######### 기초 설정 Start #############
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     # return 값 넣을 리스트
     event_list = []
     # API URL
@@ -52,6 +54,7 @@ async def get041Data():
     try:
 
         headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
             "Cookie": "JSESSIONID=t6QPpV1W9bQf5FvDL7p3OjvaaLjSNyy0tnsv0QnqDCdWR18EvjseTFgr6bGh6nKJ.amV1c19kb21haW4vd2NwYzEx; TS01d6fea6=01bae404f5e7fb0f8de5c45f60ce75a346c6934a5bb44d05190e4b06f76ab5aff11bc0feea45c91efe283656e9f9969d0f38938a82; _xm_webid_1_=1638786099; TS01bba15d=01bae404f5e7fb0f8de5c45f60ce75a346c6934a5bb44d05190e4b06f76ab5aff11bc0feea45c91efe283656e9f9969d0f38938a82; PCID=12f439a1-af00-60f3-c51b-9823509b4210-1739173354155; lang=ko; bodyYn=Y; _ga=GA1.1.1694652932.1739173355; _gcl_au=1.1.1519562618.1739173355; _ga_LXPH18QLPW=GS1.1.1739173354.1.1.1739173615.60.0.0"
         }
 
@@ -60,8 +63,8 @@ async def get041Data():
 
         session = requests.Session()
         session.mount("https://", TLSAdapter())
-        response = session.post(url, headers=headers,json=data,verify=False)
-        
+        response = session.post(url, headers=headers,json=data,verify=False , timeout=10)
+
         response.raise_for_status()  
 
         #응답 데이터 가공

@@ -1,6 +1,7 @@
 import re
 import requests
 import ssl
+import urllib3
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from urllib3.poolmanager import PoolManager
@@ -25,6 +26,7 @@ class TLSAdapter(HTTPAdapter):
 async def get374Data():
 
     ######### 기초 설정 Start #############
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     event_list = []
     url = "https://www.hanacard.co.kr/OPP35000000D.web"  # 크롤링 대상 URL
     domain = re.match(r"(https?://[^/]+)", url).group(1)
@@ -73,7 +75,7 @@ async def get374Data():
 
     except requests.exceptions.RequestException as e:
         print(f"하나카드 요청 오류 발생: {e}")
+        return [{"ERROR": str(e)}]
     except Exception as e:
         print(f"하나카드 크롤링 오류 발생: {e}")
-
-    return [{"ERROR": str(e)}]
+        return [{"ERROR": str(e)}]
