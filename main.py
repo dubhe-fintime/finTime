@@ -7,7 +7,7 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 from datetime import timedelta
 
-from flask import Flask, session, request, render_template, send_file, send_from_directory
+from flask import Flask, abort, session, request, render_template, send_file, send_from_directory
 from flask_socketio import SocketIO
 from flask_cors import CORS
 from flask import jsonify
@@ -16,6 +16,8 @@ import uuid
 
 import time
 from datetime import datetime
+
+import ipaddress
 
 import os
 
@@ -111,7 +113,25 @@ app.permanent_session_lifetime = timedelta(minutes=10)
 
 #CORS(app, resources={r"/*": {"origins": "http://allowed-origin.com"}})  # 모든 엔드포인트에 대해 CORS를 활성화
 socketio = SocketIO(app)
-rasa_process = None
+
+ALLOWED_IPS = {"3.37.13.12", "127.0.0.1", "192.168.1.100"} # 회사, 서버로컬 IP SET (외부 IP접근 차단용)
+ALLOWED_SUBNETS = [ipaddress.IPv4Network("192.168.0.0/24")]  # 192.168.0.* 대역
+
+def is_allowed_ip(ip):
+    # 개별 허용 IP 확인
+    if ip in ALLOWED_IPS:
+        return True
+
+    # 서브넷 검사
+    ip_obj = ipaddress.IPv4Address(ip)
+    return any(ip_obj in subnet for subnet in ALLOWED_SUBNETS)
+
+@app.before_request
+def limit_remote_addr():
+    client_ip = request.remote_addr
+    print(f"########################{client_ip}")
+    if not is_allowed_ip(client_ip):
+        abort(403)  # 403 Forbidden 응답
 
 # 하나은행 배치 호출
 @app.route('/test1', methods=["POST"])
