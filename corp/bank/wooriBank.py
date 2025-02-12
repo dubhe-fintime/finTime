@@ -31,7 +31,7 @@ async def get020Data():
             start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', element.find("dd",class_="contl-opt").text.strip().replace(".","-"))
 
             event_list.append({
-                "title": element.find("a").text.strip(),
+                "title": element.find("span",class_="hidden").text.strip(),
                 "startDt": start_date,
                 "endDt": end_date,
                 "thumbNail": element.find("img")["src"].replace(" ","%20"),
