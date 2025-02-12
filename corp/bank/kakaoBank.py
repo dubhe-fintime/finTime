@@ -27,7 +27,6 @@ async def get090Data():
         soup = BeautifulSoup(response.text, "html.parser")
 
         container = soup.find("ul", class_="list-event")
-        print(container)
         for element in container.find_all("li",class_="item"):
             start_date,end_date = [time["datetime"] for time in element.find("span").find_all("time")]
 
