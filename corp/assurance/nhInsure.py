@@ -47,7 +47,7 @@ def get449Data():
             print(f"2>>>>>>>>>>>>>>>>>>>>>>> {element}")
             print(f"제목 : {element.find('li',class_='eventTit').text.strip()}")
             print(f"시작 : {start_date}")
-            print(f"종료 : {end_date}")
+            print(f"종료   : {end_date}")
             print(f"썸네일URL : {domain+element.find('img')['src']}")
             print(f"목록URL :  {url}")           
 
@@ -58,5 +58,5 @@ def get449Data():
         print(f"NH손해보험 오류 발생: {e}")
         return [{"ERROR": str(e)}]
 
-get449Data()
+get449Data()   
 
