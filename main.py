@@ -1094,8 +1094,8 @@ if __name__ == "__main__":
             if real_yn == "Y":  # 운영 서버 여부
                 # SSL 인증서 및 키 파일 경로
                 # restart_rasa()
-                socketio.run(app, host=server_host, port=port, ssl_context=(
-                    ssl_cert, ssl_key), allow_unsafe_werkzeug=True)
+                #socketio.run(app, host=server_host, port=port, ssl_context=(ssl_cert, ssl_key), allow_unsafe_werkzeug=True)
+                app.run(host=server_host, port=port, debug=True)    
             else:
                 # 앱 실행
                 # socketio.run(app)
