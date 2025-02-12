@@ -7,8 +7,8 @@ from flask import jsonify
 BATCH_SCRIPT = "batch_script.py"  # 실행할 배치 스크립트 파일명
 PID_FILE = "batch_pid.txt"  # 실행된 프로세스의 PID 저장 파일
 
+# 프로세스 PID 확인
 def get_running_pid():
-    """현재 실행 중인 배치 스크립트의 PID 반환"""
     if os.path.exists(PID_FILE):
         with open(PID_FILE, "r") as f:
             pid = int(f.read().strip())
@@ -19,15 +19,15 @@ def get_running_pid():
             os.remove(PID_FILE)  # 존재하지 않는다면 PID 파일 삭제
     return None
 
+# 배치 스크립트 실행
 def start_batch():
-    """배치 스크립트 실행 (이미 실행 중이면 실행 안 함)"""
     if get_running_pid():
         return jsonify({"status": "already_running", "message": "배치가 이미 실행 중입니다."}), 400
 
     process = subprocess.Popen(
         ["nohup", "python3", BATCH_SCRIPT, "&"],
-        stdout=open("batch_output.log", "a"),
-        stderr=open("batch_error.log", "a"),
+        stdout=open("/logs/batch_output.log", "a"),
+        stderr=open("/logs/batch_error.log", "a"),
         preexec_fn=os.setsid  # 세션을 분리하여 독립적으로 실행
     )
 
@@ -36,8 +36,8 @@ def start_batch():
 
     return jsonify({"status": "started", "message": "배치를 실행했습니다.", "pid": process.pid}), 200
 
+# 배치 스크립트 중지
 def stop_batch():
-    """배치 스크립트 중지 (이미 중지 상태면 중지 안 함)"""
     pid = get_running_pid()
     if not pid:
         return jsonify({"status": "already_stopped", "message": "배치가 이미 중지 상태입니다."}), 400
@@ -47,8 +47,8 @@ def stop_batch():
 
     return jsonify({"status": "stopped", "message": "배치를 중지했습니다."}), 200
 
+# 배치 실행 상태 확인
 def check_batch_status():
-    """배치 실행 상태 확인"""
     pid = get_running_pid()
     if pid:
         return jsonify({"status": "running", "pid": pid}), 200
