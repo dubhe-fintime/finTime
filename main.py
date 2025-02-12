@@ -30,6 +30,8 @@ from corp.assurance import samsungFire,heungkukFire,kbInsure,nhInsure
 from corp.bank import hanaBank
 from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard
 
+from batch_handler import start_batch, stop_batch, check_batch_status
+
 from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
 
 # 서버 경로 취득
@@ -522,6 +524,7 @@ async def test13():
 
 
 ################## 보험 END ###############################
+################## 관리자 업무 START ###############################
 # SET BATCH LOG
 def set_batch_log(batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data):
     result_data_str = json.dumps(result_data, ensure_ascii=False)
@@ -640,7 +643,8 @@ def logout():
 def adminMainContents():
     return render_template("common/adminMainContents.html", domain=domain, port=port)
 
-
+################## 관리자 업무 END ###############################
+################## 파일 관리 START ###############################
 ########################
 # 파일 업로드 / 다운로드 #
 ########################
@@ -757,9 +761,36 @@ def delete_file():
 def get_resource_file(filename):
     return send_from_directory(app.config['FILE_FOLDER'], filename)
 
+# 파일관리 샘플 화면
 @app.route("/uploadTest")
 def uploadTest():
     return render_template("common/uploadTest.html", domain=domain, port=port)    
+################## 파일 관리 END ###############################
+################## 배치 관리 START ###############################
+# 배치관리 샘플 화면
+@app.route("/batchTest")
+def batchTest():
+    return render_template("common/batchTest.html", domain=domain, port=port)    
+
+@app.route('/batchStart', methods=["POST"])
+def batchStart():
+    result = start_batch()
+    logger.info(str(result))
+    return result
+
+@app.route('/batchStop', methods=["POST"])
+def batchStart():
+    result = stop_batch()
+    logger.info(str(result))
+    return result
+
+@app.route('/batchStatus', methods=["POST"])
+def batchStatus():
+    result = check_batch_status()
+    logger.info(str(result))
+    return result
+    
+################## 배치 관리 END ###############################
 
 if __name__ == "__main__":
     while True:
