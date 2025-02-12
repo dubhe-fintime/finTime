@@ -36,12 +36,6 @@ def get449Data():
         print(f"{element}")
         print("@@@@@@@@@@@@@@@@@@@@")
 
-        event_list.append({
-            "title": element.find('li',class_='eventTit').text.strip(),
-            "thumbNail": domain+element.find('img')['src'],
-            "listURL": url
-        }) 
-
         # 확인용
 
     print(f"NH손해보험 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
