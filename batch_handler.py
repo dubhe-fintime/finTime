@@ -23,11 +23,13 @@ def get_running_pid():
 def start_batch():
     if get_running_pid():
         return jsonify({"status": "already_running", "message": "배치가 이미 실행 중입니다."}), 400
-
+    
+    OUTPUT_LOG  = os.path.join("logs", "batch_output.log")
+    ERROR_LOG   = os.path.join("logs", "batch_error.log")
     process = subprocess.Popen(
         ["nohup", "python3", BATCH_SCRIPT, "&"],
-        stdout=open("/logs/batch_output.log", "a"),
-        stderr=open("/logs/batch_error.log", "a"),
+        stdout=open(OUTPUT_LOG, "a"),
+        stderr=open(ERROR_LOG, "a"),
         preexec_fn=os.setsid  # 세션을 분리하여 독립적으로 실행
     )
 
