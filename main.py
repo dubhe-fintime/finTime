@@ -27,7 +27,7 @@ from check_session import check_session
 
 from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,kdbLife,samsungLife,hanhwaLife,miraeAssetLife
 from corp.assurance import samsungFire,heungkukFire,kbInsure,nhInsure
-from corp.bank import hanaBank
+from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBank
 from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard
 
 from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
@@ -132,137 +132,6 @@ async def test1():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
-################## 카드사 START #############################
-
-# BC카드
-@app.route('/card1', methods=["POST"])
-async def card1():
-    results = await bcCard.get361Data()
-    status = 200
-    for item in results:
-        if 'ERROR' in item:
-            status = 500
-    
-    data_to_return = {
-        "status_code": status,  # 응답코드
-        "bank_cd": "361",
-        "fin_id": "T000000014", # TASK ID 지정
-        "result": results     # 응답결과
-    }
-    
-    # Flask의 jsonify를 사용하여 응답 생성
-    response = jsonify(data_to_return)
-    response.status_code = data_to_return["status_code"]  # status_code 지정
-    return response
-
-# 하나카드
-@app.route('/card2', methods=["POST"])
-async def card2():
-    results = await hanaCard.get374Data()
-    status = 200
-    for item in results:
-        if 'ERROR' in item:
-            status = 500
-    
-    data_to_return = {
-        "status_code": status,  # 응답코드
-        "bank_cd": "374",
-        "fin_id": "T000000015", # TASK ID 지정
-        "result": results     # 응답결과
-    }
-    
-    # Flask의 jsonify를 사용하여 응답 생성
-    response = jsonify(data_to_return)
-    response.status_code = data_to_return["status_code"]  # status_code 지정
-    return response
-
-# KB카드
-@app.route('/card3', methods=["POST"])
-async def card3():
-    results = await kbCard.get381Data()
-    status = 200
-    for item in results:
-        if 'ERROR' in item:
-            status = 500
-    
-    data_to_return = {
-        "status_code": status,  # 응답코드
-        "bank_cd": "381",
-        "fin_id": "T000000016", # TASK ID 지정
-        "result": results     # 응답결과
-    }
-    
-    # Flask의 jsonify를 사용하여 응답 생성
-    response = jsonify(data_to_return)
-    response.status_code = data_to_return["status_code"]  # status_code 지정
-    return response
-
-# 삼성카드
-@app.route('/card4', methods=["POST"])
-async def card4():
-    results = await samsungCard.get365Data()
-    status = 200
-    for item in results:
-        if 'ERROR' in item:
-            status = 500
-    
-    data_to_return = {
-        "status_code": status,  # 응답코드
-        "bank_cd": "365",
-        "fin_id": "T000000017", # TASK ID 지정
-        "result": results     # 응답결과
-    }
-    
-    # Flask의 jsonify를 사용하여 응답 생성
-    response = jsonify(data_to_return)
-    response.status_code = data_to_return["status_code"]  # status_code 지정
-    return response
-
-# 신한카드
-@app.route('/card5', methods=["POST"])
-async def card5():
-    results = await shinhanCard.get366Data()
-    status = 200
-    for item in results:
-        if 'ERROR' in item:
-            status = 500
-    
-    data_to_return = {
-        "status_code": status,  # 응답코드
-        "bank_cd": "366",
-        "fin_id": "T000000018", # TASK ID 지정
-        "result": results     # 응답결과
-    }
-    
-    # Flask의 jsonify를 사용하여 응답 생성
-    response = jsonify(data_to_return)
-    response.status_code = data_to_return["status_code"]  # status_code 지정
-    return response
-
-# 우리카드
-@app.route('/card6', methods=["POST"])
-async def card6():
-    results = await wooriCard.get041Data()
-    status = 200
-    for item in results:
-        if 'ERROR' in item:
-            status = 500
-    
-    data_to_return = {
-        "status_code": status,  # 응답코드
-        "bank_cd": "041",
-        "fin_id": "T000000019", # TASK ID 지정
-        "result": results     # 응답결과
-    }
-    
-    # Flask의 jsonify를 사용하여 응답 생성
-    response = jsonify(data_to_return)
-    response.status_code = data_to_return["status_code"]  # status_code 지정
-    return response
-
-################## 카드사 END ###############################
-
-
 ################## 보험 START #############################
 
 # ABL생명
@@ -317,7 +186,7 @@ async def test4():
     for item in results:
         if 'ERROR' in item:
             status = 500
-       
+
     data_to_return = {
         "status_code": status,  # 응답코드
         "bank_cd": "402",
@@ -518,10 +387,267 @@ async def test13():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
-
-
-
 ################## 보험 END ###############################
+
+################## 카드사 START #############################
+
+# BC카드
+@app.route('/card1', methods=["POST"])
+async def card1():
+    results = await bcCard.get361Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "361",
+        "fin_id": "T000000014", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 하나카드
+@app.route('/card2', methods=["POST"])
+async def card2():
+    results = await hanaCard.get374Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "374",
+        "fin_id": "T000000015", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# KB카드
+@app.route('/card3', methods=["POST"])
+async def card3():
+    results = await kbCard.get381Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "381",
+        "fin_id": "T000000016", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 삼성카드
+@app.route('/card4', methods=["POST"])
+async def card4():
+    results = await samsungCard.get365Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "365",
+        "fin_id": "T000000017", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 신한카드
+@app.route('/card5', methods=["POST"])
+async def card5():
+    results = await shinhanCard.get366Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "366",
+        "fin_id": "T000000018", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 우리카드
+@app.route('/card6', methods=["POST"])
+async def card6():
+    results = await wooriCard.get041Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "041",
+        "fin_id": "T000000019", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+################## 카드사 END ###############################
+################## 은행 START ###############################
+
+# 씨티은행
+@app.route('/bank1', methods=["POST"])
+async def bank1():
+    results = await citiBank.get027Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "027",
+        "fin_id": "T000000020", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# IM뱅크
+@app.route('/bank2', methods=["POST"])
+async def bank2():
+    results = await imBank.get031Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "031",
+        "fin_id": "T000000021", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 국민은행
+@app.route('/bank3', methods=["POST"])
+async def bank3():
+    results = await kbBank.get004Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "004",
+        "fin_id": "T000000022", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# SC제일은행
+@app.route('/bank4', methods=["POST"])
+async def bank4():
+    results = await scBank.get023Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "023",
+        "fin_id": "T000000023", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 신한은행
+@app.route('/bank5', methods=["POST"])
+async def bank5():
+    results = await shinhanBank.get088Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "088",
+        "fin_id": "T000000024", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 우리은행
+@app.route('/bank6', methods=["POST"])
+async def bank6():
+    results = await wooriBank.get020Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "020",
+        "fin_id": "T000000025", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+################## 은행 END ###############################
+
 # SET BATCH LOG
 def set_batch_log(batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data):
     result_data_str = json.dumps(result_data, ensure_ascii=False)
