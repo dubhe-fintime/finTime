@@ -27,7 +27,7 @@ from check_session import check_session
 
 from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,kdbLife,samsungLife,hanhwaLife,miraeAssetLife
 from corp.assurance import samsungFire,heungkukFire,kbInsure,nhInsure
-from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBank
+from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBank,ibkBank,kakaoBank
 from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard
 
 from batch_handler import start_batch, stop_batch, check_batch_status
@@ -382,6 +382,48 @@ async def bank6():
         "status_code": status,  # 응답코드
         "bank_cd": "020",
         "fin_id": "T000000025", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# IBK기업은행
+@app.route('/bank7', methods=["POST"])
+async def bank7():
+    results = await ibkBank.get003Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "003",
+        "fin_id": "T000000026", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 카카오뱅크
+@app.route('/bank8', methods=["POST"])
+async def bank8():
+    results = await kakaoBank.get090Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "090",
+        "fin_id": "T000000027", # TASK ID 지정
         "result": results     # 응답결과
     }
     

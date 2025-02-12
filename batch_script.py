@@ -7,7 +7,7 @@ import json
 from main import set_batch_log, set_batch_rst, del_batch_rst, app  # Flask 앱을 임포트
 from main import test1, test2, test3, test4, test5, test6,test7,test8,test9,test10,test11,test12,test13
 from main import card1,card2,card3,card4,card5,card6
-from main import bank1,bank2,bank3,bank4,bank5,bank6
+from main import bank1,bank2,bank3,bank4,bank5,bank6,bank7,bank8
 
 BATCH_ID = "B000000001"
 BATCH_NM = "이벤트 메인 배치"
@@ -53,7 +53,9 @@ async def my_batch_job():
         "kb_bank":bank3(),
         "sc_bank":bank4(),
         "shinhan_bank":bank5(),
-        "woori_bank":bank6()
+        "woori_bank":bank6(),
+        "ibk_bank":bank7(),
+        "kakao_bank":bank8()
     }
 
     try:
