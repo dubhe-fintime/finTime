@@ -31,7 +31,7 @@ def get449Data():
     # 요소 찾기 
     container = soup.find("ul" ,class_="eventList")
 
-    for element in container.find_all("li"):
+    for element in container.find_all("li",attrs={"class": None}):
         print("@@@@@@@@@@@@@@@@@@@@")
         print(f"{element}")
         print("@@@@@@@@@@@@@@@@@@@@")
