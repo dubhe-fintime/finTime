@@ -58,5 +58,5 @@ def get449Data():
         print(f"NH손해보험 오류 발생: {e}")
         return [{"ERROR": str(e)}]
 
-
+get449Data()
 
