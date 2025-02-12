@@ -30,7 +30,8 @@ def selectQuery(qType, values):
     elif qType == "Q6": # FILE 조회
         query = "SELECT FILE_NM, ORG_FILE_NM, FILE_EXTENSION, FILE_PATH FROM FILE_MST"
     
-
+    elif qType == "QTEMP": # 임시 배치 테이블 조회
+        query = "SELECT * FROM BATCH_RST" # 임시 배치 테이블 추후 EVT_MST 호출
 
 
 

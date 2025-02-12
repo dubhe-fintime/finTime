@@ -32,7 +32,7 @@ from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
-from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
+from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2, execute_mysql_query_select_key_value
 
 # 서버 경로 취득
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -958,6 +958,14 @@ def batchStatus():
     return result
     
 ################## 배치 관리 END ###############################
+
+
+@app.route('/eventMst', methods=["POST"])
+def eventMst():
+    results = execute_mysql_query_select_key_value("QTEMP", [])
+    print(results)
+
+    return results
 
 if __name__ == "__main__":
     while True:
