@@ -128,10 +128,15 @@ def is_allowed_ip(ip):
 
 @app.before_request
 def limit_remote_addr():
-    client_ip = request.remote_addr
-    print(f"########################{client_ip}")
+    client_ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+    if "," in client_ip:  # 프록시 체인을 통한 여러 IP가 있을 경우
+        client_ip = client_ip.split(",")[0].strip()
+    
+    print(f"######################## {client_ip}")
+
     if not is_allowed_ip(client_ip):
         abort(403)  # 403 Forbidden 응답
+
 
 # 하나은행 배치 호출
 @app.route('/test1', methods=["POST"])
