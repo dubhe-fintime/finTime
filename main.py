@@ -137,7 +137,7 @@ def limit_remote_addr():
 
     # 3. 동일 서버인지 확인
     
-    if request.host in ["admin.fin-time.com", "localhost", "127.0.0.1"]:
+    if request.host in ["admin.fin-time.com", "localhost", "127.0.0.1:8082"]:
         return  # 같은 서버에서 온 요청은 허용
     print(f"######################## {request.host}")
     print(f"######################## {client_ip}")
