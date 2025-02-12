@@ -23,39 +23,35 @@ def get449Data():
     domain = re.match(r"(https?://[^/]+)", url).group(1)
 
     ######### 기초 설정 END ##############
-    try:
-        # 요청
-        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
-        response.raise_for_status()  # 오류 발생 시 예외 처리
-        soup = BeautifulSoup(response.text, 'html.parser')
+    # 요청
+    response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+    response.raise_for_status()  # 오류 발생 시 예외 처리
+    soup = BeautifulSoup(response.text, 'html.parser')
 
-        # 요소 찾기 
-        container = soup.find("ul" ,class_="eventListArea")
-        for element in container.find_all("li",class_=""):
-            start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', element.find('li',class_='infoText fl').text.strip())
-            print(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@>>>>>>>>>>>>>>>>>>>>>>> {element}")
-            print(f"제목 : {element.find('li',class_='eventTit').text.strip()}")
-            print(f"시작 : {start_date}")
-            print(f"종료     : {end_date}")
-            print(f"썸네일URL : {domain+element.find('img')['src']}")
-            print(f"목록URL :  {url}")           
+    # 요소 찾기 
+    container = soup.find("ul" ,class_="eventListArea")
+    print(f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> {container.find_all("li",class_="")}")
+    for element in container.find_all("li",class_=""):
+        start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', element.find('li',class_='infoText fl').text.strip())
+        print(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@>>>>>>>>>>>>>>>>>>>>>>> {element}")
+        print(f"제목 : {element.find('li',class_='eventTit').text.strip()}")
+        print(f"시작 : {start_date}")
+        print(f"종료     : {end_date}")
+        print(f"썸네일URL : {domain+element.find('img')['src']}")
+        print(f"목록URL :  {url}")           
 
-            event_list.append({
-                "title": element.find('li',class_='eventTit').text.strip(),
-                "startDt": start_date,
-                "endDt": end_date,
-                "thumbNail": domain+element.find('img')['src'],
-                "listURL": url
-            }) 
+        event_list.append({
+            "title": element.find('li',class_='eventTit').text.strip(),
+            "startDt": start_date,
+            "endDt": end_date,
+            "thumbNail": domain+element.find('img')['src'],
+            "listURL": url
+        }) 
 
-            # 확인용
+        # 확인용
 
-        print(f"NH손해보험 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
-        return event_list
-
-    except Exception as e:
-        print(f"NH손해보험 오류 발생: {e}")
-        return [{"ERROR": str(e)}]
+    print(f"NH손해보험 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
+    return event_list
 
 get449Data()   
 
