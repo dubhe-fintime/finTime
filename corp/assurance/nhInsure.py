@@ -30,7 +30,7 @@ def get449Data():
 
     # 요소 찾기 
     container = soup.find("ul" ,class_="eventListArea")
-    print(f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> {container.find_all("li",class_="")}")
+    print(f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> {container.find_all('li',class_='')}")
     for element in container.find_all("li",class_=""):
         start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', element.find('li',class_='infoText fl').text.strip())
         print(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@>>>>>>>>>>>>>>>>>>>>>>> {element}")
