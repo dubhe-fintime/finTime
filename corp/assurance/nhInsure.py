@@ -30,9 +30,11 @@ def get449Data():
 
     # 요소 찾기 
     container = soup.find("ul" ,class_="eventList")
-    print(f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> {container}")
-    for element in container.find_all("li",class_=""):
-        print(f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> {element}")
+
+    for element in container.find_all("li"):
+        print("@@@@@@@@@@@@@@@@@@@@")
+        print(f"{element}")
+        print("@@@@@@@@@@@@@@@@@@@@")
 
         event_list.append({
             "title": element.find('li',class_='eventTit').text.strip(),
