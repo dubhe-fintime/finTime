@@ -1,5 +1,6 @@
 # 컴파일 및 캐시 파일
 __pycache__/
+.lh/
 *.pyc
 *.pyo
 *.pyd
@@ -9,3 +10,4 @@ logs/
 
 # 설정파일
 config_development.ini
+

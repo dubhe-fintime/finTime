@@ -1,3 +1,4 @@
+import re
 import requests
 
 ##############################
@@ -74,10 +75,11 @@ import requests
 ##############################
 
 async def get088Data():
-        
+    ######### 기초 설정 Start #############
     event_list = []
     apiUrl = "https://www.shinhan.com/serviceEndpoint/httpDigital"
     listUrl = "https://www.shinhan.com/hpe/index.jsp#902304010000"
+    ######### 기초 설정 END ##############
 
     try :
         # 요청에 보낼 데이터 (JSON 형식)
@@ -157,11 +159,12 @@ async def get088Data():
         target_data = response.json()["dataBody"]["RESULT"]
 
         for element in target_data:
+            start_date, end_date = [re.sub(r"(\d{4})(\d{2})(\d{2}).*$", r"\1-\2-\3", x) for x in [element['STRT_DT'], element['END_DT']]]
 
             event_list.append({
                 "title": element['TITLE'],
-                "startDt": element['STRT_DT'],
-                "endDt": element['END_DT'],
+                "startDt": start_date,
+                "endDt": end_date,
                 "thumbNail": element['H_ICON'],
                 "listURL": listUrl
             })
@@ -170,6 +173,7 @@ async def get088Data():
         print(event_list)
         return event_list
         
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         print(f"신한은행 오류 발생: {e}")
-        return "Fail"
+        return [{"ERROR": str(e)}]
+
