@@ -23,23 +23,34 @@ def get449Data():
     domain = re.match(r"(https?://[^/]+)", url).group(1)
 
     ######### 기초 설정 END ##############
-    # 요청
-    response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
-    response.raise_for_status()  # 오류 발생 시 예외 처리
-    soup = BeautifulSoup(response.text, 'html.parser')
+    try:
+        # 요청
+        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+        response.raise_for_status()  # 오류 발생 시 예외 처리
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-    # 요소 찾기 
-    container = soup.find("ul" ,class_="eventList")
+        # 요소 찾기 
+        container = soup.find("ul" ,class_="eventList")
 
-    for element in container.find_all("li",attrs={"class": None}):
-        print("@@@@@@@@@@@@@@@@@@@@")
-        print(f"{element}")
-        print("@@@@@@@@@@@@@@@@@@@@")
+        for element in container.find_all("li",attrs={"class": None}):
+            start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', element.find('li',class_='infoText fl').text.strip())
 
-        # 확인용
+            event_list.append({
+                    "title": element.find('li',class_='eventTit').text.strip(),
+                    "startDt": start_date,
+                    "endDt": end_date,
+                    "thumbNail": domain+element.find('img')['src'],
+                    "listURL": url
+                }) 
 
-    print(f"NH손해보험 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
-    return event_list
+        print(f"NH손해보험 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
+        print(event_list)
+        return event_list
+    
+    except Exception as e:
+        print(f"NH손해보험 오류 발생: {e}")
+        return [{"ERROR": e}]
+
 
 get449Data()   
 
