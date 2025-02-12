@@ -10,6 +10,7 @@
         #preview { margin-top: 10px; max-width: 100%; height: auto; display: none; }
         #file-list { margin-top: 20px; text-align: left; display: inline-block; }
         .file-item { cursor: pointer; color: blue; text-decoration: underline; margin: 5px 0; }
+        .delete-btn { color: red; cursor: pointer; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -28,7 +29,6 @@
     <div id="file-list"></div>
 
     <script>
-
         // 파일 업로드 & 미리보기
         document.getElementById('upload-form').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -84,7 +84,20 @@
                     let fileItem = document.createElement('div');
                     fileItem.className = "file-item";
                     fileItem.innerText = filename;
+                    
+                    // 파일을 클릭하면 다운로드
                     fileItem.onclick = () => downloadFile(filename);
+
+                    // 삭제 버튼 추가
+                    let deleteBtn = document.createElement('span');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.innerText = '삭제';
+                    deleteBtn.onclick = (event) => {
+                        event.stopPropagation(); // 클릭이 부모 요소로 전파되지 않게 함
+                        deleteFile(filename);
+                    };
+
+                    fileItem.appendChild(deleteBtn);
                     fileListDiv.appendChild(fileItem);
                 });
             })
@@ -120,6 +133,30 @@
                     console.error("Error:", error);
                     alert("파일 다운로드 중 오류가 발생했습니다.");
                 });
+        }
+
+        // 파일 삭제
+        function deleteFile(filename) {
+            let formData = new FormData();
+            formData.append("file_name", filename);
+
+            fetch("/deleteFile", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("삭제 실패: " + data.error);
+                } else {
+                    alert(data.message);
+                    loadFileList(); // 삭제 후 파일 목록 새로고침
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("파일 삭제 중 오류가 발생했습니다.");
+            });
         }
 
         // 페이지 로드 시 파일 목록 불러오기

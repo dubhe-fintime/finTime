@@ -6,3 +6,6 @@ __pycache__/
 
 # 로그
 logs/
+
+# 설정파일
+config_development.ini
