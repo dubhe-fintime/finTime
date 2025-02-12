@@ -24,11 +24,13 @@ import re
 ##############################
 
 async def get027Data():
-        
+    ######### 기초 설정 Start #############
+    # return 값 넣을 리스트   
     event_list = []
     apiUrl = "https://www.citibank.co.kr/PbnEvntCnts0100.jct"
     listUrl = "https://www.citibank.co.kr/PbnEvntCnts0100.act?MENU_TYPE=left&MENU_C_SQNO=M5_004110&TYPE_CODE=ING"
     imgUrl = "https://www.citibank.co.kr/download/cms/evt/NEW_EVENT_BBS/"
+    ######### 기초 설정 END ##############
     try :
         # 요청에 보낼 데이터 (JSON 형식)
         data = {
@@ -46,7 +48,6 @@ async def get027Data():
 
         # POST 요청 보내기
         response = requests.post(apiUrl, json=data, headers=headers)
-
         response.raise_for_status()  
         # 응답 출력
         # if response.status_code == 200:
@@ -57,7 +58,6 @@ async def get027Data():
         target_data = response.json()["REC"]
 
         for element in target_data:
-
             title = element.get("SUBJECT", "")
             startDt = element.get("EVNT_SYMD", "")
             endDt = element.get("EVNT_EYMD", "")
@@ -71,15 +71,12 @@ async def get027Data():
                 "listURL": listUrl
             })
     
-        print(f"CITI은행 완료 | 이벤트 개수 : {len(event_list)}")
+        print(f"씨티은행 완료 | 이벤트 개수 : {len(event_list)}")
         # print("최종 결과 >>")
-        print(event_list)
+        # print(event_list)
         return event_list
         
-    except requests.exceptions.RequestException as e:
-        print(f"CITI 오류 발생: {e}")
-        return "Fail"
+    except Exception as e:
+        print(f"씨티은행 오류 발생: {e}")
+        return [{"ERROR": str(e)}]
 
-
-if __name__ == "__main__":
-    asyncio.run(get027Data())

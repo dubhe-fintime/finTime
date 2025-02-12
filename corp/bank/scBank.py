@@ -28,11 +28,13 @@ import re
 ##############################
 
 async def get023Data():
-        
+
+    ######### 기초 설정 Start #############
     event_list = []
     apiUrl = "https://www.standardchartered.co.kr/np/kr/cm/et/selectEventStartList"
     listUrl = "https://www.standardchartered.co.kr/np/kr/cm/et/EventOngoingList.jsp"
     domainUrl = "https://www.standardchartered.co.kr"
+    ######### 기초 설정 END ##############
     try :
         # 요청에 보낼 데이터 (JSON 형식)
         data = {
@@ -68,8 +70,8 @@ async def get023Data():
             output_data = element.get("OUTPUT", {})  # OUTPUT 키 가져오기 (없으면 빈 딕셔너리 반환)
             print(f"썸네일 : {output_data}")
             title = output_data.get("TTL", "제목 없음")
-            startDt = "".join(re.findall(r"\d+", output_data.get("BULLTN_DT", "")))
-            endDt = "".join(re.findall(r"\d+", output_data.get("END_DT", "")))
+            startDt = "-".join(re.findall(r"\d+", output_data.get("BULLTN_DT", "")))
+            endDt = "-".join(re.findall(r"\d+", output_data.get("END_DT", "")))
             thumbNail = f"{domainUrl}{output_data.get('BNNR_IMG_NM', '')}"
             
             # print(f"시작일 : {element['STRT_DT']}")
@@ -86,13 +88,10 @@ async def get023Data():
     
         print(f"SC제일은행 완료 | 이벤트 개수 : {len(event_list)}")
         # print("최종 결과 >>")
-        print(event_list)
+        # print(event_list)
         return event_list
         
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         print(f"SC제일은행 오류 발생: {e}")
-        return "Fail"
+        return [{"ERROR": str(e)}]
 
-
-if __name__ == "__main__":
-    asyncio.run(get023Data())

@@ -42,4 +42,4 @@ async def get020Data():
 
     except Exception as e:
         print(f"우리은행 오류 발생 : {e}")
-        return [{"ERROR": e}]
+        return [{"ERROR": str(e)}]

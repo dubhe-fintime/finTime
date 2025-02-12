@@ -63,5 +63,5 @@ async def get031Data():
         return event_list
     except Exception as e:
         print(f"IM뱅크 오류 발생: {e}")
-        return {"ERROR": str(e)} 
+        return [{"ERROR": str(e)}]
         
