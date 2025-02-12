@@ -148,13 +148,7 @@ async def get088Data():
 
         # POST 요청 보내기
         response = requests.post(apiUrl, json=data, headers=headers)
-
         response.raise_for_status()  
-        # 응답 출력
-        if response.status_code == 200:
-            print("응답 데이터:", response.json())  # JSON 응답 출력
-        else:
-            print(f"오류 발생: {response.status_code}", response.text)
 
         target_data = response.json()["dataBody"]["RESULT"]
 

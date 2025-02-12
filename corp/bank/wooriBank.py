@@ -39,6 +39,7 @@ async def get020Data():
             })
 
         print(f"우리은행 완료 | 이벤트 개수 : {len(event_list)}")
+        return event_list
 
     except Exception as e:
         print(f"우리은행 오류 발생 : {e}")
