@@ -29,7 +29,7 @@ from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,
 from corp.assurance import samsungFire,heungkukFire,kbInsure,nhInsure
 from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBank,ibkBank,kakaoBank
 from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard
-from corp.stock import dashinStock,kbStock,yuantaStock
+from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
@@ -478,7 +478,7 @@ async def stock2():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
-# 유안타
+# 유안타증권
 @app.route('/stock3', methods=["POST"])
 async def stock3():
     results = await yuantaStock.get209Data()
@@ -491,6 +491,27 @@ async def stock3():
         "status_code": status,  # 응답코드
         "bank_cd": "209",
         "fin_id": "T000000030", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 삼성증권
+@app.route('/stock4', methods=["POST"])
+async def stock4():
+    results = await samsungStock.get240Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "240",
+        "fin_id": "T000000031", # TASK ID 지정
         "result": results     # 응답결과
     }
     
