@@ -136,9 +136,10 @@ def limit_remote_addr():
         client_ip = client_ip.split(",")[0].strip()
 
     # 3. 동일 서버인지 확인
+    
     if request.host in ["admin.fin-time.com", "localhost", "127.0.0.1"]:
         return  # 같은 서버에서 온 요청은 허용
-
+    print(f"######################## {request.host}")
     print(f"######################## {client_ip}")
 
     if not is_allowed_ip(client_ip):
