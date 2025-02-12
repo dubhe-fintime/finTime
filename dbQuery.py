@@ -27,6 +27,8 @@ def selectQuery(qType, values):
         query = "INSERT INTO FILE_MST (FILE_NM, ORG_FILE_NM, FILE_EXTENSION, FILE_PATH) VALUES (%s, %s, %s, %s)"
     elif qType == "Q5": # FILE 삭제
         query = "DELETE FROM FILE_MST WHERE FILE_NM = %s"
+    elif qType == "Q6": # FILE 조회
+        query = "SELECT FILE_NM, ORG_FILE_NM, FILE_EXTENSION, FILE_PATH FROM FILE_MST"
     
 
 
