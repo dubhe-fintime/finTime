@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 # 이미지 : X | 내용 : X | 목록 URL : O | 상세 URL : X
 ##############################
 
-def get449Data():
+async def get449Data():
     ######### 기초 설정 Start #############
 
     # return 값 넣을 리스트
@@ -31,7 +31,6 @@ def get449Data():
 
         # 요소 찾기 
         container = soup.find("ul" ,class_="eventList")
-
         for element in container.find_all("li",attrs={"class": None}):
             start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', element.find('li',class_='infoText fl').text.strip())
 
@@ -44,7 +43,6 @@ def get449Data():
                 }) 
 
         print(f"NH손해보험 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
-        print(event_list)
         return event_list
     
     except Exception as e:
@@ -52,5 +50,4 @@ def get449Data():
         return [{"ERROR": e}]
 
 
-get449Data()   
 
