@@ -904,7 +904,7 @@ def batchStart():
     return result
 
 @app.route('/batchStop', methods=["POST"])
-def batchStart():
+def batchStop():
     result = stop_batch()
     logger.info(str(result))
     return result
