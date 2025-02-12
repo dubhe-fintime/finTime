@@ -38,7 +38,7 @@ async def get020Data():
                 "listURL": url
             })
 
-        print(f"우리은행 완료 | 이벤트 개수 : {len(event_list)}")
+        print(f"우리은행 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
         return event_list
 
     except Exception as e:

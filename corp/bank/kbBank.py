@@ -40,7 +40,7 @@ async def get004Data():
                 "listURL": url
             })
 
-        print(f"국민은행 완료 | 이벤트 개수 : {len(event_list)}")
+        print(f"국민은행 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
         return event_list
     
     except Exception as e:

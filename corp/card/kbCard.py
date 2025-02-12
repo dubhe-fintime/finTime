@@ -57,7 +57,7 @@ async def get381Data():
                 # print(f'목록URL : {url}')
                 # print(f"상세URL: {return_detail}")
 
-        print(f"KB카드 완료 | 이벤트 개수 : {len(event_list)}")         
+        print(f"KB카드 크롤링 완료 | 이벤트 개수 : {len(event_list)}")         
         return event_list
     except Exception as e:
         print(f"KB카드 오류 발생: {e}")

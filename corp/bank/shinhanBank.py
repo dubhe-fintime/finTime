@@ -163,7 +163,7 @@ async def get088Data():
                 "listURL": listUrl
             })
     
-        print(f"신한은행 완료 | 이벤트 개수 : {len(event_list)}")
+        print(f"신한은행 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
         return event_list
         
     except Exception as e:

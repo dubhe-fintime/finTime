@@ -59,7 +59,7 @@ async def get031Data():
                     "thumbNail": thumbnail,
                     "listURL": list_domain
                 })
-        print(f"IM뱅크  완료 | 이벤트 개수 : {len(event_list)}")
+        print(f"IM뱅크 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
         return event_list
     except Exception as e:
         print(f"IM뱅크 오류 발생: {e}")
