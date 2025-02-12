@@ -701,9 +701,33 @@ def upload_file():
     except Exception as e:
         # 예외 발생 시 에러 메시지 출력
         return jsonify({"error": f"파일 업로드 중 오류가 발생했습니다: {str(e)}"}), 50
-    
+
+# 파일 확장자 검증
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# 파일 삭제
+@app.route('/deleteFile', methods=['POST'])
+def delete_file():
+    try:
+        # 클라이언트로부터 삭제할 파일 이름을 받음
+        file_name = request.form.get('file_name', default='', type=str)
+        
+        if not file_name:
+            return jsonify({"error": "삭제할 파일 이름이 필요합니다."}), 400
+        
+        file_path = os.path.join(app.config['FILE_FOLDER'], file_name)
+        
+        # 파일이 존재하는지 확인
+        if not os.path.exists(file_path):
+            return jsonify({"error": "파일이 존재하지 않습니다."}), 404
+        
+        # 파일 삭제
+        os.remove(file_path)
+        return jsonify({"message": f"파일 '{file_name}' 삭제 성공"}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"파일 삭제 중 오류가 발생했습니다: {str(e)}"}), 500
 
 # 이미지 미리보기를 하기위한 파일 서빙 처리용
 @app.route('/resources/<path:filename>')
