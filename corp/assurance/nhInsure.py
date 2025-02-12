@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 # 이미지 : X | 내용 : X | 목록 URL : O | 상세 URL : X
 ##############################
 
-async def get449Data():
+def get449Data():
     ######### 기초 설정 Start #############
 
     # return 값 넣을 리스트
