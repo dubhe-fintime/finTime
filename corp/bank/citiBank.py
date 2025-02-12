@@ -71,7 +71,7 @@ async def get027Data():
                 "listURL": listUrl
             })
     
-        print(f"씨티은행 완료 | 이벤트 개수 : {len(event_list)}")
+        print(f"씨티은행 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
         # print("최종 결과 >>")
         # print(event_list)
         return event_list
