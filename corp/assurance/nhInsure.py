@@ -31,9 +31,14 @@ def get449Data():
 
         # 요소 찾기 
         container = soup.find("ul" ,class_="eventListArea")
-        print(f"1>>>>>>>>>>>>>>>>>>>>>>> {container}")
         for element in container.find_all("li",class_=""):
             start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', element.find('li',class_='infoText fl').text.strip())
+            print(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@>>>>>>>>>>>>>>>>>>>>>>> {element}")
+            print(f"제목 : {element.find('li',class_='eventTit').text.strip()}")
+            print(f"시작 : {start_date}")
+            print(f"종료     : {end_date}")
+            print(f"썸네일URL : {domain+element.find('img')['src']}")
+            print(f"목록URL :  {url}")           
 
             event_list.append({
                 "title": element.find('li',class_='eventTit').text.strip(),
@@ -44,12 +49,6 @@ def get449Data():
             }) 
 
             # 확인용
-            print(f"2>>>>>>>>>>>>>>>>>>>>>>> {element}")
-            print(f"제목 : {element.find('li',class_='eventTit').text.strip()}")
-            print(f"시작 : {start_date}")
-            print(f"종료     : {end_date}")
-            print(f"썸네일URL : {domain+element.find('img')['src']}")
-            print(f"목록URL :  {url}")           
 
         print(f"NH손해보험 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
         return event_list
