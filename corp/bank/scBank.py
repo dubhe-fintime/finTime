@@ -68,7 +68,6 @@ async def get023Data():
         for element in target_data:
 
             output_data = element.get("OUTPUT", {})  # OUTPUT 키 가져오기 (없으면 빈 딕셔너리 반환)
-            print(f"썸네일 : {output_data}")
             title = output_data.get("TTL", "제목 없음")
             startDt = "-".join(re.findall(r"\d+", output_data.get("BULLTN_DT", "")))
             endDt = "-".join(re.findall(r"\d+", output_data.get("END_DT", "")))

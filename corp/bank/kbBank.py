@@ -31,10 +31,6 @@ async def get004Data():
         container = soup.find("div", class_="eventListArea")
         for element in container.find_all("li"):
             start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', element.find("dd",class_="date").text.replace(".","-"))
-            print(element.find("dt").text)
-            print(start_date)
-            print(end_date)
-            print(element.find("img")["src"])
 
             event_list.append({
                 "title": element.find("dt").text,
