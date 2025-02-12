@@ -11,13 +11,17 @@ from main import bank1,bank2,bank3,bank4,bank5,bank6
 
 BATCH_ID = "B000000001"
 BATCH_NM = "이벤트 메인 배치"
+
 # 비동기 작업 함수
 async def my_batch_job():
     # logs 폴더 경로 설정 (현재 실행 경로의 한 단계 위)
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
     os.makedirs(log_dir, exist_ok=True)  # logs 폴더가 없으면 생성
 
-    log_file_path = os.path.join(log_dir, "batch_log.txt")
+    # 날짜별로 로그 파일 이름 설정 (현재 날짜 형식: YYYYMMDD)
+    today = datetime.datetime.now().strftime("%Y%m%d")
+    log_file_path = os.path.join(log_dir, f"batch_log_{today}.txt")
+    
     now = datetime.datetime.now()
     print(f"[{now}] 배치 작업 실행 중...")
 
@@ -57,25 +61,24 @@ async def my_batch_job():
             # 비동기 작업 실행
             task_futures = {name: asyncio.create_task(func) for name, func in tasks.items()}
             responses = await asyncio.gather(*task_futures.values(), return_exceptions=True)
-            cnt = 0 # 배치 결과 정상 처리 건수
+            cnt = 0  # 배치 결과 정상 처리 건수
+            
             # 응답 처리 및 로그 기록
             for (task_name, response) in zip(task_futures.keys(), responses):
-                
                 task_time = datetime.datetime.now()
-                
+
                 if isinstance(response, Exception):
                     log_message = f"[{task_time}] {task_name} 실행 실패: {response}"
                     # 배치 로그 DB 저장
                     set_batch_log(BATCH_ID , BATCH_NM, '', task_name, now, task_time, "FAIL", str(response))
                 else:
                     res = response.get_json()
-                    #res_json = json.dump(res['result'], ensure_ascii=False, indent=4)
                     status = "SUCCESS" if res['status_code'] == 200 else "FAIL"
                     log_message = f"[{task_time}] {task_name} 실행 완료 - 상태: {status}, 응답: {res['result']}"
+                    
                     if res['status_code'] == 200:
                         if isinstance(res['result'], list) and len(res['result']) > 0:
-
-                            cnt = cnt+1
+                            cnt += 1
                             # 스크레핑 결과 정보 DB 삭제(cnt = 1 일때)
                             del_batch_rst(cnt)
 
@@ -93,7 +96,7 @@ async def my_batch_job():
                                     event.get('listURL', ""),
                                     event.get('detailURL', "")
                                 )
-                    
+
                     # 배치 로그 DB 저장
                     set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, status, res['result'])
 
@@ -105,6 +108,7 @@ async def my_batch_job():
 
     except Exception as e:
         print(f"[{now}] 배치 실행 중 오류 발생: {e}")
+
 
 def run_batch_job():
     try:
