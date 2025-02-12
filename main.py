@@ -130,6 +130,8 @@ def is_allowed_ip(ip):
 def limit_remote_addr():
     # 1. X-Forwarded-For 확인 (프록시가 있을 경우)
     client_ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+    print(f"######################## {request.host}")
+    print(f"######################## {client_ip}")
 
     # 2. 여러 개의 IP가 있을 경우 첫 번째 IP 선택
     if "," in client_ip:
@@ -139,9 +141,7 @@ def limit_remote_addr():
     
     if request.host in ["admin.fin-time.com", "localhost", "127.0.0.1:8082"]:
         return  # 같은 서버에서 온 요청은 허용
-    print(f"######################## {request.host}")
-    print(f"######################## {client_ip}")
-
+    
     if not is_allowed_ip(client_ip):
         abort(403)  # 403 Forbidden 응답
 
