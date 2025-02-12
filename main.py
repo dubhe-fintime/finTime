@@ -693,7 +693,11 @@ def upload_file():
 
             file_path = os.path.join(app.config['FILE_FOLDER'], filename)
             file.save(file_path)  # 파일 저장
-
+            
+            # DB 파일 등록 처리
+            values = (filename, file.filename, ext,  os.path.join(app.config['FILE_FOLDER']))
+            execute_mysql_query_insert("Q4",values)
+            
             return jsonify({"message": "파일 업로드 성공", "filename": filename, "original_name": file.filename}), 200
         else:
             return jsonify({"error": "허용되지 않은 파일 형식입니다."}), 400
@@ -724,6 +728,13 @@ def delete_file():
         
         # 파일 삭제
         os.remove(file_path)
+        
+        # DB 파일 삭제 처리
+        try:
+            execute_mysql_query_delete('Q5', [file_name])
+        except Exception as e:
+            print(e)
+
         return jsonify({"message": f"파일 '{file_name}' 삭제 성공"}), 200
 
     except Exception as e:

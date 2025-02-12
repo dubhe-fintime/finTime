@@ -23,7 +23,10 @@ def selectQuery(qType, values):
         query = "INSERT INTO BATCH_RST (COR_NO, EVT_TITLE, EVT_ID, EVT_ST_DATE, EVT_ED_DATE, EVT_THUMBNAIL, EVT_IMG, EVT_NOTI, EVT_LIST_LINK, EVT_DT_LINK) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     elif qType == "Q3": # BACTH 데이터 전체 삭제
         query = "DELETE FROM BATCH_RST"
-    
+    elif qType == "Q4": # FILE 업로드 등록
+        query = "INSERT INTO FILE_MST (FILE_NM, ORG_FILE_NM, FILE_EXTENSION, FILE_PATH) VALUES (%s, %s, %s, %s)"
+    elif qType == "Q5": # FILE 삭제
+        query = "DELETE FROM FILE_MST WHERE FILE_NM = %s"
     
 
 
