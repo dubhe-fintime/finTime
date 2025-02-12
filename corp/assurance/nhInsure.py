@@ -49,7 +49,7 @@ def get449Data():
             print(f"시작 : {start_date}")
             print(f"종료 : {end_date}")
             print(f"썸네일URL : {domain+element.find('img')['src']}")
-            print(f"목록URL : {url}")        
+            print(f"목록URL :  {url}")           
 
         print(f"NH손해보험 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
         return event_list
