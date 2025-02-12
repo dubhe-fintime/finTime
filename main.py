@@ -117,25 +117,25 @@ socketio = SocketIO(app)
 ALLOWED_IPS = {"3.37.13.12", "127.0.0.1", "192.168.1.100"} # 회사, 서버로컬 IP SET (외부 IP접근 차단용)
 ALLOWED_SUBNETS = [ipaddress.IPv4Network("192.168.0.0/24")]  # 192.168.0.* 대역
 
-def is_allowed_ip(ip):
-    # 개별 허용 IP 확인
-    if ip in ALLOWED_IPS:
-        return True
+# def is_allowed_ip(ip):
+#     # 개별 허용 IP 확인
+#     if ip in ALLOWED_IPS:
+#         return True
 
-    # 서브넷 검사
-    ip_obj = ipaddress.IPv4Address(ip)
-    return any(ip_obj in subnet for subnet in ALLOWED_SUBNETS)
+#     # 서브넷 검사
+#     ip_obj = ipaddress.IPv4Address(ip)
+#     return any(ip_obj in subnet for subnet in ALLOWED_SUBNETS)
 
-@app.before_request
-def limit_remote_addr():
-    client_ip = request.headers.get("X-Forwarded-For", request.remote_addr)
-    if "," in client_ip:  # 프록시 체인을 통한 여러 IP가 있을 경우
-        client_ip = client_ip.split(",")[0].strip()
+# @app.before_request
+# def limit_remote_addr():
+#     client_ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+#     if "," in client_ip:  # 프록시 체인을 통한 여러 IP가 있을 경우
+#         client_ip = client_ip.split(",")[0].strip()
     
-    print(f"######################## {client_ip}")
+#     print(f"######################## {client_ip}")
 
-    if not is_allowed_ip(client_ip):
-        abort(403)  # 403 Forbidden 응답
+#     if not is_allowed_ip(client_ip):
+#         abort(403)  # 403 Forbidden 응답
 
 
 # 하나은행 배치 호출
