@@ -783,8 +783,20 @@ app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB
 # 파일 목록 가져오기
 @app.route('/files', methods=['GET'])
 def list_files():
-    files = os.listdir(app.config['FILE_FOLDER'])
-    return jsonify({"files": files})
+    results = execute_mysql_query_select("Q6",[])
+    datas = []
+    for item in results:
+        data = {
+            'file_name': item[0],
+            'org_file_name': item[1],
+            'file_extension': item[2],
+            'file_path': item[3]
+        }
+        datas.append(data)
+    
+    # 파일업로드 경로에서 직접 목록 가져오기
+    #files = os.listdir(app.config['FILE_FOLDER'])
+    return jsonify(datas)
 
 # 파일 다운로드
 @app.route('/fileDownload', methods=['POST'])

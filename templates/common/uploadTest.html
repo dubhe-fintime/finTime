@@ -79,14 +79,14 @@
             .then(data => {
                 let fileListDiv = document.getElementById('file-list');
                 fileListDiv.innerHTML = "";
-
-                data.files.forEach(filename => {
+                //console.log(data);
+                data.forEach(function(v, i) {
                     let fileItem = document.createElement('div');
                     fileItem.className = "file-item";
-                    fileItem.innerText = filename;
-                    
+                    fileItem.innerText = v.org_file_name;
+
                     // 파일을 클릭하면 다운로드
-                    fileItem.onclick = () => downloadFile(filename);
+                    fileItem.onclick = () => downloadFile(v.file_name);
 
                     // 삭제 버튼 추가
                     let deleteBtn = document.createElement('span');
@@ -94,12 +94,14 @@
                     deleteBtn.innerText = '삭제';
                     deleteBtn.onclick = (event) => {
                         event.stopPropagation(); // 클릭이 부모 요소로 전파되지 않게 함
-                        deleteFile(filename);
+                        deleteFile(v.file_name);
                     };
 
                     fileItem.appendChild(deleteBtn);
                     fileListDiv.appendChild(fileItem);
                 });
+
+               
             })
             .catch(error => console.error("파일 목록 불러오기 실패:", error));
         }
