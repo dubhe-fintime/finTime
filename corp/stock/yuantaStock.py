@@ -30,7 +30,6 @@ async def get209Data():
 
         events = soup.find_all("div", class_="eventListWrap")
         for event in events:
-            print(event)
             li_tags = event.find_all("li")
             for li in li_tags:
                 title = li.find("p", class_="tit").text.strip() 
@@ -42,7 +41,6 @@ async def get209Data():
                     link = ""
 
                 start_date, end_date = re.findall(r'\d{4}-\d{2}-\d{2}', date.replace("/","-"))
-
 
                 event_list.append({
                                 "title": title,
