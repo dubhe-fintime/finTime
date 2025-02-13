@@ -8,7 +8,7 @@ from main import set_batch_log, set_batch_rst, del_batch_rst, app  # Flask 앱�
 from main import test1, test2, test3, test4, test5, test6,test7,test8,test9,test10,test11,test12,test13
 from main import card1,card2,card3,card4,card5,card6
 from main import bank1,bank2,bank3,bank4,bank5,bank6,bank7,bank8
-from main import stock1,stock2,stock3,stock4,stock5,stock6,stock7
+from main import stock1,stock2,stock3,stock4,stock5,stock6,stock7,stock8
 
 BATCH_ID = "B000000001"
 BATCH_NM = "이벤트 메인 배치"
@@ -64,7 +64,8 @@ async def my_batch_job():
         "samsung_stock":stock4(),
         "hankook_stock":stock5(),
         "kiwoom_stock":stock6(),
-        "shinhan_stock":stock7()
+        "shinhan_stock":stock7(),
+        "hana_stock":stock8()
     }
 
     try:

@@ -31,7 +31,7 @@ from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,
 from corp.assurance import samsungFire,heungkukFire,kbInsure,nhInsure
 from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBank,ibkBank,kakaoBank
 from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard
-from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock,shinhanStock,kiwoomStock
+from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock,shinhanStock,kiwoomStock,hanaStock
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
@@ -609,6 +609,27 @@ async def stock7():
         "status_code": status,  # 응답코드
         "bank_cd": "278",
         "fin_id": "T000000034", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 하나증권
+@app.route('/stock8', methods=["POST"])
+async def stock8():
+    results = await hanaStock.get270Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "270",
+        "fin_id": "T000000035", # TASK ID 지정
         "result": results     # 응답결과
     }
     
