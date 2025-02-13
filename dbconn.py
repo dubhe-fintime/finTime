@@ -48,26 +48,6 @@ def execute_mysql_query_select(queryId, values):
         cnx.close()
     return results
 
-# Select 쿼리 처리 (DB conn -> Query Search -> result -> DB conn close)
-# return key value
-def execute_mysql_query_select_key_value(queryId, values):
-    formatted_results = []
-
-    cnx = conn_mysql()
-    cursor = cnx.cursor()
-    try:
-        cursor.execute(selectQuery(queryId, values), tuple(values))
-        columns = [column[0] for column in cursor.description] 
-        results = cursor.fetchall()
-
-        for row in results:
-            result = dict(zip(columns, row))  # key와 value를 매핑하여 딕셔너리로 변환
-            formatted_results.append(result)
-    finally:
-        cursor.close()
-        cnx.close()
-    return formatted_results
-
 # Insert 쿼리 처리 (DB conn -> Query Search -> result -> DB conn close)
 def execute_mysql_query_insert(queryId, values):
     cnx = conn_mysql()

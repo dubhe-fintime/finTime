@@ -35,7 +35,7 @@ from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
-from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2, execute_mysql_query_select_key_value
+from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
 
 # 서버 경로 취득
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -1192,10 +1192,26 @@ def batchStatus():
 
 @app.route('/eventMst', methods=["POST"])
 def eventMst():
-    results = execute_mysql_query_select_key_value("QTEMP", [])
-    print(results)
+    data = request.get_json()  # 전송된 JSON 데이터 받아오기
+    start = data.get("start")
+    end = data.get("end")
+    values = [start, end]
+    results = execute_mysql_query_select("QTEMP", values)
 
-    return results
+    datas = []
+    for item in results:
+        data = {
+            'cor_no': item[0],
+            'evt_title': item[1],
+            'evt_st_dt': item[3],
+            'evt_ed_dt': item[4],
+            'evt_thumbnail': item[5],
+            'evt_list_link': item[8],
+            'evt_dt_link': item[9]
+        }
+        datas.append(data)
+    
+    return jsonify(datas)
 
 if __name__ == "__main__":
     while True:
