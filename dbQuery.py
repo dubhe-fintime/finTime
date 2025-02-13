@@ -35,7 +35,7 @@ def selectQuery(qType, values):
         query = "INSERT INTO UNIQUE_IDS (LETTER, SEQUENCE, IDENTIFIER) VALUES (%s, %s, %s)"
     
     elif qType == "QTEMP": # 임시 배치 테이블 조회
-        query = "SELECT * FROM BATCH_RST" # 임시 배치 테이블 추후 EVT_MST 호출
+        query = "SELECT * FROM BATCH_RST WHERE EVT_ST_DATE >= %s AND EVT_ST_DATE <= %s"
 
     elif qType == "Q9":  # 금융사 정보 관리 전체 조회
         query = """
