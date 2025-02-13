@@ -31,7 +31,7 @@ from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,
 from corp.assurance import samsungFire,heungkukFire,kbInsure,nhInsure
 from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBank,ibkBank,kakaoBank
 from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard
-from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock
+from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock,shinhanStock,kiwoomStock
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
@@ -553,6 +553,69 @@ async def stock4():
     response = jsonify(data_to_return)
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
+
+# 한국투자증권
+@app.route('/stock5', methods=["POST"])
+async def stock5():
+    results = await hankookStock.get243Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "243",
+        "fin_id": "T000000032", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 키움증권
+@app.route('/stock6', methods=["POST"])
+async def stock6():
+    results = await kiwoomStock.get264Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "264",
+        "fin_id": "T000000033", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 신한투자증권
+@app.route('/stock7', methods=["POST"])
+async def stock7():
+    results = await shinhanStock.get278Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "278",
+        "fin_id": "T000000034", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
 ################## 증권 END ###############################
 
 ################## 보험 START #############################
@@ -829,6 +892,31 @@ def set_batch_rst(bank_cd, title, evt_id, startDt, endDt, thumbNail, image, noti
 def del_batch_rst(cnt):
     if cnt == 1:
         execute_mysql_query_delete('Q3', []) # BATCH 데이터 전체 삭제
+
+# 고유ID 생성
+def get_next_id(letter):
+    # 주어진 letter에 해당하는 가장 최신 시퀀스를 조회
+    
+    last_sequence = execute_mysql_query_select("Q7",[letter])
+    for item in last_sequence:
+        last_sequence = item[0]
+        
+    # 기존 시퀀스가 존재하면 1 증가, 아니면 처음부터 시작
+    if last_sequence:
+        new_sequence = last_sequence + 1
+    else:
+        new_sequence = 1  # 첫 번째 ID인 경우
+
+    # 생성할 ID 포맷: 영문자 + 9자리 숫자 (예: A000000001)
+    new_id = f"{letter}{new_sequence:09d}"
+    save_id(letter, new_sequence, new_id) # 고유ID 등록
+    return new_id
+
+# 고유ID 등록
+def save_id(letter, sequence, new_id):
+    values = [letter, sequence, new_id]
+    print(values)
+    execute_mysql_query_insert("Q8",values) # BATCH 데이터 등록
 
 
 # 에러코드 보는 곳
