@@ -908,6 +908,7 @@ def set_batch_rst(bank_cd, title, evt_id, startDt, endDt, thumbNail, image, noti
     values = (bank_cd, title, evt_id, startDt, endDt, thumbNail, image, noti, listURL, detailURL)
     #execute_mysql_query_delete('Q3', []) # BATCH 데이터 전체 삭제
     execute_mysql_query_insert("Q2",values) # BATCH 데이터 등록
+    execute_mysql_query_update("Q10",[]) # BATCH 데이터 이벤트 ID 등록
 
 # SET BATCH 데이터 삭제
 def del_batch_rst(cnt):

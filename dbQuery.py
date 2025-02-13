@@ -34,6 +34,7 @@ def selectQuery(qType, values):
     elif qType == "Q8": # 고유 ID 등록
         query = "INSERT INTO UNIQUE_IDS (LETTER, SEQUENCE, IDENTIFIER) VALUES (%s, %s, %s)"
     
+    
     elif qType == "QTEMP": # 임시 배치 테이블 조회
         query = "SELECT * FROM BATCH_RST"
 
@@ -57,6 +58,9 @@ def selectQuery(qType, values):
             ON 
                 CM.COR_GP = CG.GP_NO
         """
+
+    elif qType == "Q10": # 고유 ID 등록
+        query = "UPDATE BATCH_RST BR JOIN ( SELECT EM.EVT_ID, EM.COR_NO, EM.EVT_TITLE FROM EVT_MST EM JOIN BATCH_RST BR_SUB ON EM.COR_NO = BR_SUB.COR_NO AND EM.EVT_TITLE = BR_SUB.EVT_TITLE GROUP BY EM.EVT_ID, EM.COR_NO, EM.EVT_TITLE) AS LatestEM ON BR.COR_NO = LatestEM.COR_NO AND BR.EVT_TITLE = LatestEM.EVT_TITLE SET BR.EVT_ID = LatestEM.EVT_ID"
 
     
 
