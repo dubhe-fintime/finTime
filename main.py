@@ -31,7 +31,7 @@ from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,
 from corp.assurance import samsungFire,heungkukFire,kbInsure,nhInsure
 from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBank,ibkBank,kakaoBank
 from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard
-from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock
+from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock,shinhanStock,kiwoomStock
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
@@ -546,6 +546,69 @@ async def stock4():
         "status_code": status,  # 응답코드
         "bank_cd": "240",
         "fin_id": "T000000031", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 한국투자증권
+@app.route('/stock5', methods=["POST"])
+async def stock5():
+    results = await hankookStock.get243Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "243",
+        "fin_id": "T000000032", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 키움증권
+@app.route('/stock6', methods=["POST"])
+async def stock6():
+    results = await kiwoomStock.get264Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "264",
+        "fin_id": "T000000033", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 신한투자증권
+@app.route('/stock7', methods=["POST"])
+async def stock7():
+    results = await shinhanStock.get278Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "278",
+        "fin_id": "T000000034", # TASK ID 지정
         "result": results     # 응답결과
     }
     
