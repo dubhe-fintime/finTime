@@ -1204,7 +1204,6 @@ def batchStatus():
 
 @app.route('/eventMst', methods=["POST"])
 def eventMst():
-    print(">>>>>>>>>>>>>>>>>>>>>>>>>> event MST")
     #data = request.get_json()  # 전송된 JSON 데이터 받아오기
     #start = data.get("start")
     #end = data.get("end")
