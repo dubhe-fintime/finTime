@@ -197,7 +197,7 @@
     }
 
     $.ajax({
-      url: "{{domain}}/adminLogin",
+      url: "{{domain}}:{{port}}/adminLogin",
       type: "POST",
       contentType: "application/json",
       dataType: "json",
@@ -215,8 +215,7 @@
       fail: function (response) {
         window.location.href = "{{url_for('adminMain')}}" 
       }
-
-   })
+})
   }
 
 

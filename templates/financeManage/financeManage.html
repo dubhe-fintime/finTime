@@ -94,6 +94,7 @@
           <tbody id="dataContent" class="tbody"></tbody>
         </table>
       </div>
+      <button id="moreContent" class="btn tertiary sm">더보기</button>
     </main>
   </div>
 </body>
@@ -176,39 +177,69 @@
     OpenModal("기관 추가", "", true, true, "addGroup()", "확인", "취소", "", "md", values)
   }
 
+  let default_page = 0
+  let limit = 10
+  let totalData = []
+
   // 전체 조회
   function SearchGroupCode() {
-    session_ok("{{domain}}", "{{port}}");
     $.ajax({
-      url: "{{domain}}:{{port}}/getAdminGroup",
-      type: "GET",
+      url: "{{domain}}:{{port}}/contentMange",
+      type: "POST",
       contentType: "application/json",
       success: function (response) {
         console.log(response)
 
         $(".count").append(`Total : ${response.length}`)
-
-        values = ``
-        response.forEach((v, i) => {
-          values += `    
-            <tr data-id="${v['group_code']}" name="${v['group_name']}" explain="${v['group_info']}">
-              <td>${i + 1}</td>
-              <td>${v['group_code']}</td>
-              <td>${v['group_name']}</td>
-              <td>${v['group_info']} 챗봇 데모</td>
-              <td>${v['reg_date']}</td>
-            </tr>`
-        });
-        $("#dataContent").append(values)
+        totalData.push(response)
+        //화면 불러오기 + 더보기 버튼
+        loadPagedData(default_page, limit, totalData)
+        moreBtn()
       }
     });
   }
+
+  function moreBtn() {
+      $("#moreContent").click(function (e) {
+        e.preventDefault()
+        default_page++; // 다음 페이지로 이동
+        loadPagedData(default_page, limit, totalData);
+      })
+    }
+
+  function loadPagedData(page, limit, totalData) {
+      let start = page * limit;
+      let end = start + limit;
+      let pagedData = totalData[0].slice(start, end);
+      paging(pagedData);
+    }
+
+    function paging(res) {
+      var oHtml = '';
+      $.each(res, function (i, v) {
+        oHtml += `    
+            <tr data-id="${v['group_code']}" name="${v['group_name']}" explain="${v['group_info']}">
+              <td>${v['COR_NO']}</td>
+              <td>${v['GP_NM']}</td>
+              <td>${v['COR_NM']}</td>
+              <td>${v['COR_NOTI']}</td>
+              <td>${v['IMG_URL']}</td>
+              <td>${v['THUMBNAIL_URL']}</td>
+              <td>${v['USE_YN']}</td>
+              <td>${v['C_DATE']}</td>
+              <td>${v['U_DATE']}</td>
+            </tr>`;
+      });
+      $("#dataContent").append(oHtml);
+    }
+
+
+
 
 
   //검색 기능
   $("#searchBtn").click(function (e) {
     e.preventDefault();
-    session_ok("{{domain}}", "{{port}}");
     let target_data = $('#searchInput').val()
     let option = $('#groupName').attr('name')
 
@@ -272,6 +303,12 @@
       })
     }
   }
+
+
+
+  ////////////////////////
+  ///////////////////////
+
 </script>
 
 </html>

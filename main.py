@@ -1040,6 +1040,18 @@ def logout():
 def adminMainContents():
     return render_template("common/adminMainContents.html", domain=domain, port=port)
 
+
+# 금융사 현황 전체 조회
+@app.route("/contentMange", methods=['POST'])
+def contentMange():
+    results = execute_mysql_query_select("Q9", [])
+
+    return_col_name = ["COR_NO","COR_GP","GP_NM","COR_NM","COR_NOTI","IMG_URL","THUMBNAIL_URL","USE_YN","C_DATE","U_DATE"]
+    return_result = [dict(zip(return_col_name, data)) for data in results]
+
+    return return_result
+
+
 ################## 관리자 업무 END ###############################
 ################## 파일 관리 START ###############################
 ########################

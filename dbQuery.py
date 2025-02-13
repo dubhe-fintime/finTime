@@ -37,6 +37,30 @@ def selectQuery(qType, values):
     elif qType == "QTEMP": # 임시 배치 테이블 조회
         query = "SELECT * FROM BATCH_RST" # 임시 배치 테이블 추후 EVT_MST 호출
 
+    elif qType == "Q9":  # 금융사 정보 관리 전체 조회
+        query = """
+            SELECT 
+                CM.COR_NO,
+                CM.COR_GP,
+                COALESCE(CG.GP_NM, '') AS GP_NM,
+                COALESCE(CM.COR_NM, '') AS COR_NM,
+                COALESCE(CM.COR_NOTI, '') AS COR_NOTI,
+                COALESCE(CM.IMG_URL, '') AS IMG_URL,
+                COALESCE(CM.THUMBNAIL_URL, '') AS THUMBNAIL_URL,
+                COALESCE(CM.USE_YN, '') AS USE_YN,
+                COALESCE(DATE_FORMAT(CM.C_DATE, '%Y-%m-%d'), '') AS C_DATE,
+                COALESCE(DATE_FORMAT(CM.U_DATE, '%Y-%m-%d'), '') AS U_DATE
+            FROM 
+                COR_MST AS CM
+            JOIN 
+                COR_GP AS CG 
+            ON 
+                CM.COR_GP = CG.GP_NO
+        """
+
+    
+
+
 
 
         
