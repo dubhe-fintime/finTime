@@ -31,7 +31,8 @@ def conn_mysql():
         host=db_host,
         user=db_user,
         password=db_password,
-        database=db_database
+        database=db_database,
+        use_pure=True
     )
     return cnx
 
