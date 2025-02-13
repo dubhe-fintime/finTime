@@ -1222,7 +1222,9 @@ def eventMst():
             'evt_dt_link': item[9]
         }
         datas.append(data)
-    
+
+    print(jsonify(datas))
+
     return jsonify(datas)
 
 if __name__ == "__main__":
