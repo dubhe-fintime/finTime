@@ -570,3 +570,5 @@ function session_ok(domain, port) {
     }
   })
 }
+
+//테스트용

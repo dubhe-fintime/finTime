@@ -1045,7 +1045,10 @@ def adminMainContents():
 # 금융사 현황 전체 조회
 @app.route("/contentMange", methods=['POST'])
 def contentMange():
-    results = execute_mysql_query_select("Q9", [])
+    data = request.get_json()
+    print(data)
+    print("@!!!!!!!!!!!!!!!!!!")
+    results = execute_mysql_query_rest("Q9", data)
 
     return_col_name = ["COR_NO","COR_GP","GP_NM","COR_NM","COR_NOTI","IMG_URL","THUMBNAIL_URL","USE_YN","C_DATE","U_DATE"]
     return_result = [dict(zip(return_col_name, data)) for data in results]

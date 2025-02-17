@@ -14,9 +14,11 @@ def validate_date(date_string):
 def selectQuery(qType, values):
     # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@S")
     # print("Query Id : "+qType)
-    # if len(values) > 0:
-    #     print(values)
-    # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@E")
+    if len(values) > 0:
+        print(values)
+        print(type(values))
+        print(len(values))
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@E")
     if qType == "Q1": # BACTH LOG 등록
         query = "INSERT INTO BATCH_LOG (BATCH_ID, BATCH_NM, TASK_ID, TASK_NM, ST_DATE, ED_DATE, STATUS, RESULT_DATA) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     elif qType == "Q2": # BACTH 데이터 등록
@@ -57,7 +59,15 @@ def selectQuery(qType, values):
                 COR_GP AS CG 
             ON 
                 CM.COR_GP = CG.GP_NO
+            WHERE 1=1 
         """
+        if (len(values) > 0 and values["cor_gp"]):
+            query += f"AND CM.COR_GP = '{values['cor_gp']}' "
+        if (len(values) > 0 and values["cor_nm"]):
+            query += f"AND CM.COR_NM = '{values['cor_nm']}' "
+        if (len(values) > 0 and values["use_yn"]):
+            query += f"AND CM.USE_YN = '{values['use_yn']}' "
+
 
     elif qType == "Q10": # 고유 ID 등록
         query = "UPDATE BATCH_RST BR JOIN ( SELECT EM.EVT_ID, EM.COR_NO, EM.EVT_TITLE FROM EVT_MST EM JOIN BATCH_RST BR_SUB ON EM.COR_NO = BR_SUB.COR_NO AND EM.EVT_TITLE = BR_SUB.EVT_TITLE GROUP BY EM.EVT_ID, EM.COR_NO, EM.EVT_TITLE) AS LatestEM ON BR.COR_NO = LatestEM.COR_NO AND BR.EVT_TITLE = LatestEM.EVT_TITLE SET BR.EVT_ID = LatestEM.EVT_ID"
@@ -73,6 +83,6 @@ def selectQuery(qType, values):
 
         
     # print("###################################")
-    # print(query)
+    print(query)
     # print("###################################")
     return query

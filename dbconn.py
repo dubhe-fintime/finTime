@@ -41,6 +41,7 @@ def execute_mysql_query_select(queryId, values):
     cnx = conn_mysql()
     cursor = cnx.cursor()
     try:
+        print(tuple(values))
         cursor.execute(selectQuery(queryId, values), tuple(values))
         results = cursor.fetchall()
     finally:

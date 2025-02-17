@@ -22,38 +22,35 @@
           <span class="delete-btn"></span>
         </div>
         <div class="select-box md" style="margin-left: 16px;">
-          <strong class="label" onclick="ClickSelectLabel('corGp')" id="corGp" name="corGp">전체</strong>
+          <strong class="label" onclick="ClickSelectLabel('corGp')" id="corGp" name="">전체</strong>
           <ul class="options type">
             <li class="option" onclick="ClickSelectOption('corGp','전체','')">
               전체
             </li>
-            <li class="option" onclick="ClickSelectOption('corGp','은행','bank')">
+            <li class="option" onclick="ClickSelectOption('corGp','은행','001')">
               은행
             </li>
-            <li class="option" onclick="ClickSelectOption('corGp','카드','card')">
-              카드
-            </li>
-            <li class="option" onclick="ClickSelectOption('corGp','증권','stock')">
+            <li class="option" onclick="ClickSelectOption('corGp','증권','002')">
               증권
             </li>
-            <li class="option" onclick="ClickSelectOption('corGp','보험','assr')">
+            <li class="option" onclick="ClickSelectOption('corGp','카드','003')">
+              카드
+            </li>
+            <li class="option" onclick="ClickSelectOption('corGp','보험','004')">
               보험
             </li>
-            <!-- <li class="option" onclick="ClickSelectOption('corNm','그룹코드','groupID')">
-              그룹코드
-            </li> -->
           </ul>
         </div>
         <div class="select-box md" style="margin-left: 16px;">
-          <strong class="label" onclick="ClickSelectLabel('useYn')" id="useYn" name="useYn">전체</strong>
+          <strong class="label" onclick="ClickSelectLabel('useYn')" id="useYn" name="">전체</strong>
           <ul class="options type">
-            <li class="option" onclick="ClickSelectOption('useYn','전체','useAll')">
+            <li class="option" onclick="ClickSelectOption('useYn','전체','')">
               전체
             </li>
-            <li class="option" onclick="ClickSelectOption('useYn','사용','useY')">
+            <li class="option" onclick="ClickSelectOption('useYn','사용',' Y')">
               사용
             </li>
-            <li class="option" onclick="ClickSelectOption('useYn','미사용','useN')">
+            <li class="option" onclick="ClickSelectOption('useYn','미사용','N')">
               미사용
             </li>
           </ul>
@@ -69,8 +66,8 @@
           <caption>기관 관리 테이블</caption>
           <colgroup>
             <col width="80px" />
-            <col />
-            <col />
+            <col width="80px"/>
+            <col width="100px"/>
             <col />
             <col />
             <col />
@@ -106,43 +103,86 @@
   }
 
   $(document).ready(function () {
-    session_ok("{{domain}}", "{{port}}");
     SearchGroupCode()
+    fn_eventHandler()
   })
 
-  $("#addBtn").click(function () {
+
+
+  function fn_eventHandler(){
+    //기관추가 btn
+    $("#addBtn").click(function () {
     addModal()
   })
+  // row dbClick
+    $("#dataContent").on('dblclick', 'tr', function() {
+      addModal(this)
+  });  
+
+    //검색 기능
+    $("#searchBtn").click(function (e) {
+    e.preventDefault();
+
+    search_data = {
+      cor_nm : $('#searchInput').val(),
+      cor_gp : $('#corGp').attr('name'),
+      use_yn : $('#useYn').attr('name')
+    }
+
+    SearchGroupCode(search_data)
+  })
+
+  }
+
+  function modifyGroup(){
+    console.log("수정 임~~")
+  }
+
+  function addGroup(){
+    console.log("등록 임~~")
+  }
+
+
 
   //모달 
-  function addModal() {
-    session_ok("{{domain}}", "{{port}}");
+  function addModal(tag=false) {
+    //모달 setting
+    var modal_title = tag ? "기관 수정" : "기관 추가"
+    var fn_name = tag? addGroup : modifyGroup
+
+    //요소 바인딩
+    var title = tag ? $(tag).find("td").eq(2).text() : ""
+    var cor_name = tag ? $(tag).find("td").eq(1).text() : ""
+    var cor_gp = tag ? $(tag).attr("data-id") : ""
+    var cor_noti = tag ? $(tag).find("td").eq(3).text() : ""
+    var img_url = tag ? $(tag).find("td").eq(4).text() : ""
+    var thumbnail_url = tag ? $(tag).find("td").eq(5).text() : ""
     values = `
                     <h3>기관명</h3>
                     <fieldset>
                         <div class="input-wrap">
                             <input id="corNmInput" class="input" placeholder="기관명을 입력 해 주세요" 
                                 onfocus="FocusInput('corNmInput')" oninput="ChangeInput('corNmInput')" onblur="BlurInput('corNmInput')"
-                                value="">
+                                value="${title}">
                             <span class="delete-btn" onclick="DeleteInput('corNmInput')"></span>
                         </div>
                     </fieldset>
                     <br>
                     <h3>기관그룹 선택</h3>
                     <fieldset>
-                      <div class="select-box md">
-                        <strong class="label" onclick="ClickSelectLabel('corGrpSel')" id="corGrpSel" name="corGrpSel">선택하세요</strong>
+                      <div class="select-box md" style="width:100%">
+                        <strong class="label" onclick="ClickSelectLabel('corGrpSel')" id="corGrpSel" name="${cor_gp}">선택하세요</strong>
                         <ul class="options type">
-                          <li class="option" onclick="ClickSelectOption('corGrpSel','은행','bankSel')">
+                          <li class="option" onclick="ClickSelectOption('corGrpSel','은행','001')">
                             은행
                           </li>
-                          <li class="option" onclick="ClickSelectOption('corGrpSel','카드','cardSel')">
-                            카드
-                          </li>
-                          <li class="option" onclick="ClickSelectOption('corGrpSel','증권','stockSel')">
+                          <li class="option" onclick="ClickSelectOption('corGrpSel','증권','002')">
                             증권
                           </li>
-                          <li class="option" onclick="ClickSelectOption('corGrpSel','보험','assrSel')">
+                          <li class="option" onclick="ClickSelectOption('corGrpSel','카드','003')">
+                            카드
+                          </li>
+                          <li class="option" onclick="ClickSelectOption('corGrpSel','보험','004')">
                             보험
                           </li>
                         </ul>
@@ -152,14 +192,14 @@
                     <h3>기관 설명</h3>
                     <fieldset>
                         <textarea id="corNotiInput" class="textarea" onfocus="FocusInput('corNotiInput')"
-                            placeholder="기관 설명을 입력 해 주세요"></textarea>
+                            placeholder="기관 설명을 입력 해 주세요" value="${cor_noti}"></textarea>
                     </fieldset>
                     <h3>대표이미지 URL</h3>
                     <fieldset>
                         <div class="input-wrap">
                             <input id="imgUrlInput" class="input" placeholder="대표 이미지 URL을 입력 해 주세요" 
                                 onfocus="FocusInput('imgUrlInput')" oninput="ChangeInput('imgUrlInput')" onblur="BlurInput('imgUrlInput')"
-                                value="">
+                                value="${img_url}">
                             <span class="delete-btn" onclick="DeleteInput('imgUrlInput')"></span>
                         </div>
                     </fieldset>
@@ -168,36 +208,47 @@
                         <div class="input-wrap">
                             <input id="thumbUrlInput" class="input" placeholder="썸네일 이미지 URL을 입력 해 주세요" 
                                 onfocus="FocusInput('thumbUrlInput')" oninput="ChangeInput('thumbUrlInput')" onblur="BlurInput('thumbUrlInput')"
-                                value="">
+                                value="${thumbnail_url}">
                             <span class="delete-btn" onclick="DeleteInput('thumbUrlInput')"></span>
                         </div>
-                    </fieldset>
-                    
-              `
-    OpenModal("기관 추가", "", true, true, "addGroup()", "확인", "취소", "", "md", values)
+                    </fieldset>    `
+    OpenModal(modal_title, "", true, true, `${fn_name}()`, "확인", "취소", "", "md", values)
+    
+    if(tag){
+      ClickSelectOption("corGrpSel",cor_name,cor_gp)
+    }
   }
 
   let default_page = 0
   let limit = 10
-  let totalData = []
+  let totalData
 
-  // 전체 조회
-  function SearchGroupCode() {
+  // 조회
+  function SearchGroupCode(data={}) {
     $.ajax({
-      url: "{{domain}}/contentMange",
+      url: "{{domain}}:{{port}}/contentMange",
       type: "POST",
       contentType: "application/json",
+      dataType: "json",
+      data: JSON.stringify(data),
       success: function (response) {
-        console.log(response)
+        totalData = []
 
-        $(".count").append(`Total : ${response.length}`)
+        //초기화
+        $("#dataContent tr").remove()
+        $(".count").text(`Total : ${response.length}`);
+        default_page = 0
+        
         totalData.push(response)
+
         //화면 불러오기 + 더보기 버튼
         loadPagedData(default_page, limit, totalData)
         moreBtn()
       }
     });
   }
+
+
 
   function moreBtn() {
       $("#moreContent").click(function (e) {
@@ -218,7 +269,7 @@
       var oHtml = '';
       $.each(res, function (i, v) {
         oHtml += `    
-            <tr data-id="${v['group_code']}" name="${v['group_name']}" explain="${v['group_info']}">
+            <tr data-id="${v['COR_GP']}" name="${v['COR_GP']}" explain="${v['group_info']}">
               <td>${v['COR_NO']}</td>
               <td>${v['GP_NM']}</td>
               <td>${v['COR_NM']}</td>
@@ -232,78 +283,6 @@
       });
       $("#dataContent").append(oHtml);
     }
-
-
-
-
-
-  //검색 기능
-  $("#searchBtn").click(function (e) {
-    e.preventDefault();
-    let target_data = $('#searchInput').val()
-    let option = $('#groupName').attr('name')
-
-
-    let search_list = []
-
-    $("#dataContent tr").each(function (i, v) {
-      if (option.includes('Name') && $(v).attr('name').includes(target_data)) {
-        search_list.push(v)
-      } else if (option.includes('ID') && $(v).attr('data-id').includes(target_data)) {
-        search_list.push(v)
-      } else if (option.includes('Explain') && $(v).attr('explain').includes(target_data))
-        search_list.push(v)
-    })
-
-    //검색 결과가 없을 경우
-    if (search_list.length == 0) {
-      values = `<p>검색 결과가 없습니다.</p>`
-      OpenModal("검색어 결과 없음", "", true, "", "", "확인", "", true, "md", values)
-    } else {
-      $("#dataContent tr").hide();
-      $(search_list).show();
-    }
-  })
-
-  //추가 기능
-  function addGroup() {
-    let new_group_name = $("#groupname").val()
-    let new_group_info = $("#groupinfo").val()
-
-    //경우1: 그룹명을 입력하지 않을 경우
-    if (new_group_name.length == 0) {
-      values = `<p>그룹 명을 입력해주세요.</p>`
-      OpenModal("알림", "except1", true, "", `CloseModal("except2")`, "확인", "", true, "sm", values)
-
-      //경우2: 그룹 설명을 입력하지 않을 경우
-    } else if (new_group_info.length == 0) {
-      values = `<p>그룹 설명을 입력해주세요.</p>`
-      OpenModal("알림", "except2", true, "", `CloseModal("except2")`, "확인", "", true, "sm", values)
-
-    } else {
-      $.ajax({
-        url: "{{domain}}:{{port}}/insertAdminGroup",
-        type: "POST",
-        contentType: "application/json",
-        dataType: "json",
-        data: JSON.stringify([new_group_name, new_group_info]),
-        success: function (response) {
-
-          if (response[0] = "00000") {
-            CloseModal()
-            values = `<p>관리자 그룹 등록이 완료되었습니다.</p>`
-            OpenModal("완료", "", true, "", "CloseModal()", "확인", "", true, "sm", values)
-
-          } else {
-            values = `<p>관리자 그룹 등록이 실패했습니다. </p>`
-            OpenModal("실패", "except3", true, "", `CloseModal("except3")`, "확인", "", true, "sm", values)
-          }
-        }
-      })
-    }
-  }
-
-
 
 </script>
 
