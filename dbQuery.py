@@ -63,6 +63,69 @@ def selectQuery(qType, values):
         query = "UPDATE BATCH_RST BR JOIN ( SELECT EM.EVT_ID, EM.COR_NO, EM.EVT_TITLE FROM EVT_MST EM JOIN BATCH_RST BR_SUB ON EM.COR_NO = BR_SUB.COR_NO AND EM.EVT_TITLE = BR_SUB.EVT_TITLE GROUP BY EM.EVT_ID, EM.COR_NO, EM.EVT_TITLE) AS LatestEM ON BR.COR_NO = LatestEM.COR_NO AND BR.EVT_TITLE = LatestEM.EVT_TITLE SET BR.EVT_ID = LatestEM.EVT_ID"
 
     
+    elif qType == "A1": # 배치 데이터 조회
+        query  = "SELECT "
+        query += "    a.COR_NO cor_no, "
+        query += "    COALESCE(c.cor_nm, '미등록기관') cor_nm, "
+        query += "    a.EVT_TITLE evt_title, "
+        query += "    COALESCE(a.EVT_ID, '') evt_id," #EVT_ID 값과 EVT_MST.USE_YN에 따른 상태 값 설정
+        query += "    CASE "
+        query += "        WHEN a.EVT_ID IS NULL OR a.EVT_ID = '' THEN 'NONE'"
+        query += "        WHEN b.USE_YN = 'Y' THEN 'Y'"
+        query += "        WHEN b.USE_YN = 'N' THEN 'N'"
+        query += "        ELSE NULL"
+        query += "    END AS evt_status, " # 상태 컬럼 추가
+        query += "    DATE_FORMAT(a.EVT_ST_DATE, '%Y-%m-%d') evt_st_date, "
+        query += "    DATE_FORMAT(a.EVT_ED_DATE, '%Y-%m-%d') evt_ed_date, "
+        query += "    a.EVT_THUMBNAIL evt_thumbnail, "
+        query += "    a.EVT_IMG evt_img, "
+        query += "    a.EVT_NOTI evt_noti,"
+        query += "    a.EVT_LIST_LINK evt_list_link, "
+        query += "    a.EVT_DT_LINK evt_dt_link, "
+        query += "    a.C_DATE c_date"
+        query += " FROM BATCH_RST a"
+        query += "    LEFT JOIN EVT_MST b ON a.EVT_ID = b.EVT_ID"
+        query += "    LEFT JOIN COR_MST c ON a.COR_NO = c.COR_NO"
+    
+    elif qType == "A2": # 배치데이터 이벤트 테이블 적용
+        query =  "INSERT INTO EVT_MST "
+        query += "	(	 "
+        query += "		COR_NO, "
+        query += "		EVT_TITLE, "
+        query += "		EVT_ID, "
+        query += "		EVT_ST_DATE, "
+        query += "		EVT_ED_DATE, "
+        query += "		EVT_THUMBNAIL, "
+        query += "		EVT_IMG, "
+        query += "		EVT_NOTI, "
+        query += "		EVT_LIST_LINK, "
+        query += "		EVT_DT_LINK, "
+        query += "		C_DATE "
+        query += "	) "
+        query += "VALUES "
+        query += "	( "
+        query += "		%s, "
+        query += "		%s, "
+        query += "		%s, "
+        query += "		%s, "
+        query += "		%s, "
+        query += "		%s, "
+        query += "		%s, "
+        query += "		%s, "
+        query += "		%s, "
+        query += "		%s,  "
+        query += "		NOW()  "
+        query += "	); "
+    
+    elif qType == "A3": # 배치데이터 테이블 이벤트 아이디 업데이트
+        query =  "UPDATE BATCH_RST SET"
+        query += " EVT_ID= %s"
+        query += " WHERE COR_NO = %s AND EVT_TITLE = %s"
+
+    elif qType == "A4": # 노출여부 업데이트
+        query =  "UPDATE EVT_MST SET"
+        query += " USE_YN= %s"
+        query += " WHERE EVT_ID= %s"
 
 
 
