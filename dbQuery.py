@@ -14,11 +14,11 @@ def validate_date(date_string):
 def selectQuery(qType, values):
     # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@S")
     # print("Query Id : "+qType)
-    if len(values) > 0:
-        print(values)
-        print(type(values))
-        print(len(values))
-    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@E")
+    # if len(values) > 0:
+    #     print(values)
+    #     print(type(values))
+    #     print(len(values))
+    # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@E")
     if qType == "Q1": # BACTH LOG 등록
         query = "INSERT INTO BATCH_LOG (BATCH_ID, BATCH_NM, TASK_ID, TASK_NM, ST_DATE, ED_DATE, STATUS, RESULT_DATA) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     elif qType == "Q2": # BACTH 데이터 등록
@@ -146,6 +146,6 @@ def selectQuery(qType, values):
 
         
     # print("###################################")
-    print(query)
+    # print(query)
     # print("###################################")
     return query

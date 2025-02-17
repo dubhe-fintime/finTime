@@ -1046,8 +1046,6 @@ def adminMainContents():
 @app.route("/contentMange", methods=['POST'])
 def contentMange():
     data = request.get_json()
-    print(data)
-    print("@!!!!!!!!!!!!!!!!!!")
     results = execute_mysql_query_rest("Q9", data)
 
     return_col_name = ["COR_NO","COR_GP","GP_NM","COR_NM","COR_NOTI","IMG_URL","THUMBNAIL_URL","USE_YN","C_DATE","U_DATE"]
