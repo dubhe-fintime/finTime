@@ -64,13 +64,24 @@ def selectQuery(qType, values):
         if (len(values) > 0 and values["cor_gp"]):
             query += f"AND CM.COR_GP = '{values['cor_gp']}' "
         if (len(values) > 0 and values["cor_nm"]):
-            query += f"AND CM.COR_NM = '{values['cor_nm']}' "
+            query += f"AND CM.COR_NM LIKE '%{values['cor_nm']}%' "
         if (len(values) > 0 and values["use_yn"]):
             query += f"AND CM.USE_YN = '{values['use_yn']}' "
 
 
     elif qType == "Q10": # 고유 ID 등록
         query = "UPDATE BATCH_RST BR JOIN ( SELECT EM.EVT_ID, EM.COR_NO, EM.EVT_TITLE FROM EVT_MST EM JOIN BATCH_RST BR_SUB ON EM.COR_NO = BR_SUB.COR_NO AND EM.EVT_TITLE = BR_SUB.EVT_TITLE GROUP BY EM.EVT_ID, EM.COR_NO, EM.EVT_TITLE) AS LatestEM ON BR.COR_NO = LatestEM.COR_NO AND BR.EVT_TITLE = LatestEM.EVT_TITLE SET BR.EVT_ID = LatestEM.EVT_ID"
+    
+    elif qType == "Q11": # 금융사 정보 등록 / 수정
+        query = "INSERT INTO COR_MST "
+        query += "( COR_NO, COR_NM, COR_GP, COR_NOTI, C_USER, IMG_URL, THUMBNAIL_URL ) "
+        query += " VALUES  "
+        query += " ( %s, %s, %s, %s, 'ADMIN', %s, %s ) "
+        query += " ON DUPLICATE KEY UPDATE "
+        query += " COR_NM = %s, COR_GP = %s, COR_NOTI = %s, U_DATE = SYSDATE(), "
+        query += " U_USER = 'ADMIN', USE_YN = %s, IMG_URL = %s, THUMBNAIL_URL = %s"
+
+
 
     
     elif qType == "A1": # 배치 데이터 조회

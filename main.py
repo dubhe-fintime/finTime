@@ -1042,16 +1042,39 @@ def adminMainContents():
     return render_template("common/adminMainContents.html", domain=domain, port=port)
 
 
-# 금융사 현황 전체 조회
-@app.route("/contentMange", methods=['POST'])
-def contentMange():
+# 금융사 정보 관리 조회
+@app.route("/financeManage", methods=['POST'])
+def selectFinace():
     data = request.get_json()
     results = execute_mysql_query_rest("Q9", data)
-
     return_col_name = ["COR_NO","COR_GP","GP_NM","COR_NM","COR_NOTI","IMG_URL","THUMBNAIL_URL","USE_YN","C_DATE","U_DATE"]
     return_result = [dict(zip(return_col_name, data)) for data in results]
 
     return return_result
+
+
+# 금융사 정보 추가
+@app.route("/insertFinance", methods=['POST'])
+def insertFinance():
+    data = request.get_json()
+    form = (
+            data.get("corNoInput",""),
+            data.get("corNmInput"),
+            data.get("cor_gp"),
+            data.get("corNotiInput",""),
+            data.get("imgUrlInput",""),
+            data.get("thumbUrlInput",""),
+            data.get("corNmInput"),
+            data.get("cor_gp"),
+            data.get("corNotiInput",""),
+            data.get("use_yn",""),
+            data.get("imgUrlInput",""),
+            data.get("thumbUrlInput","")
+            )
+
+    results = execute_mysql_query_insert("Q11", form)
+    return [success]
+
 
 
 ################## 관리자 업무 END ###############################

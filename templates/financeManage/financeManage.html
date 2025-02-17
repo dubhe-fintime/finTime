@@ -96,30 +96,60 @@
   </div>
 </body>
 <script>
-  //세션
-  let session_check = "{{session}}";
-  if (session_check == 'None') {
-    top.location.href = '/';
-  }
+
+  let default_page = 0
+  let limit = 10
+  let totalData
 
   $(document).ready(function () {
     SearchGroupCode()
     fn_eventHandler()
   })
 
+  //추가|수정
+  function addGroup(flag=true) {
+    let target_data = {}
+    $("#addGroup input , #addGroup textarea").each(function() {
+        target_data[$(this).attr("id")] = $(this).val()
+    });
+    target_data["cor_gp"] = $("#addGroup strong").attr("name");
 
+    fetch("/insertFinance", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(target_data)
+    })
+    .then(response => console.log(response))
+    .then(data => {
+      
+        console.log(data)
+        CloseModal();
+        if(flag){
+        let values = `<p>금융사 정보 수정이 완료되었습니다.</p>`;
+        values += `<br>`;
+        OpenModal("금융사 정보 수정", "", true, "", "location.reload()", "확인", "", true, "md", values);
+      } else {
+          let values = `<p>금융사 정보 추가가 완료되었습니다.</p>`;
+          values += `<br>`;
+          OpenModal("금융사 정보 추가", "", true, "", "location.reload()", "확인", "", true, "md", values);
+
+        }
+
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+  }
 
   function fn_eventHandler(){
-    //기관추가 btn
-    $("#addBtn").click(function () {
+    $("#addBtn").click(function (e) {
+    e.preventDefault();
     addModal()
   })
-  // row dbClick
     $("#dataContent").on('dblclick', 'tr', function() {
       addModal(this)
   });  
 
-    //검색 기능
     $("#searchBtn").click(function (e) {
     e.preventDefault();
 
@@ -128,18 +158,9 @@
       cor_gp : $('#corGp').attr('name'),
       use_yn : $('#useYn').attr('name')
     }
-
     SearchGroupCode(search_data)
   })
 
-  }
-
-  function modifyGroup(){
-    console.log("수정 임~~")
-  }
-
-  function addGroup(){
-    console.log("등록 임~~")
   }
 
 
@@ -148,19 +169,30 @@
   function addModal(tag=false) {
     //모달 setting
     var modal_title = tag ? "기관 수정" : "기관 추가"
-    var fn_name = tag? addGroup : modifyGroup
+    var flag = tag ?  true : false  // true는 수정  // false는 추가
 
     //요소 바인딩
-    var title = tag ? $(tag).find("td").eq(2).text() : ""
+    var cor_no = tag ? $(tag).find("td").eq(0).text() : ""
     var cor_name = tag ? $(tag).find("td").eq(1).text() : ""
+    var title = tag ? $(tag).find("td").eq(2).text() : ""
     var cor_gp = tag ? $(tag).attr("data-id") : ""
     var cor_noti = tag ? $(tag).find("td").eq(3).text() : ""
     var img_url = tag ? $(tag).find("td").eq(4).text() : ""
     var thumbnail_url = tag ? $(tag).find("td").eq(5).text() : ""
     values = `
+                    <h3>기관번호</h3>
+                    <fieldset>
+                        <div class="input-wrap sm">
+                            <input id="corNoInput" class="input" placeholder="기관번호를 입력 해 주세요" 
+                                onfocus="FocusInput('corNoInput')" oninput="ChangeInput('corNoInput')" onblur="BlurInput('corNoInput')"
+                                value="${cor_no}">
+                            <span class="delete-btn" onclick="DeleteInput('corNoInput')"></span>
+                        </div>
+                    </fieldset>
+                    <br>
                     <h3>기관명</h3>
                     <fieldset>
-                        <div class="input-wrap">
+                        <div class="input-wrap sm">
                             <input id="corNmInput" class="input" placeholder="기관명을 입력 해 주세요" 
                                 onfocus="FocusInput('corNmInput')" oninput="ChangeInput('corNmInput')" onblur="BlurInput('corNmInput')"
                                 value="${title}">
@@ -170,8 +202,8 @@
                     <br>
                     <h3>기관그룹 선택</h3>
                     <fieldset>
-                      <div class="select-box md" style="width:100%">
-                        <strong class="label" onclick="ClickSelectLabel('corGrpSel')" id="corGrpSel" name="${cor_gp}">선택하세요</strong>
+                      <div class=" input-wrap select-box sm" style="width:100%">
+                        <strong class="label" onclick="ClickSelectLabel('corGrpSel')" id="corGrpSel" name="">선택하세요</strong>
                         <ul class="options type">
                           <li class="option" onclick="ClickSelectOption('corGrpSel','은행','001')">
                             은행
@@ -192,41 +224,39 @@
                     <h3>기관 설명</h3>
                     <fieldset>
                         <textarea id="corNotiInput" class="textarea" onfocus="FocusInput('corNotiInput')"
-                            placeholder="기관 설명을 입력 해 주세요" value="${cor_noti}"></textarea>
+                            placeholder="기관 설명을 입력 해 주세요" value="">${cor_noti}</textarea>
                     </fieldset>
+                    <br>
                     <h3>대표이미지 URL</h3>
                     <fieldset>
-                        <div class="input-wrap">
+                        <div class="input-wrap sm">
                             <input id="imgUrlInput" class="input" placeholder="대표 이미지 URL을 입력 해 주세요" 
                                 onfocus="FocusInput('imgUrlInput')" oninput="ChangeInput('imgUrlInput')" onblur="BlurInput('imgUrlInput')"
                                 value="${img_url}">
                             <span class="delete-btn" onclick="DeleteInput('imgUrlInput')"></span>
                         </div>
                     </fieldset>
+                    <br>
                     <h3>썸네일이미지 URL</h3>
                     <fieldset>
-                        <div class="input-wrap">
+                        <div class="input-wrap sm">
                             <input id="thumbUrlInput" class="input" placeholder="썸네일 이미지 URL을 입력 해 주세요" 
                                 onfocus="FocusInput('thumbUrlInput')" oninput="ChangeInput('thumbUrlInput')" onblur="BlurInput('thumbUrlInput')"
                                 value="${thumbnail_url}">
                             <span class="delete-btn" onclick="DeleteInput('thumbUrlInput')"></span>
                         </div>
                     </fieldset>    `
-    OpenModal(modal_title, "", true, true, `${fn_name}()`, "확인", "취소", "", "md", values)
-
+    OpenModal(modal_title, `addGroup`, true, true, `addGroup(${flag})`, "확인", "취소", "", "md", values)
+    
     if(tag){
       ClickSelectOption("corGrpSel",cor_name,cor_gp)
     }
   }
 
-  let default_page = 0
-  let limit = 10
-  let totalData
-
   // 조회
   function SearchGroupCode(data={}) {
     $.ajax({
-      url: "{{domain}}/contentMange",
+      url: "{{domain}}/financeManage",
       type: "POST",
       contentType: "application/json",
       dataType: "json",
