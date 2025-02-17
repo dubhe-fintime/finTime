@@ -213,7 +213,7 @@
                         </div>
                     </fieldset>    `
     OpenModal(modal_title, "", true, true, `${fn_name}()`, "확인", "취소", "", "md", values)
-    
+
     if(tag){
       ClickSelectOption("corGrpSel",cor_name,cor_gp)
     }
@@ -226,7 +226,7 @@
   // 조회
   function SearchGroupCode(data={}) {
     $.ajax({
-      url: "{{domain}}:{{port}}/contentMange",
+      url: "{{domain}}/contentMange",
       type: "POST",
       contentType: "application/json",
       dataType: "json",
