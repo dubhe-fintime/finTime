@@ -38,7 +38,7 @@ def selectQuery(qType, values):
     
     
     elif qType == "QTEMP": # 임시 배치 테이블 조회
-        query = "SELECT * FROM BATCH_RST"
+        query = "SELECT * FROM EVT_MST"
 
     elif qType == "Q9":  # 금융사 정보 관리 전체 조회
         query = """
