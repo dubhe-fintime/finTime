@@ -1204,7 +1204,101 @@ def batchStatus():
     return result
     
 ################## 배치 관리 END ###############################
+############## 관리자 START ############################
+@app.route('/batchDataList', methods=["POST"])
+def batchDataList():
 
+    try:
+        results = execute_mysql_query_select("A1", [])
+
+        # if not results:
+        #     return jsonify({"message": "No data found"}), 404  # 데이터가 없을 경우 404 응답
+
+        # print("DB Query Result:", results)  # 서버 로그 출력
+        # return jsonify(results)  # JSON 형식으로 응답
+    
+        datas = []
+        logger.info(str(results))
+        for item in results:
+            data = {
+                'cor_no': item[0],
+                'cor_nm': item[1],
+                'evt_title': item[2],
+                'evt_id': item[3],
+                'evt_status': item[4],
+                'evt_st_date': item[5],
+                'evt_ed_date': item[6],
+                'evt_thumbnail': item[7],
+                'evt_img': item[8],
+                'evt_noti': item[9],
+                'evt_list_link': item[10],
+                'evt_dt_link': item[11],
+            }
+            datas.append(data)
+        
+        return jsonify(datas)
+
+    except Exception as e:
+        print(f"Error: {e}")  # 에러 로그 출력
+        return jsonify({"error": str(e)}), 500  # 500 Internal Server Error 응답
+
+@app.route('/insertEvent', methods=["POST"])
+def insertEvent():
+
+    try:
+        # FormData에서 "datas" 키 가져오기
+        event_data = request.form.get("datas")
+
+        if not event_data:
+            return jsonify({"error": "No data received"}), 400
+
+        # JSON 문자열을 파이썬 딕셔너리로 변환
+        event_dict = json.loads(event_data)
+        evtId = get_next_id('E')
+
+        if not evtId :
+            return jsonify({"error": "evtId 생성 실패"}), 400
+        
+        values = [event_dict["cor_no"],event_dict["evt_title"],evtId,event_dict["evt_st_date"],event_dict["evt_ed_date"],event_dict["evt_thumbnail"],event_dict["evt_img"],event_dict["evt_noti"],event_dict["evt_list_link"],event_dict["evt_dt_link"]]
+        print(values)
+        execute_mysql_query_insert("A2",values) # 이벤트 데이터 등록(EVT_MST)
+        updValues = [evtId,event_dict["cor_no"],event_dict["evt_title"]]
+        execute_mysql_query_update("A3",updValues) # 이벤트 아이디 업데이트(BATCH_RST)
+
+        return jsonify({"message": "Data Insert", "data": event_dict})
+
+    except Exception as e:
+        logger.error("에러 발생: %s", str(e))
+        return jsonify({"error": str(e)}), 500
+@app.route('/updateEvent', methods=["POST"])
+def updateEvent():
+
+    try:
+        # FormData에서 "datas" 키 가져오기
+        event_data = request.form.get("datas")
+
+        if not event_data:
+            return jsonify({"error": "No data received"}), 400
+
+        # JSON 문자열을 파이썬 딕셔너리로 변환
+        event_dict = json.loads(event_data)
+        
+        useYn = "Y"
+        if event_dict["evt_status"] == "Y" :
+            useYn = "N"
+        else :
+            useYn = "Y"
+            
+        values = [useYn,event_dict["evt_id"]]
+
+        execute_mysql_query_update("A4",values) # 이벤트 노출여부 업데이트(EVT_MST)
+
+        return jsonify({"message": "Data UPDATE", "data": event_dict})
+
+    except Exception as e:
+        logger.error("에러 발생: %s", str(e))
+        return jsonify({"error": str(e)}), 500
+################## 관리자 END ############################
 
 @app.route('/eventMst', methods=["POST"])
 def eventMst():

@@ -18,7 +18,7 @@
       <h2 class="title">스크래핑 데이터 관리</h2>
       <form class="search-form" style ="display:none">
         <div class="select-box md">
-          <strong class="label" onclick="ClickSelectLabel('groupName')" id="groupName" name="groupName">그룹 명</strong>
+          <strong class="label" onclick="ClickSelectLabel('groupName')" id="groupName" name="groupName">기관명</strong>
           <ul class="options type">
             <li class="option" onclick="ClickSelectOption('groupName','그룹명','groupName')">
               그룹 명
@@ -47,21 +47,29 @@
           <button class="btn tertiary sm" id="addBtn" onclick=""> + 그룹 추가</button>
         </div>
         <table class="table intent-table">
-          <caption>그룹 관리 테이블</caption>
+          <caption>스크래핑 데이터 관리 테이블</caption>
           <colgroup>
             <col width="80px" />
             <col />
-            <col />
-            <col />
-            <col />
+            <col width="80px" />
+            <col width="80px" />
+            <col width="80px" />
+            <col width="80px" />
+            <col width="80px" />
+            <col width="80px" />
+            <col width="80px" />
           </colgroup>
           <thead class="thead type2">
             <tr>
-              <th>No.</th>
-              <th>그룹코드</th>
-              <th>그룹명</th>
-              <th>그룹설명</th>
-              <th>등록일</th>
+              <th>기관명</th>
+              <th>이벤트제목</th>
+              <th>시작일</th>
+              <th>종료일</th>
+              <th>썸네일</th>
+              <th>이미지</th>
+              <th>목록 URL</th>
+              <th>상세 URL</th>
+              <th>적용</th>
             </tr>
           </thead>
           <tbody id="dataContent" class="tbody"></tbody>
@@ -78,8 +86,9 @@
   }
 
   $(document).ready(function () {
-    session_ok("{{domain}}", "{{port}}");
-    SearchGroupCode()
+    // session_ok("{{domain}}", "{{port}}");
+    selectList()
+    
   })
 
   $("#addBtn").click(function () {
@@ -109,8 +118,102 @@
   }
 
   // 전체 조회
+  function selectList() {
+
+    $("#dataContent").empty();
+    let formData = new FormData();
+    fetch("/batchDataList", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('success')
+                values = ``
+                data.forEach((v, i) => {
+                  var status = v['evt_status'];
+                  var statusCol = ''
+                  if(status =='NONE')
+                  {
+                    statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="insertEvent(this)">적용</button></td>`
+                  }
+                  else
+                  {
+                    `<td></td>`
+                  }
+                  // else if(status =='Y')
+                  // {
+                  //   statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="updateEvent(this)">비노출</button></td>`
+                  // }
+                  // else if(status =='N')
+                  // {
+                  //   statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="updateEvent(this)">재노출</button></td>`
+                  // }
+                  values += `    
+                    <tr data-id="${i+1}" name="${v['evt_title']}" explain="${v['evt_title']}">
+                      <td>${v['cor_nm']}</td>
+                      <td>${v['evt_title']}</td>
+                      <td>${v['evt_st_date']} </td>
+                      <td>${v['evt_ed_date']} </td>
+                      <td><button id='thumbBtn' class='btn primary sm'>썸네일</button></td>
+                      <td><button id='imgBtn' class='btn primary sm'>이미지</button></td>
+                      <td><button id='listBtn' class='btn primary sm'>리스트</button></td>
+                      <td><button id='dtBtn' class='btn primary sm'>디테일</button></td>`
+                  values += statusCol
+                  values += `  </tr>`
+                });
+                $("#dataContent").append(values)
+                
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+  
+  }
+  function insertEvent(button) {
+
+    let formData = new FormData();
+    
+    formData.append("datas", JSON.stringify(JSON.parse(button.getAttribute("data-json"))));
+    formData.forEach((value, key) => {
+        console.log(`${key}: ${value}`);
+    });
+
+    fetch("/insertEvent", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+              selectList()
+            })
+            .catch(error => {
+              console.error("Error:", error);
+            });
+  }
+  function updateEvent(button) {
+
+    let formData = new FormData();
+    
+    formData.append("datas", JSON.stringify(JSON.parse(button.getAttribute("data-json"))));
+    formData.forEach((value, key) => {
+        console.log(`${key}: ${value}`);
+    });
+
+    fetch("/updateEvent", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+              selectList()
+            })
+            .catch(error => {
+              console.error("Error:", error);
+            });
+  }
+  // 전체 조회
   function SearchGroupCode() {
-    session_ok("{{domain}}", "{{port}}");
     $.ajax({
       url: "{{domain}}:{{port}}/getAdminGroup",
       type: "GET",
