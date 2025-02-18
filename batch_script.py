@@ -22,7 +22,7 @@ async def my_batch_job():
 
     # 날짜별로 로그 파일 이름 설정 (현재 날짜 형식: YYYYMMDD)
     today = datetime.datetime.now().strftime("%Y%m%d")
-    log_file_path = os.path.join(log_dir, f"batch_log_{today}.txt")
+    log_file_path = os.path.join(log_dir, f"batch_log_{today}.log")
     
     now = datetime.datetime.now()
     print(f"[{now}] 배치 작업 실행 중...")
@@ -157,4 +157,4 @@ print("배치 작업이 스케줄링되었습니다. (매일 5분마다 실행)"
 # 무한 루프 실행 (배치 스케줄 유지)
 while True:
     schedule.run_pending()
-    time.sleep(1)  # 1초마다 스케줄 체크
+    time.sleep(60)  # 1초마다 스케줄 체크
