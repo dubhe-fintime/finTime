@@ -66,9 +66,7 @@ async def my_batch_job():
         "hankook_stock":stock5(),
         "kiwoom_stock":stock6(),
         "shinhan_stock":stock7(),
-        "hana_stock":stock8(),
-        
-        "api_holiday":holidayAPI()
+        "hana_stock":stock8()
     }
 
     try:
