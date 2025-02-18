@@ -127,7 +127,8 @@ def selectQuery(qType, values):
                 ON DUPLICATE KEY UPDATE
                     HOI_DATE = %s, 
                     HOI_YN = %s, 
-                    HOI_NAME = %s
+                    HOI_NAME = %s,
+                    U_DATE = SYSDATE()
                 """
 
     elif qType == "A1": # 배치 데이터 조회
