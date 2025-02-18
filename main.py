@@ -945,27 +945,6 @@ def del_batch_rst(cnt):
     if cnt == 1:
         execute_mysql_query_delete('Q3', []) # BATCH 데이터 전체 삭제
 
-# 배치 종료 로그
-def set_batch_end_log(b_id, s_date, e_date):
-    print("#######################################")
-    results = execute_mysql_query_select("Q19",[]) # 배치 성공여부 건수 조회
-    print(f"결과건수 : {len(results)}")
-    if not results:
-        logger.debug("No data found from Q19")
-    
-    success_cnt = 0
-    fail_cnt = 0
-    for item in results:
-        if item[0] == "SUCCESS":
-            success_cnt = item[1]
-        elif item[0] == "FAIL":
-            fail_cnt = item[1]
-
-    values = [b_id, success_cnt, fail_cnt, s_date, e_date]
-    print(f"결과건수 : {values}")
-    print("#######################################")
-    execute_mysql_query_insert("Q20",values) # 배치 종료 로그 등록
-
 # SET USER EVENT MAPPING 등록
 def set_user_mapp():
     

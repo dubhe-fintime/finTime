@@ -125,20 +125,6 @@ def selectQuery(qType, values):
             VALUES (%s, %s, %s);
         """
 
-    elif qType == "Q19": # 배치 결과 건수 조회
-        query = """
-                SELECT STATUS, COUNT(*) AS COUNT
-                FROM BATCH_LOG
-                WHERE ST_DATE = (
-                    SELECT MAX(ST_DATE) 
-                    FROM BATCH_LOG
-                )
-                GROUP BY STATUS
-                """
-    
-    elif qType == "Q20": # 배치 결과 저장
-        query = "INSERT INTO BATCH_RST_CNT (BATCH_ID, SUCCESS_CNT, FAIL_CNT, C_DATE, E_DATE) VALUES (%s, %s, %s, %s, %s)"
-
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
         query += "    a.COR_NO cor_no, "
