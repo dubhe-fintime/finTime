@@ -2,7 +2,6 @@ from datetime import datetime
 import requests
 import json
 import os
-from pandas import json_normalize
 import configparser
 
 environment = os.getenv('ENVIRONMENT', 'development')
