@@ -95,7 +95,7 @@ def selectQuery(qType, values):
                 ON EM.COR_NO = CM.COR_NO
                 AND CM.USE_YN = 'Y';
         """
-    
+
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
         query += "    a.COR_NO cor_no, "
@@ -119,7 +119,14 @@ def selectQuery(qType, values):
         query += " FROM BATCH_RST a"
         query += "    LEFT JOIN EVT_MST b ON a.EVT_ID = b.EVT_ID"
         query += "    LEFT JOIN COR_MST c ON a.COR_NO = c.COR_NO"
-    
+        query += " WHERE 1=1"
+        
+        if len(values[0])>0 :
+            query += f" AND c.COR_NM LIKE ('{values[0]}')"
+        if len(values[1])>0 :
+            query += f" AND a.EVT_TITLE LIKE ('{values[1]}')"
+
+        print(query)
     elif qType == "A2": # 배치데이터 이벤트 테이블 적용
         query =  "INSERT INTO EVT_MST "
         query += "	(	 "
@@ -160,13 +167,22 @@ def selectQuery(qType, values):
         query += " USE_YN= %s"
         query += " WHERE EVT_ID= %s"
 
-
-
-
-        
-
-    
-
+    elif qType == "A5": # 이벤트 마스터 조회
+        query =  "SELECT a.COR_NO cor_no, "
+        query += "    COALESCE(b.cor_nm, '미등록기관') cor_nm, "
+        query += "	  a.EVT_TITLE evt_title, "
+        query += "    a.EVT_ID evt_id, "
+        query += "    DATE_FORMAT(a.EVT_ST_DATE, '%Y-%m-%d') evt_st_date, "
+        query += "    DATE_FORMAT(a.EVT_ED_DATE, '%Y-%m-%d') evt_ed_date, "
+        query += "    a.EVT_THUMBNAIL evt_thumbnail, "
+        query += "    a.EVT_IMG evt_img, "
+        query += "    a.EVT_NOTI evt_noti, "
+        query += "    a.EVT_LIST_LINK evt_list_link, "
+        query += "    a.EVT_DT_LINK evt_dt_link, "
+        query += "    a.USE_YN use_yn, "
+        query += "    a.C_DATE c_date "
+        query += "FROM EVT_MST a "
+        query += "	LEFT JOIN COR_MST b ON a.COR_NO = b.COR_NO "
         
     # print("###################################")
     # print(query)
