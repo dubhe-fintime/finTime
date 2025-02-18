@@ -85,6 +85,16 @@ def selectQuery(qType, values):
         query =  "UPDATE COR_MST SET  "
         query += " USE_YN = %s WHERE COR_NO = %s "
 
+    elif qType == "Q13": # 캘린더용 이벤트 조회
+        query = """
+            SELECT 
+                EM.*,
+                COALESCE(CM.cor_nm, '미등록기관') AS cor_nm
+            FROM EVT_MST EM
+            LEFT JOIN COR_MST CM 
+                ON EM.COR_NO = CM.COR_NO
+                AND CM.USE_YN = 'Y';
+        """
     
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "

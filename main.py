@@ -1333,19 +1333,20 @@ def updateEvent():
         return jsonify({"error": str(e)}), 500
 ################## 관리자 END ############################
 
-@app.route('/eventMst', methods=["POST"])
+@app.route('/getEventMst', methods=["POST"])
 def eventMst():
     #data = request.get_json()  # 전송된 JSON 데이터 받아오기
     #start = data.get("start")
     #end = data.get("end")
     #values = [start, end]
-    #results = execute_mysql_query_select("QTEMP", values)
-    results = execute_mysql_query_select("QTEMP", [])
+    #results = execute_mysql_query_select("Q13", values)
+    results = execute_mysql_query_select("Q13", [])
 
     datas = []
     for item in results:
         data = {
             'cor_no': item[0],
+            'cor_nm': item[12],
             'evt_title': item[1],
             'evt_st_dt': item[3],
             'evt_ed_dt': item[4],
