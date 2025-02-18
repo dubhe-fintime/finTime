@@ -916,22 +916,14 @@ def del_batch_rst(cnt):
         execute_mysql_query_delete('Q3', []) # BATCH 데이터 전체 삭제
 
 # SET USER EVENT MAPPING 등록
-@app.route('/set_user_mapp', methods=["POST"])
 def set_user_mapp():
     
     results = execute_mysql_query_select("Q15",[])
-    print("######################################")
-    print("######################################")
-    print(len(results))
     if not results:
         logger.debug("No data found from Q15")
 
     for item in results:
-        print("######################################")
-        print("######################################")
-        print("######################################")
         values = [get_next_id("M"), item[0],item[1]]
-        print(values)
         execute_mysql_query_insert("Q14",values) # USER EVENT MAPPING 데이터 등록
 
 #####################
