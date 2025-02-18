@@ -16,48 +16,71 @@
   <div class="container">
     <main class="main-area">
       <h2 class="title">컨텐츠 관리</h2>
-      <form class="search-form">
-        <div class="select-box md">
-          <strong class="label" onclick="ClickSelectLabel('groupName')" id="groupName" name="groupName">그룹 명</strong>
+      <form class="search-form" >
+        <div class="select-box md" style="display:none">
+          <strong class="label" onclick="ClickSelectLabel('searchCor')" id="searchCor" name="searchCor">기관명</strong>
           <ul class="options type">
-            <li class="option" onclick="ClickSelectOption('groupName','그룹명','groupName')">
-              그룹 명
+            <li class="option" onclick="ClickSelectOption('searchCor','기관명','searchCor')">
+              기관명
             </li>
-            <li class="option" onclick="ClickSelectOption('groupName','설명','groupExplain')">
-              그룹 설명
-            </li>
-            <li class="option" onclick="ClickSelectOption('groupName','그룹코드','groupID')">
-              그룹코드
+            <li class="option" onclick="ClickSelectOption('searchCor','이벤트제목','searchSubject')">
+              이벤트 제목
             </li>
           </ul>
         </div>
         <div class="input-wrap">
-          <input id="searchInput" class="input" placeholder="그룹명, 설명 입력 후 검색" />
+          <input id="searchInputCor" class="input" placeholder="기관명 입력 후 검색" />
           <span class="delete-btn"></span>
         </div>
-        <button id="searchBtn" class="btn primary md search-btn">검색</button>
+        <div class="input-wrap" style="margin-left: 16px;">
+          <input id="searchInputSub" class="input" placeholder="이벤트 제목 입력 후 검색" />
+          <span class="delete-btn"></span>
+        </div>
+        <div class="select-box md" style="margin-left: 16px;">
+          <strong class="label" onclick="ClickSelectLabel('useYn')" id="useYn" name="" >전체</strong>
+          <ul class="options type">
+            <li class="option" onclick="ClickSelectOption('useYn','전체','')">
+              전체
+            </li>
+            <li class="option" onclick="ClickSelectOption('useYn','노출','Y')">
+              노출
+            </li>
+            <li class="option" onclick="ClickSelectOption('useYn','비노출','N')">
+              비노출
+            </li>
+          </ul>
+        </div>
+        <button id="searchBtn" class="btn primary md search-btn" onclick="javascript:selectList()">검색</button>
       </form>
       <div class="table-area">
-        <div class="flex justify-between align-end">
+        <div class="flex justify-between align-end" style ="display:none">
           <strong class="count"></strong>
           <button class="btn tertiary sm" id="addBtn" onclick=""> + 그룹 추가</button>
         </div>
         <table class="table intent-table">
-          <caption>그룹 관리 테이블</caption>
+          <caption>컨텐츠 데이터 관리 테이블</caption>
           <colgroup>
             <col width="80px" />
             <col />
-            <col />
-            <col />
-            <col />
+            <col width="80px" />
+            <col width="80px" />
+            <col width="80px" />
+            <col width="80px" />
+            <col width="80px" />
+            <col width="80px" />
+            <col width="80px" />
           </colgroup>
           <thead class="thead type2">
             <tr>
-              <th>No.</th>
-              <th>그룹코드</th>
-              <th>그룹명</th>
-              <th>그룹설명</th>
-              <th>등록일</th>
+              <th>기관명</th>
+              <th>이벤트제목</th>
+              <th>시작일</th>
+              <th>종료일</th>
+              <th>썸네일</th>
+              <th>이미지</th>
+              <th>목록 URL</th>
+              <th>상세 URL</th>
+              <th>노출여부</th>
             </tr>
           </thead>
           <tbody id="dataContent" class="tbody"></tbody>
@@ -74,8 +97,9 @@
   }
 
   $(document).ready(function () {
-    session_ok("{{domain}}", "{{port}}");
-    SearchGroupCode()
+    // session_ok("{{domain}}", "{{port}}");
+    selectList()
+    
   })
 
   $("#addBtn").click(function () {
@@ -105,8 +129,105 @@
   }
 
   // 전체 조회
+  function selectList() {
+
+    $("#dataContent").empty();
+    let formData = new FormData();
+
+    let corNm = $('#searchInputCor').val()
+    let corSub = $('#searchInputSub').val()
+    let option = $('#useYn').attr('name')
+
+    formData.append("corNm",corNm)
+    formData.append("corSub",corSub)
+    formData.append("useYn",option)
+
+    fetch("/evtDataList", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('success')
+                values = ``
+                data.forEach((v, i) => {
+                  var status = v['use_yn'];
+                  var statusCol = ''
+                  if(status =='Y')
+                  {
+                    // statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="updateEvent(this)">비노출</button></td>`
+                    statusCol = `<td>노출</td>`
+                  }
+                  else if(status =='N')
+                  {
+                    // statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="updateEvent(this)">재노출</button></td>`
+                    statusCol = `<td>비노출</td>`
+                  }
+                  values += `    
+                    <tr data-id="${i+1}" name="${v['evt_title']}" explain="${v['evt_title']}">
+                      <td>${v['cor_nm']}</td>
+                      <td>${v['evt_title']}</td>
+                      <td>${v['evt_st_date']} </td>
+                      <td>${v['evt_ed_date']} </td>
+                      <td><button id='thumbBtn' class='btn primary sm'>썸네일</button></td>
+                      <td><button id='imgBtn' class='btn primary sm'>이미지</button></td>
+                      <td><button id='listBtn' class='btn primary sm'>리스트</button></td>
+                      <td><button id='dtBtn' class='btn primary sm'>디테일</button></td>`
+                  values += statusCol
+                  values += `  </tr>`
+                });
+                $("#dataContent").append(values)
+                
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+  
+  }
+  function insertEvent(button) {
+
+    let formData = new FormData();
+    
+    formData.append("datas", JSON.stringify(JSON.parse(button.getAttribute("data-json"))));
+    formData.forEach((value, key) => {
+        console.log(`${key}: ${value}`);
+    });
+
+    fetch("/insertEvent", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+              selectList()
+            })
+            .catch(error => {
+              console.error("Error:", error);
+            });
+  }
+  function updateEvent(button) {
+
+    let formData = new FormData();
+    
+    formData.append("datas", JSON.stringify(JSON.parse(button.getAttribute("data-json"))));
+    formData.forEach((value, key) => {
+        console.log(`${key}: ${value}`);
+    });
+
+    fetch("/updateEvent", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+              selectList()
+            })
+            .catch(error => {
+              console.error("Error:", error);
+            });
+  }
+  // 전체 조회
   function SearchGroupCode() {
-    session_ok("{{domain}}", "{{port}}");
     $.ajax({
       url: "{{domain}}:{{port}}/getAdminGroup",
       type: "GET",
@@ -136,30 +257,6 @@
   //검색 기능
   $("#searchBtn").click(function (e) {
     e.preventDefault();
-    session_ok("{{domain}}", "{{port}}");
-    let target_data = $('#searchInput').val()
-    let option = $('#groupName').attr('name')
-
-
-    let search_list = []
-
-    $("#dataContent tr").each(function (i, v) {
-      if (option.includes('Name') && $(v).attr('name').includes(target_data)) {
-        search_list.push(v)
-      } else if (option.includes('ID') && $(v).attr('data-id').includes(target_data)) {
-        search_list.push(v)
-      } else if (option.includes('Explain') && $(v).attr('explain').includes(target_data))
-        search_list.push(v)
-    })
-
-    //검색 결과가 없을 경우
-    if (search_list.length == 0) {
-      values = `<p>검색 결과가 없습니다.</p>`
-      OpenModal("검색어 결과 없음", "", true, "", "", "확인", "", true, "md", values)
-    } else {
-      $("#dataContent tr").hide();
-      $(search_list).show();
-    }
   })
 
   //추가 기능

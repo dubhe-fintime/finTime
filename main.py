@@ -1297,10 +1297,6 @@ def batchDataList():
     corNm = request.form.get('corNm', default='', type=str)
     corSub = request.form.get('corSub', default='', type=str)
 
-    if corNm != '' :
-        corNm = '%'+corNm+'%'
-    if corSub != '' :
-        corSub = '%'+corSub+'%'
     values = [corNm, corSub]
 
     try:
@@ -1340,8 +1336,14 @@ def batchDataList():
 @app.route('/evtDataList', methods=["POST"])
 def evtDataList():
 
+    corNm = request.form.get('corNm', default='', type=str)
+    corSub = request.form.get('corSub', default='', type=str)
+    useYn = request.form.get('useYn', default='', type=str)
+
+    values = [corNm, corSub, useYn]
+
     try:
-        results = execute_mysql_query_select("A5", [])
+        results = execute_mysql_query_rest("A5", values)
 
         # if not results:
         #     return jsonify({"message": "No data found"}), 404  # 데이터가 없을 경우 404 응답
@@ -1350,7 +1352,6 @@ def evtDataList():
         # return jsonify(results)  # JSON 형식으로 응답
     
         datas = []
-        logger.info(str(results))
         for item in results:
             data = {
                 'cor_no': item[0],

@@ -151,10 +151,11 @@ def selectQuery(qType, values):
         query += " WHERE 1=1"
         
         if len(values[0])>0 :
-            query += f" AND c.COR_NM LIKE ('{values[0]}')"
+            query += f" AND c.COR_NM LIKE '%{values[0]}%'"
         if len(values[1])>0 :
-            query += f" AND a.EVT_TITLE LIKE ('{values[1]}')"
+            query += f" AND a.EVT_TITLE LIKE '%{values[1]}%'"
 
+        print(query)
     elif qType == "A2": # 배치데이터 이벤트 테이블 적용
         query =  "INSERT INTO EVT_MST "
         query += "	(	 "
@@ -211,7 +212,15 @@ def selectQuery(qType, values):
         query += "    a.C_DATE c_date "
         query += "FROM EVT_MST a "
         query += "	LEFT JOIN COR_MST b ON a.COR_NO = b.COR_NO "
-        
+
+        query += " WHERE 1=1"
+        if len(values[0])>0 :
+            query += f" AND b.COR_NM LIKE '%{values[0]}%'"
+        if len(values[1])>0 :
+            query += f" AND a.EVT_TITLE LIKE '%{values[1]}%'"
+        if len(values[2])>0 :
+            query += f" AND a.USE_YN = '{values[2]}'"
+
     # print("###################################")
     # print(query)
     # print("###################################")
