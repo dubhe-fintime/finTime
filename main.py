@@ -1067,7 +1067,6 @@ def insertFinance():
             data.get("corNmInput"),
             data.get("cor_gp"),
             data.get("corNotiInput",""),
-            data.get("use_yn",""),
             data.get("imgUrlInput",""),
             data.get("thumbUrlInput","")
             )
@@ -1076,6 +1075,19 @@ def insertFinance():
     return [success]
 
 
+# 금융사 사용여부
+@app.route("/changeYnFinance", methods=['POST'])
+def changeYnFinance():
+    try:
+        data = request.get_json()
+        form = (
+                data.get("change_yn"),
+                data.get("finance_no")
+                )
+        results = execute_mysql_query_insert("Q12", form)
+        return [success]
+    except:
+        return [error]
 
 ################## 관리자 업무 END ###############################
 ################## 파일 관리 START ###############################

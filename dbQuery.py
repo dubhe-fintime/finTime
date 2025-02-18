@@ -79,9 +79,11 @@ def selectQuery(qType, values):
         query += " ( %s, %s, %s, %s, 'ADMIN', %s, %s ) "
         query += " ON DUPLICATE KEY UPDATE "
         query += " COR_NM = %s, COR_GP = %s, COR_NOTI = %s, U_DATE = SYSDATE(), "
-        query += " U_USER = 'ADMIN', USE_YN = %s, IMG_URL = %s, THUMBNAIL_URL = %s"
+        query += " U_USER = 'ADMIN', IMG_URL = %s, THUMBNAIL_URL = %s"
 
-
+    elif qType == "Q12": # 금융사 사용여부 변경
+        query =  "UPDATE COR_MST SET  "
+        query += " USE_YN = %s WHERE COR_NO = %s "
 
     
     elif qType == "A1": # 배치 데이터 조회
