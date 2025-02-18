@@ -150,6 +150,9 @@ ALLOWED_SUBNETS = [ipaddress.IPv4Network("192.168.0.0/24")]  # 192.168.0.* 대�
 # 날씨 API
 async def holidayAPI():
     results = await getHoliday.API_Holiday()
+    print(">>>>>>>>>>>>>")
+    print(results)
+
     status = 200
     for item in results:
         if 'ERROR' in item:
@@ -159,7 +162,6 @@ async def holidayAPI():
         "status_code": status,  # 응답코드
         "fin_id": "T000000036", # TASK ID 지정
         "result": results     # 응답결과
-
     }
     
     # Flask의 jsonify를 사용하여 응답 생성
