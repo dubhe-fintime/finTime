@@ -1379,57 +1379,6 @@ def updateEvent():
         logger.error("에러 발생: %s", str(e))
         return jsonify({"error": str(e)}), 500
 ################## 관리자 END ############################
-        if not event_data:
-            return jsonify({"error": "No data received"}), 400
-
-        # JSON 문자열을 파이썬 딕셔너리로 변환
-        event_dict = json.loads(event_data)
-        evtId = get_next_id('E')
-
-        if not evtId :
-            return jsonify({"error": "evtId 생성 실패"}), 400
-        
-        values = [event_dict["cor_no"],event_dict["evt_title"],evtId,event_dict["evt_st_date"],event_dict["evt_ed_date"],event_dict["evt_thumbnail"],event_dict["evt_img"],event_dict["evt_noti"],event_dict["evt_list_link"],event_dict["evt_dt_link"]]
-        print(values)
-        execute_mysql_query_insert("A2",values) # 이벤트 데이터 등록(EVT_MST)
-        updValues = [evtId,event_dict["cor_no"],event_dict["evt_title"]]
-        execute_mysql_query_update("A3",updValues) # 이벤트 아이디 업데이트(BATCH_RST)
-
-        return jsonify({"message": "Data Insert", "data": event_dict})
-
-    except Exception as e:
-        logger.error("에러 발생: %s", str(e))
-        return jsonify({"error": str(e)}), 500
-@app.route('/updateEvent', methods=["POST"])
-def updateEvent():
-
-    try:
-        # FormData에서 "datas" 키 가져오기
-        event_data = request.form.get("datas")
-
-        if not event_data:
-            return jsonify({"error": "No data received"}), 400
-
-        # JSON 문자열을 파이썬 딕셔너리로 변환
-        event_dict = json.loads(event_data)
-        
-        useYn = "Y"
-        if event_dict["evt_status"] == "Y" :
-            useYn = "N"
-        else :
-            useYn = "Y"
-            
-        values = [useYn,event_dict["evt_id"]]
-
-        execute_mysql_query_update("A4",values) # 이벤트 노출여부 업데이트(EVT_MST)
-
-        return jsonify({"message": "Data UPDATE", "data": event_dict})
-
-    except Exception as e:
-        logger.error("에러 발생: %s", str(e))
-        return jsonify({"error": str(e)}), 500
-################## 관리자 END ############################
-
 @app.route('/getEventMst', methods=["POST"])
 def eventMst():
     #data = request.get_json()  # 전송된 JSON 데이터 받아오기
