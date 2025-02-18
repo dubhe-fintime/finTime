@@ -76,10 +76,10 @@
               <th>이벤트제목</th>
               <th>시작일</th>
               <th>종료일</th>
-              <th>썸네일</th>
-              <th>이미지</th>
-              <th>목록 URL</th>
-              <th>상세 URL</th>
+              <th colspan="2">이미지</th>
+              <!-- <th>이미지</th> -->
+              <th colspan="2">URL</th>
+              <!-- <th></th> -->
               <th>상태</th>
             </tr>
           </thead>
@@ -133,22 +133,14 @@
 
     $("#dataContent").empty();
     let formData = new FormData();
-    // formData.append("datas", JSON.stringify(JSON.parse(button.getAttribute("data-json"))));
         
     let corNm = $('#searchInputCor').val()
     let corSub = $('#searchInputSub').val()
     let option = $('#useYn').attr('name')
-    console.log(corNm)
-    console.log(corSub)
-    console.log(option)
 
     formData.append("corNm",corNm)
     formData.append("corSub",corSub)
-    // formData.append("useYn",option)
-    formData.forEach((value, key) => {
-        console.log(`${key}: ${value}`);
-    });
-    console.log(formData)
+
     fetch("/batchDataList", {
                 method: "POST",
                 body: formData
@@ -180,10 +172,10 @@
                       <td>${v['evt_title']}</td>
                       <td>${v['evt_st_date']} </td>
                       <td>${v['evt_ed_date']} </td>
-                      <td><button id='thumbBtn' class='btn primary sm'>썸네일</button></td>
-                      <td><button id='imgBtn' class='btn primary sm'>이미지</button></td>
-                      <td><button id='listBtn' class='btn primary sm'>리스트</button></td>
-                      <td><button id='dtBtn' class='btn primary sm'>디테일</button></td>`
+                      <td><button id='thumbBtn' class='btn primary sm' data-value="${v['evt_thumbnail']}" data-title='썸네일이미지' onclick="openImgModal(this)" >썸네일</button></td>
+                      <td><button id='imgBtn' class='btn primary sm' data-value="${v['evt_img']}" data-title='이미지' onclick="openImgModal(this)">이미지</button></td>
+                      <td><button id='listBtn' class='btn primary sm' >리스트</button></td>
+                      <td><button id='dtBtn' class='btn primary sm' >디테일</button></td>`
                   values += statusCol
                   values += `  </tr>`
                 });
@@ -200,9 +192,6 @@
     let formData = new FormData();
     
     formData.append("datas", JSON.stringify(JSON.parse(button.getAttribute("data-json"))));
-    formData.forEach((value, key) => {
-        console.log(`${key}: ${value}`);
-    });
 
     fetch("/insertEvent", {
                 method: "POST",
@@ -253,44 +242,21 @@
     // }
   })
 
-  //추가 기능
-  function addGroup() {
-    session_ok("{{domain}}", "{{port}}");
-    let new_group_name = $("#groupname").val()
-    let new_group_info = $("#groupinfo").val()
+  function openImgModal(button) {
 
-    //경우1: 그룹명을 입력하지 않을 경우
-    if (new_group_name.length == 0) {
-      values = `<p>그룹 명을 입력해주세요.</p>`
-      OpenModal("알림", "except1", true, "", `CloseModal("except2")`, "확인", "", true, "sm", values)
-
-      //경우2: 그룹 설명을 입력하지 않을 경우
-    } else if (new_group_info.length == 0) {
-      values = `<p>그룹 설명을 입력해주세요.</p>`
-      OpenModal("알림", "except2", true, "", `CloseModal("except2")`, "확인", "", true, "sm", values)
-
-    } else {
-      $.ajax({
-        url: "{{domain}}:{{port}}/insertAdminGroup",
-        type: "POST",
-        contentType: "application/json",
-        dataType: "json",
-        data: JSON.stringify([new_group_name, new_group_info]),
-        success: function (response) {
-
-          if (response[0] = "00000") {
-            CloseModal()
-            values = `<p>관리자 그룹 등록이 완료되었습니다.</p>`
-            OpenModal("완료", "", true, "", "CloseModal()", "확인", "", true, "sm", values)
-
-          } else {
-            values = `<p>관리자 그룹 등록이 실패했습니다. </p>`
-            OpenModal("실패", "except3", true, "", `CloseModal("except3")`, "확인", "", true, "sm", values)
-          }
-        }
-      })
+    var imgUrl = $(button).attr('data-value');
+    if(!imgUrl)
+    {
+      imgUrl='/static/assets/images/dobot_running.gif'
     }
+    var title = $(button).attr('data-title');
+
+    values = '<img src="'+imgUrl+'"></img>'
+                    
+    OpenModal(title, `viewImg`, false, false, '', "", "", true, "md", values)
   }
+
+  
 </script>
 
 </html>

@@ -942,27 +942,6 @@ def del_batch_rst(cnt):
     if cnt == 1:
         execute_mysql_query_delete('Q3', []) # BATCH 데이터 전체 삭제
 
-# 배치 종료 로그
-def set_batch_end_log(b_id, s_date, e_date):
-    print("#######################################")
-    results = execute_mysql_query_select("Q19",[]) # 배치 성공여부 건수 조회
-    print(f"결과건수 : {len(results)}")
-    if not results:
-        logger.debug("No data found from Q19")
-    
-    success_cnt = 0
-    fail_cnt = 0
-    for item in results:
-        if item[0] == "SUCCESS":
-            success_cnt = item[1]
-        elif item[0] == "FAIL":
-            fail_cnt = item[1]
-
-    values = [b_id, success_cnt, fail_cnt, s_date, e_date]
-    print(f"결과건수 : {values}")
-    print("#######################################")
-    execute_mysql_query_insert("Q20",values) # 배치 종료 로그 등록
-
 # SET USER EVENT MAPPING 등록
 def set_user_mapp():
     
@@ -1315,10 +1294,6 @@ def batchDataList():
     corNm = request.form.get('corNm', default='', type=str)
     corSub = request.form.get('corSub', default='', type=str)
 
-    if corNm != '' :
-        corNm = '%'+corNm+'%'
-    if corSub != '' :
-        corSub = '%'+corSub+'%'
     values = [corNm, corSub]
 
     try:
@@ -1358,8 +1333,14 @@ def batchDataList():
 @app.route('/evtDataList', methods=["POST"])
 def evtDataList():
 
+    corNm = request.form.get('corNm', default='', type=str)
+    corSub = request.form.get('corSub', default='', type=str)
+    useYn = request.form.get('useYn', default='', type=str)
+
+    values = [corNm, corSub, useYn]
+
     try:
-        results = execute_mysql_query_select("A5", [])
+        results = execute_mysql_query_rest("A5", values)
 
         # if not results:
         #     return jsonify({"message": "No data found"}), 404  # 데이터가 없을 경우 404 응답
@@ -1368,7 +1349,6 @@ def evtDataList():
         # return jsonify(results)  # JSON 형식으로 응답
     
         datas = []
-        logger.info(str(results))
         for item in results:
             data = {
                 'cor_no': item[0],

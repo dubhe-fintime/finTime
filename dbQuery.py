@@ -130,20 +130,6 @@ def selectQuery(qType, values):
                     HOI_NAME = %s
                 """
 
-    elif qType == "Q19": # 배치 결과 건수 조회
-        query = """
-                SELECT STATUS, COUNT(*) AS COUNT
-                FROM BATCH_LOG
-                WHERE ST_DATE = (
-                    SELECT MAX(ST_DATE) 
-                    FROM BATCH_LOG
-                )
-                GROUP BY STATUS
-                """
-    
-    elif qType == "Q20": # 배치 결과 저장
-        query = "INSERT INTO BATCH_RST_CNT (BATCH_ID, SUCCESS_CNT, FAIL_CNT, C_DATE, E_DATE) VALUES (%s, %s, %s, %s, %s)"
-
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
         query += "    a.COR_NO cor_no, "
@@ -170,10 +156,11 @@ def selectQuery(qType, values):
         query += " WHERE 1=1"
         
         if len(values[0])>0 :
-            query += f" AND c.COR_NM LIKE ('{values[0]}')"
+            query += f" AND c.COR_NM LIKE '%{values[0]}%'"
         if len(values[1])>0 :
-            query += f" AND a.EVT_TITLE LIKE ('{values[1]}')"
+            query += f" AND a.EVT_TITLE LIKE '%{values[1]}%'"
 
+        print(query)
     elif qType == "A2": # 배치데이터 이벤트 테이블 적용
         query =  "INSERT INTO EVT_MST "
         query += "	(	 "
@@ -230,7 +217,15 @@ def selectQuery(qType, values):
         query += "    a.C_DATE c_date "
         query += "FROM EVT_MST a "
         query += "	LEFT JOIN COR_MST b ON a.COR_NO = b.COR_NO "
-        
+
+        query += " WHERE 1=1"
+        if len(values[0])>0 :
+            query += f" AND b.COR_NM LIKE '%{values[0]}%'"
+        if len(values[1])>0 :
+            query += f" AND a.EVT_TITLE LIKE '%{values[1]}%'"
+        if len(values[2])>0 :
+            query += f" AND a.USE_YN = '{values[2]}'"
+
     # print("###################################")
     # print(query)
     # print("###################################")

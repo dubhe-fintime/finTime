@@ -130,10 +130,6 @@ async def my_batch_job():
             
             # 사용자 , 이벤트 맵핑 정보 등록
             set_user_mapp() 
-
-            # 배치 종료 로그 등록
-            e_now = datetime.datetime.now()
-            set_batch_end_log(BATCH_ID, now, e_now) 
             
     except Exception as e:
         print(f"[{now}] 배치 실행 중 오류 발생: {e}")
