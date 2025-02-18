@@ -118,12 +118,26 @@ def selectQuery(qType, values):
     elif qType == "Q17": # 특정 UNIQUE_ID 삭제
         query = "DELETE FROM UNIQUE_IDS WHERE LETTER =%s "    
 
-    elif qType == "Q17": # 배치 공휴일 등록 
+    elif qType == "Q18": # 배치 공휴일 등록 
         query = """
             INSERT INTO HOI_DAY 
             (HOI_DATE ,HOI_YN ,HOI_NAME)
             VALUES (%s, %s, %s);
         """
+
+    elif qType == "Q19": # 배치 결과 건수 조회
+        query = """
+                SELECT STATUS, COUNT(*) AS COUNT
+                FROM BATCH_LOG
+                WHERE ST_DATE = (
+                    SELECT MAX(ST_DATE) 
+                    FROM BATCH_LOG
+                )
+                GROUP BY STATUS
+                """
+    
+    elif qType == "Q20": # 배치 결과 저장
+        query = "INSERT INTO BATCH_RESULT (BATCH_ID, SUCCESS_CNT, FAIL_CNT, C_DATE, E_DATE) VALUES (%s, %s, %s, %s, %s)"
 
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
