@@ -18,6 +18,7 @@
         <button onclick="startBatch()">🚀 배치 시작</button>
         <button onclick="stopBatch()">🛑 배치 중지</button>
         <button onclick="checkBatchStatus()">🔍 상태 확인</button>
+        <button onclick="test()">🔍 TEST</button>
 
         <p id="status">⏳ 배치 상태 확인 중...</p>
     </div>
@@ -62,6 +63,17 @@
                 .catch(error => {
                     console.error("Error:", error);
                     document.getElementById("status").innerText = "❌ 상태 확인 중 오류 발생";
+                });
+        }
+
+        function TEST() {
+            fetch("/set_user_mapp", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                    console.error("data:", data);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
                 });
         }
 

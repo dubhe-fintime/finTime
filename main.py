@@ -916,6 +916,7 @@ def del_batch_rst(cnt):
         execute_mysql_query_delete('Q3', []) # BATCH 데이터 전체 삭제
 
 # SET USER EVENT MAPPING 등록
+@app.route('/set_user_mapp', methods=["POST"])
 def set_user_mapp():
     
     results = execute_mysql_query_select("Q15",[])
