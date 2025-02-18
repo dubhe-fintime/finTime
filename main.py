@@ -150,9 +150,6 @@ ALLOWED_SUBNETS = [ipaddress.IPv4Network("192.168.0.0/24")]  # 192.168.0.* 대�
 # 날씨 API
 async def holidayAPI():
     results = await getHoliday.API_Holiday()
-    print(">>>>>>>>>>>>>")
-    print(results)
-
     status = 200
     for item in results:
         if 'ERROR' in item:
@@ -923,7 +920,7 @@ async def test13():
 
 # SET HOLIDAY DATA
 def set_batch_holiday(hol_date,hoi_yn,hoi_name):
-    values = (hol_date, hoi_yn, hoi_name)
+    values = (hol_date, hoi_yn, hoi_name, hol_date, hoi_yn, hoi_name)
     execute_mysql_query_insert("Q18",values) # BATCH LOG 등록
 
 

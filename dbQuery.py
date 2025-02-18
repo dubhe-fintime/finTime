@@ -120,10 +120,15 @@ def selectQuery(qType, values):
 
     elif qType == "Q18": # 배치 공휴일 등록 
         query = """
-            INSERT INTO HOI_DAY 
-            (HOI_DATE ,HOI_YN ,HOI_NAME)
-            VALUES (%s, %s, %s);
-        """
+                INSERT INTO HOI_DAY 
+                    ( HOI_DATE, HOI_YN, HOI_NAME ) 
+                VALUES 
+                    ( %s, %s, %s )
+                ON DUPLICATE KEY UPDATE
+                    HOI_DATE = %s, 
+                    HOI_YN = %s, 
+                    HOI_NAME = %s
+                """
 
     elif qType == "Q19": # 배치 결과 건수 조회
         query = """

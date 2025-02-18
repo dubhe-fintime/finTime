@@ -34,10 +34,6 @@ async def get457Data():
         #전체 html 찍어볼 경우
         #print(soup)
 
-        # 페이지 제목 
-        title = soup.title.string if soup.title else "제목 없음"
-        print(f"페이지 제목: {title}\n")
-
         # class값 찾는법
         container = soup.find("ul" ,class_="img_list")
 
