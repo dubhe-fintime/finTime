@@ -128,9 +128,6 @@ async def my_batch_job():
                 with open(log_file_path, "a", encoding="utf-8") as log_file:
                     log_file.write(log_message + "\n")
             
-            # 사용자 , 이벤트 맵핑 정보 등록
-            set_user_mapp() 
-            
     except Exception as e:
         print(f"[{now}] 배치 실행 중 오류 발생: {e}")
 
@@ -144,6 +141,9 @@ def run_batch_job():
             asyncio.set_event_loop(loop)
 
         loop.run_until_complete(my_batch_job())  # 비동기 함수 실행
+
+        # 사용자 , 이벤트 맵핑 정보 등록
+        set_user_mapp() 
     except Exception as e:
         print(f"배치 작업 실행 중 오류 발생: {e}")
 
