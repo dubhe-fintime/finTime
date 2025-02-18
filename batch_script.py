@@ -134,16 +134,18 @@ async def my_batch_job():
 
 def run_batch_job():
     try:
-        loop = asyncio.get_event_loop()
-
-        if loop.is_closed():
+        try:
+            # 실행 중인 이벤트 루프가 있는지 확인
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            # 실행 중인 루프가 없으면 새 이벤트 루프 생성
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
 
         loop.run_until_complete(my_batch_job())  # 비동기 함수 실행
 
         # 사용자 , 이벤트 맵핑 정보 등록
-        set_user_mapp() 
+        set_user_mapp()  
     except Exception as e:
         print(f"배치 작업 실행 중 오류 발생: {e}")
 
