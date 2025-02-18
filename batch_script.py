@@ -4,7 +4,7 @@ import datetime
 import schedule
 import os
 import json
-from main import set_batch_log, set_batch_rst, del_batch_rst, set_batch_holiday, app  # Flask 앱을 임포트
+from main import set_batch_log, set_batch_rst, del_batch_rst, set_user_mapp, set_batch_holiday, app  # Flask 앱을 임포트
 from main import test1, test2, test3, test4, test5, test6,test7,test8,test9,test10,test11,test12,test13
 from main import card1,card2,card3,card4,card5,card6
 from main import bank1,bank2,bank3,bank4,bank5,bank6,bank7,bank8
@@ -124,11 +124,15 @@ async def my_batch_job():
                         set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, status, res['result'])
 
                 print(log_message)
+                # 사용자, 이벤트 데이터 맵핑 
 
                 # 로그 파일 저장
                 with open(log_file_path, "a", encoding="utf-8") as log_file:
                     log_file.write(log_message + "\n")
-
+            
+            # 사용자 , 이벤트 맵핑 정보 등록
+            set_user_mapp() 
+            
     except Exception as e:
         print(f"[{now}] 배치 실행 중 오류 발생: {e}")
 

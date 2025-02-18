@@ -95,6 +95,28 @@ def selectQuery(qType, values):
                 ON EM.COR_NO = CM.COR_NO
                 AND CM.USE_YN = 'Y';
         """
+    
+    elif qType == "Q14": # USER, EVENT 매핑 테이블 등록
+        query = "INSERT INTO USER_EVT_MAPP (US_ET_MAPPING_ID, USER_ID , EVT_ID) VALUES (%s, %s, %s)"
+
+    elif qType == "Q15": # USER, EVENT 매핑 대상 조회
+        query = """
+            SELECT 
+                U.USER_ID,
+                E.EVT_ID
+            FROM (
+                SELECT USER_ID FROM CLIENT_USER WHERE USE_YN = 'Y'
+            ) AS U
+            JOIN EVT_MST AS E
+                ON E.USE_YN = 'Y'
+            ORDER BY USER_ID , EVT_ID    
+            """
+
+    elif qType == "Q16": # USER, EVENT 매핑 테이블 등록
+        query = "DELETE FROM USER_EVT_MAPP "
+
+    elif qType == "Q17": # 특정 UNIQUE_ID 삭제
+        query = "DELETE FROM UNIQUE_IDS WHERE LETTER =%s "    
 
     elif qType == "Q17": # 배치 공휴일 등록 
         query = """
