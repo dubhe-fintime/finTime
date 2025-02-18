@@ -35,6 +35,8 @@ from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
+from util import getHoliday
+
 from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
 
 # 서버 경로 취득
@@ -144,6 +146,26 @@ ALLOWED_SUBNETS = [ipaddress.IPv4Network("192.168.0.0/24")]  # 192.168.0.* 대�
 #     # 특정 IP 대역 허용
 #     if not is_allowed_ip(client_ip):
 #         abort(403)  # 403 Forbidden 응답
+
+# 날씨 API
+async def holidayAPI():
+    results = await getHoliday.API_Holiday()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "fin_id": "T000000036", # TASK ID 지정
+        "result": results     # 응답결과
+
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
 
 
 
@@ -897,6 +919,12 @@ async def test13():
 ################## 보험 END ###############################
 ################## 관리자 업무 START ###############################
 
+# SET HOLIDAY DATA
+def set_batch_holiday(hol_date,hoi_yn,hoi_name):
+    values = (hol_date, hoi_yn, hoi_name)
+    execute_mysql_query_insert("Q17",values) # BATCH LOG 등록
+
+
 # SET BATCH LOG
 def set_batch_log(batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data):
     result_data_str = json.dumps(result_data, ensure_ascii=False)
@@ -1028,6 +1056,11 @@ def scrapingManage():
 def contentsManage():
     return render_template("contentsManage/contentsManage.html", domain=domain, port=port)
 
+# 관리자 공휴일 관리 화면 호출
+@app.route("/etcManage")
+def etcManage():
+    return render_template("etcManage/etcManage.html", domain=domain, port=port)
+
 # 로그아웃 기능
 @app.route('/logout', methods=['POST'])
 def logout():
@@ -1088,6 +1121,7 @@ def changeYnFinance():
         return [success]
     except:
         return [error]
+    
 
 ################## 관리자 업무 END ###############################
 ################## 파일 관리 START ###############################

@@ -4,11 +4,12 @@ import datetime
 import schedule
 import os
 import json
-from main import set_batch_log, set_batch_rst, del_batch_rst, app  # Flask 앱을 임포트
+from main import set_batch_log, set_batch_rst, del_batch_rst, set_batch_holiday, app  # Flask 앱을 임포트
 from main import test1, test2, test3, test4, test5, test6,test7,test8,test9,test10,test11,test12,test13
 from main import card1,card2,card3,card4,card5,card6
 from main import bank1,bank2,bank3,bank4,bank5,bank6,bank7,bank8
 from main import stock1,stock2,stock3,stock4,stock5,stock6,stock7,stock8
+from main import holidayAPI
 
 BATCH_ID = "B000000001"
 BATCH_NM = "이벤트 메인 배치"
@@ -65,7 +66,9 @@ async def my_batch_job():
         "hankook_stock":stock5(),
         "kiwoom_stock":stock6(),
         "shinhan_stock":stock7(),
-        "hana_stock":stock8()
+        "hana_stock":stock8(),
+        
+        "api_holiday":holidayAPI()
     }
 
     try:
@@ -90,27 +93,35 @@ async def my_batch_job():
                     
                     if res['status_code'] == 200:
                         if isinstance(res['result'], list) and len(res['result']) > 0:
-                            cnt += 1
-                            # 스크레핑 결과 정보 DB 삭제(cnt = 1 일때)
-                            del_batch_rst(cnt)
+                            if(task_time == "api_holiday"):
+                                for event in res['result']:
+                                    set_batch_holiday(
+                                        event.get("locdate"),
+                                        event.get("isHoliday"),
+                                        event.get("dateName")
+                                    )
+                            else:
+                                cnt += 1
+                                # 스크레핑 결과 정보 DB 삭제(cnt = 1 일때)
+                                del_batch_rst(cnt)
 
-                            # 스크레핑 결과 정보 DB 저장
-                            for event in res['result']:
-                                set_batch_rst(
-                                    res['bank_cd'],
-                                    event.get('title', ""),
-                                    "",
-                                    event.get('startDt', None) or None,
-                                    event.get('endDt', None) or None,
-                                    event.get('thumbNail', ""),
-                                    event.get('image', ""),
-                                    event.get('noti', ""),
-                                    event.get('listURL', ""),
-                                    event.get('detailURL', "")
-                                )
+                                # 스크레핑 결과 정보 DB 저장
+                                for event in res['result']:
+                                    set_batch_rst(
+                                        res['bank_cd'],
+                                        event.get('title', ""),
+                                        "",
+                                        event.get('startDt', None) or None,
+                                        event.get('endDt', None) or None,
+                                        event.get('thumbNail', ""),
+                                        event.get('image', ""),
+                                        event.get('noti', ""),
+                                        event.get('listURL', ""),
+                                        event.get('detailURL', "")
+                                    )
 
-                    # 배치 로그 DB 저장
-                    set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, status, res['result'])
+                        # 배치 로그 DB 저장
+                        set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, status, res['result'])
 
                 print(log_message)
 

@@ -92,6 +92,7 @@
           <tbody id="dataContent" class="tbody"></tbody>
         </table>
       </div>
+      <br>
       <button id="moreContent" class="btn tertiary sm">더보기</button>
     </main>
   </div>
@@ -185,7 +186,7 @@
                         <div class="input-wrap sm">
                             <input id="corNoInput" class="input" placeholder="기관번호를 입력 해 주세요" 
                                 onfocus="FocusInput('corNoInput')" oninput="ChangeInput('corNoInput')" onblur="BlurInput('corNoInput')"
-                                value="${cor_no}">
+                                value="${cor_no}" required>
                             <span class="delete-btn" onclick="DeleteInput('corNoInput')"></span>
                         </div>
                     </fieldset>
@@ -195,7 +196,7 @@
                         <div class="input-wrap sm">
                             <input id="corNmInput" class="input" placeholder="기관명을 입력 해 주세요" 
                                 onfocus="FocusInput('corNmInput')" oninput="ChangeInput('corNmInput')" onblur="BlurInput('corNmInput')"
-                                value="${title}">
+                                value="${title}" required>
                             <span class="delete-btn" onclick="DeleteInput('corNmInput')"></span>
                         </div>
                     </fieldset>
@@ -255,6 +256,7 @@
 
   //추가|수정
   function addGroup(flag=true) {
+  checkRequired()
   let target_data = {}
   $("#addGroup input , #addGroup textarea").each(function() {
       target_data[$(this).attr("id")] = $(this).val()
@@ -345,6 +347,13 @@
             oHtml +=`</tr>`
       });
       $("#dataContent").append(oHtml);
+    }
+
+
+    function checkRequired(){
+      $("input[required]").each(function(){
+        console.log($(this).val())
+      })
     }
 
 </script>

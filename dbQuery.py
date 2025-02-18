@@ -96,6 +96,13 @@ def selectQuery(qType, values):
                 AND CM.USE_YN = 'Y';
         """
 
+    elif qType == "Q17": # 배치 공휴일 등록 
+        query = """
+            INSERT INTO HOI_DAY 
+            (HOI_DATE ,HOI_YN ,HOI_NAME)
+            VALUES (%s, %s, %s);
+        """
+
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
         query += "    a.COR_NO cor_no, "
@@ -126,7 +133,6 @@ def selectQuery(qType, values):
         if len(values[1])>0 :
             query += f" AND a.EVT_TITLE LIKE ('{values[1]}')"
 
-        print(query)
     elif qType == "A2": # 배치데이터 이벤트 테이블 적용
         query =  "INSERT INTO EVT_MST "
         query += "	(	 "
