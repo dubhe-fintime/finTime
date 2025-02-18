@@ -924,7 +924,11 @@ def set_user_mapp():
         logger.debug("No data found from Q15")
 
     for item in results:
+        print("######################################")
+        print("######################################")
+        print("######################################")
         values = [get_next_id("M"), item[0],item[1]]
+        print(values)
         execute_mysql_query_insert("Q14",values) # USER EVENT MAPPING 데이터 등록
 
 #####################
