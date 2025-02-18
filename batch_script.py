@@ -114,12 +114,13 @@ async def my_batch_job():
 
                 print(log_message)
                 # 사용자, 이벤트 데이터 맵핑 
-                set_user_mapp() 
 
                 # 로그 파일 저장
                 with open(log_file_path, "a", encoding="utf-8") as log_file:
                     log_file.write(log_message + "\n")
             
+            # 사용자 , 이벤트 맵핑 정보 등록
+            set_user_mapp() 
             
     except Exception as e:
         print(f"[{now}] 배치 실행 중 오류 발생: {e}")
