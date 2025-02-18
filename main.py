@@ -922,6 +922,7 @@ def set_user_mapp():
     if not results:
         logger.debug("No data found from Q15")
 
+    execute_mysql_query_delete('Q16', []) # USER EVENT MAPPING 데이터 초기화
     for item in results:
         values = [get_next_id("M"), item[0],item[1]]
         execute_mysql_query_insert("Q14",values) # USER EVENT MAPPING 데이터 등록

@@ -112,6 +112,9 @@ def selectQuery(qType, values):
             ORDER BY USER_ID , EVT_ID    
             """
 
+    elif qType == "Q14": # USER, EVENT 매핑 테이블 등록
+        query = "DELETE FROM USER_EVT_MAPP "
+
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
         query += "    a.COR_NO cor_no, "
