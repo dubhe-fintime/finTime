@@ -915,6 +915,23 @@ def del_batch_rst(cnt):
     if cnt == 1:
         execute_mysql_query_delete('Q3', []) # BATCH 데이터 전체 삭제
 
+# SET USER EVENT MAPPING 등록
+def set_user_mapp():
+    
+    results = execute_mysql_query_select("Q15",[])
+
+    if not results:
+        logger.debug("No data found from Q15")
+
+    for item in results:
+        values = [get_next_id("M"), item[1],item[2]]
+        execute_mysql_query_insert("Q14",values) # USER EVENT MAPPING 데이터 등록
+
+#####################
+# TODO: 아이디 생성시 해당 주석에 사용 이니셜, 사용처 작성
+# E: 이벤트 ID
+# M : USER, EVENT MAPPING 아이디
+#####################
 # 고유ID 생성
 def get_next_id(letter):
     # 주어진 letter에 해당하는 가장 최신 시퀀스를 조회
