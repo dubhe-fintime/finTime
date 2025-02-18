@@ -60,33 +60,64 @@ def execute_mysql_query_insert(queryId, values):
         cnx.commit()
     except Exception as e:
         print(f"Error occurred: {e}")
-        cnx.rollback()
+        if cnx:  # 연결이 열려 있다면 롤백
+            cnx.rollback()
         raise
     finally:
-        cursor.close()
-        cnx.close()
+        if cursor:  # ✅ 커서가 None이 아닐 경우 닫기
+            cursor.close()
+        if cnx:  # ✅ 연결이 None이 아닐 경우 닫기
+            cnx.close()
 
 # Update 쿼리 처리 (DB conn -> Query Search -> result -> DB conn close)
 def execute_mysql_query_update(queryId, values):
-    cnx = conn_mysql()
-    cursor = cnx.cursor() 
+    cnx = None
+    cursor = None
     try:
+        cnx = conn_mysql()  # MySQL 연결을 받아옴
+        cursor = cnx.cursor()  # 커서 생성
+
+        # 쿼리 실행 (values를 튜플로 변환하여 전달)
         cursor.execute(selectQuery(queryId, values), tuple(values))
-        cnx.commit()
+        cnx.commit()  # 커밋
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        if cnx:  # 연결이 열려 있다면 롤백
+            cnx.rollback()
+        raise
+    
     finally:
-        cursor.close()
-        cnx.close()
+        if cursor:  # 커서가 열려있다면 닫기
+            cursor.close()
+        if cnx:  # 연결이 열려있다면 닫기
+            cnx.close()
+
 
 # Delete 쿼리 처리 (DB conn -> Query Search -> result -> DB conn close)
 def execute_mysql_query_delete(queryId, values):
-    cnx = conn_mysql()
-    cursor = cnx.cursor()
+    cnx = None
+    cursor = None
     try:
+        cnx = conn_mysql()  # MySQL 연결을 받아옴
+        cursor = cnx.cursor()  # 커서 생성
+
+        # 쿼리 실행 (values를 튜플로 변환하여 전달)
         cursor.execute(selectQuery(queryId, values), tuple(values))
-        cnx.commit()
+        cnx.commit()  # 커밋
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        if cnx:  # 연결이 열려 있다면 롤백
+            cnx.rollback()
+        raise
+    
     finally:
-        cursor.close()
-        cnx.close()
+        if cursor:  # 커서가 열려있다면 닫기
+            cursor.close()
+        if cnx:  # 연결이 열려있다면 닫기
+            cnx.close()
+
 
 # 단순 쿼리 처리 (DB conn -> Query Search -> result -> DB conn close)
 def execute_mysql_query_rest(queryId, values):
