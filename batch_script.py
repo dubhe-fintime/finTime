@@ -94,6 +94,7 @@ async def my_batch_job():
                     if res['status_code'] == 200:
                         if isinstance(res['result'], list) and len(res['result']) > 0:
                             if(task_time == "api_holiday"):
+                                print("여기!!!!!!!!!!!")
                                 for event in res['result']:
                                     set_batch_holiday(
                                         event.get("locdate"),
