@@ -919,7 +919,9 @@ def del_batch_rst(cnt):
 def set_user_mapp():
     
     results = execute_mysql_query_select("Q15",[])
-
+    print("######################################")
+    print("######################################")
+    print(len(results))
     if not results:
         logger.debug("No data found from Q15")
 

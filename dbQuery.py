@@ -105,7 +105,6 @@ def selectQuery(qType, values):
                 U.USER_ID,
                 E.EVT_ID
             FROM (
-                -- 회원관리 테이블에서 사용 중인 사용자
                 SELECT USER_ID FROM CLIENT_USER WHERE USE_YN = 'Y'
             ) AS U
             JOIN EVT_MST AS E
