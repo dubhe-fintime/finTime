@@ -13,9 +13,10 @@ from main import holidayAPI
 
 BATCH_ID = "B000000001"
 BATCH_NM = "이벤트 메인 배치"
-random_number = random.randint(100000, 999999)
+
 # 비동기 작업 함수
 async def my_batch_job():
+    
     # logs 폴더 경로 설정 (현재 실행 경로의 한 단계 위)
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
     os.makedirs(log_dir, exist_ok=True)  # logs 폴더가 없으면 생성
@@ -25,8 +26,8 @@ async def my_batch_job():
     log_file_path = os.path.join(log_dir, f"batch_log_{today}.log")
     
     now = datetime.datetime.now()
-    print(f"[{now}] 배치 작업 실행 중...")
-
+    random_number = random.randint(100000, 999999)
+    print(f"[{now}] 배치 작업 실행 중... 함수번호[{random_number}]")
     # 실행할 작업 정의
     tasks = {
 
