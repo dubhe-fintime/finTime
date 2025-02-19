@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>배치 재기동</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinTime | 배치치 관리</title>
+    <link href="{{ url_for('static', filename='style/common.css') }}" rel="stylesheet" />
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
         .container { width: 1200px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; margin-bottom:20px; }
@@ -47,9 +51,13 @@
             word-wrap: break-word;
         }
     </style>
-</head>
+  </head>
 <body>
-
+    <div class="container">
+        <main class="main-area">
+          <h2 class="title">컨텐츠 관리</h2>
+        </main>
+    </div>
     <div class="container">
         <h2>배치 컨트롤</h2>
         <button onclick="startBatch()">🚀 배치 시작</button>
@@ -57,8 +65,6 @@
         <button onclick="checkBatchStatus()">🔍 상태 확인</button>
 
         <p id="status">⏳ 배치 상태 확인 중...</p>
-
-        
     </div>
     
     <div class="container">
