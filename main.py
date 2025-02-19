@@ -1291,7 +1291,7 @@ def batchStatus():
 
 # 배치 결과 통계 조회    
 @app.route('/batchResultSearch', methods=["POST"])
-def batchStatus():
+def batchResultSearch():
     results = execute_mysql_query_select("Q19", [])
 
     datas = []
