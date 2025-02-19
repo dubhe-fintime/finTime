@@ -103,7 +103,7 @@
             fetch("/batchResultSearch", { method: "POST" })
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("totalCount").innerText = data[0].total_cnt;
+                    document.getElementById("totalCount").innerText = data[0].tot_cnt;
                     document.getElementById("successCount").innerText = data[0].success_cnt;
                     document.getElementById("failCount").innerText = data[0].fail_cnt;
                 })
