@@ -34,7 +34,7 @@ async def get432Data():
     event_list = []
     
     # 크롤링URL
-    url = "https://www.hanwhalife.com/main/benefit/event/BS_EQEV000_P10000.do1111111" 
+    url = "https://www.hanwhalife.com/main/benefit/event/BS_EQEV000_P10000.do" 
     # 메인 URL 
     domain = re.match(r"(https?://[^/]+)", url).group(1)
     ######### 기초 설정 END ##############
