@@ -20,6 +20,9 @@ class TLSAdapter(HTTPAdapter):
         context = ssl.create_default_context()
         context.check_hostname = True  # SSL 인증서 검증 비활성화
         context.verify_mode = ssl.CERT_REQUIRED
+        context = ssl.create_default_context()
+        context.set_ciphers('ALL')  # SSL/TLS에서 모든 암호화 알고리즘을 허용
+        context.options |= ssl.OP_LEGACY_SERVER_CONNECT  # 안전하지 않은 구식 재협상 허용
         kwargs["ssl_context"] = context
         super().init_poolmanager(*args, **kwargs)
 
