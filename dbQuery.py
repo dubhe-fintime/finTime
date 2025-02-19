@@ -164,7 +164,7 @@ def selectQuery(qType, values):
 
                 """
 
-    elif qType == "Q19": # 배치 공휴일 등록 
+    elif qType == "Q20": # 배치 공휴일 등록 
         query = """
             SELECT 
                 HOI_DATE,
