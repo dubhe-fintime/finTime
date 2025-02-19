@@ -1488,7 +1488,7 @@ def getEventMst():
 
 @app.route('/getHoiDay', methods=["POST"])
 def getHoiDay():
-    results = execute_mysql_query_select("Q19", [])
+    results = execute_mysql_query_select("Q20", [])
 
     datas = []
     for item in results:
