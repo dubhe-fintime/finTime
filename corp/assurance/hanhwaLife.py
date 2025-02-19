@@ -36,7 +36,7 @@ async def get432Data():
     # 크롤링URL
     url = "https://www.hanwhalife.com/main/benefit/event/BS_EQEV000_P10000.do" 
     # 메인 URL 
-    domain = re.match(r"(https?://[^/]+)", url).group(1)
+    domain = re.match(r"(https?://[^/]+)", url).group(1) 
     ######### 기초 설정 END ##############
     try:
         # 웹페이지 요청
