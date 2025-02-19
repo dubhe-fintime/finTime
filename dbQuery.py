@@ -130,6 +130,25 @@ def selectQuery(qType, values):
                     HOI_NAME = %s,
                     U_DATE = SYSDATE()
                 """
+    
+    elif qType == "Q19": # 배치 실행 결과 통계 조회
+        query = """
+                SELECT *,
+                    (SELECT COUNT(*) FROM BATCH_LOG WHERE SEQ = (
+                        SELECT SEQ FROM BATCH_LOG ORDER BY ST_DATE DESC LIMIT 1
+                    )) AS TOTAL_COUNT,
+                    (SELECT COUNT(*) FROM BATCH_LOG WHERE SEQ = (
+                        SELECT SEQ FROM BATCH_LOG ORDER BY ST_DATE DESC LIMIT 1
+                    ) AND STATUS = 'SUCCESS') AS SUCCESS_COUNT,
+                    (SELECT COUNT(*) FROM BATCH_LOG WHERE SEQ = (
+                        SELECT SEQ FROM BATCH_LOG ORDER BY ST_DATE DESC LIMIT 1
+                    ) AND STATUS = 'FAIL') AS FAIL_COUNT
+                FROM BATCH_LOG 
+                WHERE SEQ = (
+                    SELECT SEQ FROM BATCH_LOG ORDER BY ST_DATE DESC LIMIT 1
+                )
+                ORDER BY TASK_ID ASC
+                """
 
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
