@@ -9,7 +9,9 @@
   <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/common.js') }}"></script>
-
+  <style>
+    
+  </style>
 </head>
 
 <body>
@@ -99,35 +101,109 @@
   $(document).ready(function () {
     // session_ok("{{domain}}", "{{port}}");
     selectList()
-    
+
   })
+
+  $("#dataContent").on('dblclick', 'tr', function() {
+      addModal(this)
+  });  
+
+  $("#dataContent").on('dblclick', 'td:last-child', function(e) {
+      e.stopPropagation();  
+      ynModal(this)
+  });
 
   $("#addBtn").click(function () {
     addModal()
   })
 
+
+function clickEvtSelOpt(id, option, name){
+  ClickSelectOption(id,option,name)
+  
+}
   //모달 
-  function addModal() {
-    session_ok("{{domain}}", "{{port}}");
+  function addModal(tag=false) {
+    //session_ok("{{domain}}", "{{port}}");
+    var modal_title = tag ? "기관 수정" : "기관 추가"
+    console.log(tag)
+    var flag = tag ?  true : false  // true는 수정  // false는 추가
+    //요소 바인딩
+    var cor_name = tag ? $(tag).find("td").eq(0).text() : ""
+    var title = tag ? $(tag).find("td").eq(1).text() : ""
+    var start_dt = tag ? $(tag).find("td").eq(2).text().trim() : ""
+    var end_dt = tag ? $(tag).find("td").eq(3).text().trim() : ""
+    var thumbnail_url = tag ? $(tag).find("td").eq(4).find("button").attr('data-value') : ""
+    var img_url = tag ? $(tag).find("td").eq(5).find("button").attr('data-value') : ""
     values = `
-                    <h3>회사 명</h3>
+                    <h3>기관명</h3>
                     <fieldset>
-                        <div class="input-wrap">
-                            <input id="groupname" class="input" placeholder="회사 명을 입력해주세요" 
-                                onfocus="FocusInput('groupname')" oninput="ChangeInput('groupname')" onblur="BlurInput('groupname')"
-                                value="">
-                            <span class="delete-btn" onclick="DeleteInput('groupname')"></span>
+                        <div class="input-wrap sm">
+                            <input id="corNmInput" class="input" placeholder="기관명을 입력 해 주세요" 
+                                onfocus="FocusInput('corNmInput')" oninput="ChangeInput('corNmInput')" onblur="BlurInput('corNmInput')"
+                                value="${cor_name}" readonly>
                         </div>
                     </fieldset>
                     <br>
-                    <h3>그룹 설명</h3>
+                    <h3>이벤트제목</h3>
                     <fieldset>
-                        <textarea id="groupinfo" class="textarea" onfocus="FocusInput('command')"
-                            placeholder="신한은행 챗봇 데모 관리자 그룹"></textarea>
-                    </fieldset>`
-    OpenModal("그룹 추가", "", true, true, "addGroup()", "확인", "취소", "", "md", values)
-  }
+                        <div class="input-wrap sm">
+                            <input id="corNmInput" class="input" placeholder="기관명을 입력 해 주세요" 
+                                onfocus="FocusInput('corNmInput')" oninput="ChangeInput('corNmInput')" onblur="BlurInput('corNmInput')"
+                                value="${title}" readonly>
+                        </div>
+                    </fieldset>
+                    <br>
+                    <h3>이벤트기간</h3>
+                    <fieldset>
+                      <div class="date-wrap align-center"  >
+                        <div class="date-box" style="width:47.5%;float:left"><input type="date" id="startDay" value="${start_dt}"></div>
+                        <span class="unit" >~</span>
+                        <div class="date-box" style="width:47.5%;float:right"><input type="date" id="endDay" value="${end_dt}"></div>
+                      </div>
+                    </fieldset>
+                    <h3>썸네일</h3>
+                    <fieldset>
+                        <div class="input-wrap sm">
+                            <div class="select-box xs" >
+                              <strong class="label" onclick="ClickSelectLabel('thumbOpt')" id="thumbOpt" name="" >URL</strong>
+                              <ul class="options type">
+                                <li class="option thumb" onclick="clickEvtSelOpt('thumbOpt','URL','url')">
+                                  URL
+                                </li>
+                                <li class="option thumb" onclick="clickEvtSelOpt('thumbOpt','파일','file')">
+                                  파일
+                                </li>
+                              </ul>
+                            </div>
+                            <div class="input-wrap sm">
+                              <input id="thumbUrlInput" class="input" placeholder="썸네일 이미지 URL을 입력 해 주세요" 
+                                onfocus="FocusInput('thumbUrlInput')" oninput="ChangeInput('thumbUrlInput')" onblur="BlurInput('thumbUrlInput')"
+                                value="${thumbnail_url}">
+                              <span class="delete-btn" onclick="DeleteInput('thumbUrlInput')"></span>
+                              <button>미리보기</button>
+                            </div>
+                            <div class="input-wrap sm">
+                              <input type="file" id="file-input" accept="image/*" style="display:none">
+                            </div>
+                          </div>
 
+                    </fieldset>
+                    <br>
+                    <h3>이미지 URL</h3>
+                    <fieldset>
+                        <div class="input-wrap sm">
+                            <input id="imgUrlInput" class="input" placeholder="이미지 URL을 입력 해 주세요" 
+                                onfocus="FocusInput('imgUrlInput')" oninput="ChangeInput('imgUrlInput')" onblur="BlurInput('imgUrlInput')"
+                                value="${img_url}">
+                            <span class="delete-btn" onclick="DeleteInput('imgUrlInput')"></span>
+                        </div>
+                    </fieldset>    `
+    OpenModal("이벤트 상세", "", true, true, "addGroup()", "확인", "취소", "", "lg", values)
+  }
+function changeTest(){
+  console.log('test')
+}
   // 전체 조회
   function selectList() {
 
@@ -169,8 +245,8 @@
                       <td>${v['evt_title']}</td>
                       <td>${v['evt_st_date']} </td>
                       <td>${v['evt_ed_date']} </td>
-                      <td><button id='thumbBtn' class='btn primary sm'>썸네일</button></td>
-                      <td><button id='imgBtn' class='btn primary sm'>이미지</button></td>
+                      <td><button id='thumbBtn' class='btn primary sm' data-value="${v['evt_thumbnail']}">썸네일</button></td>
+                      <td><button id='imgBtn' class='btn primary sm' data-value="${v['evt_img']}" >이미지</button></td>
                       <td><button id='listBtn' class='btn primary sm'>리스트</button></td>
                       <td><button id='dtBtn' class='btn primary sm'>디테일</button></td>`
                   values += statusCol
