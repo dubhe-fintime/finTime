@@ -1268,24 +1268,47 @@ def uploadTest():
 def batchControl():
     return render_template("common/batchControl.html", domain=domain, port=port)    
 
+# 배치 시작
 @app.route('/batchStart', methods=["POST"])
 def batchStart():
     result = start_batch()
     logger.info(str(result))
     return result
 
+# 배치 종료
 @app.route('/batchStop', methods=["POST"])
 def batchStop():
     result = stop_batch()
     logger.info(str(result))
     return result
 
+# 배치 상태 조회회
 @app.route('/batchStatus', methods=["POST"])
 def batchStatus():
     result = check_batch_status()
     logger.info(str(result))
     return result
-    
+
+# 배치 결과 통계 조회    
+@app.route('/batchResultSearch', methods=["POST"])
+def batchStatus():
+    results = execute_mysql_query_select("Q19", [])
+
+    datas = []
+    for item in results:
+        data = {
+            'task_nm': item[4],
+            'st_date': item[5],
+            'ed_date': item[6],
+            'status': item[7],
+            'tot_cnt': item[10],
+            'success_cnt': item[11],
+            'fail': item[12]
+        }
+        datas.append(data)
+
+    return jsonify(datas)
+
 ################## 배치 관리 END ###############################
 ############## 관리자 START ############################
 @app.route('/batchDataList', methods=["POST"])
