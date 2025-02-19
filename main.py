@@ -1266,29 +1266,55 @@ def uploadTest():
     return render_template("common/uploadTest.html", domain=domain, port=port)    
 ################## 파일 관리 END ###############################
 ################## 배치 관리 START ###############################
-# 배치관리 샘플 화면
-@app.route("/batchTest")
-def batchTest():
-    return render_template("common/batchTest.html", domain=domain, port=port)    
+# 배치관리 화면
+@app.route("/batchControl")
+def batchControl():
+    return render_template("common/batchControl.html", domain=domain, port=port)    
 
+# 배치 시작
 @app.route('/batchStart', methods=["POST"])
 def batchStart():
     result = start_batch()
     logger.info(str(result))
     return result
 
+# 배치 종료
 @app.route('/batchStop', methods=["POST"])
 def batchStop():
     result = stop_batch()
     logger.info(str(result))
     return result
 
+# 배치 상태 조회회
 @app.route('/batchStatus', methods=["POST"])
 def batchStatus():
     result = check_batch_status()
     logger.info(str(result))
     return result
-    
+
+# 배치 결과 통계 조회    
+@app.route('/batchResultSearch', methods=["POST"])
+def batchResultSearch():
+    results = execute_mysql_query_select("Q19", [])
+    print("##############1")
+    print(results)
+    datas = []
+    for item in results:
+        data = {
+            'batch_nm': item[0],
+            'task_nm': item[1],
+            'st_date': item[2],
+            'ed_date': item[3],
+            'status': item[4],
+            'tot_cnt': item[5],
+            'success_cnt': item[6],
+            'fail_cnt': item[7]
+        }
+        datas.append(data)
+    print("##############2")
+    print(datas)
+    return jsonify(datas)
+
 ################## 배치 관리 END ###############################
 ############## 관리자 START ############################
 @app.route('/batchDataList', methods=["POST"])
