@@ -133,7 +133,12 @@ def selectQuery(qType, values):
     
     elif qType == "Q19": # 배치 실행 결과 통계 조회
         query = """
-                SELECT BATCH_NM, TASK_NM, ST_DATE, ED_DATE, STATUS,
+                SELECT 
+                    BATCH_NM, 
+                    TASK_NM, 
+                    TO_CHAR(ST_DATE, 'YYYY.MM.DD HH24:MI:SS') AS ST_DATE, 
+                    TO_CHAR(ED_DATE, 'YYYY.MM.DD HH24:MI:SS') AS ED_DATE, 
+                    STATUS,
                     (SELECT COUNT(*) FROM BATCH_LOG WHERE SEQ = (
                         SELECT SEQ FROM BATCH_LOG ORDER BY ST_DATE DESC LIMIT 1
                     )) AS TOTAL_COUNT,
@@ -147,7 +152,8 @@ def selectQuery(qType, values):
                 WHERE SEQ = (
                     SELECT SEQ FROM BATCH_LOG ORDER BY ST_DATE DESC LIMIT 1
                 )
-                ORDER BY TASK_ID ASC
+                ORDER BY TASK_ID ASC;
+
                 """
 
     elif qType == "A1": # 배치 데이터 조회
