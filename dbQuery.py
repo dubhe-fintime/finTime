@@ -88,8 +88,14 @@ def selectQuery(qType, values):
     elif qType == "Q13": # 캘린더용 이벤트 조회
         query = """
             SELECT 
-                EM.*,
-                COALESCE(CM.cor_nm, '미등록기관') AS cor_nm
+                EM.COR_NO,
+                COALESCE(CM.cor_nm, '미등록기관') AS cor_nm,
+                EM.EVT_TITLE,
+                EM.EVT_ST_DATE,
+                EM.EVT_ED_DATE,
+                EM.EVT_THUMBNAIL,
+                EM.EVT_LiST_LINK,
+                EM.EVT_DT_LINK
             FROM EVT_MST EM
             LEFT JOIN COR_MST CM 
                 ON EM.COR_NO = CM.COR_NO
@@ -157,6 +163,15 @@ def selectQuery(qType, values):
                 LIMIT 1000;
 
                 """
+
+    elif qType == "Q19": # 배치 공휴일 등록 
+        query = """
+            SELECT 
+                HOI_DATE,
+                HOI_NAME 
+            FROM HOI_DAY
+            WHERE HOI_YN = 'Y';
+        """
 
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "

@@ -1461,7 +1461,7 @@ def updateEvent():
         return jsonify({"error": str(e)}), 500
 ################## 관리자 END ############################
 @app.route('/getEventMst', methods=["POST"])
-def eventMst():
+def getEventMst():
     #data = request.get_json()  # 전송된 JSON 데이터 받아오기
     #start = data.get("start")
     #end = data.get("end")
@@ -1473,13 +1473,27 @@ def eventMst():
     for item in results:
         data = {
             'cor_no': item[0],
-            'cor_nm': item[12],
-            'evt_title': item[1],
+            'cor_nm': item[1],
+            'evt_title': item[2],
             'evt_st_dt': item[3],
             'evt_ed_dt': item[4],
             'evt_thumbnail': item[5],
-            'evt_list_link': item[8],
-            'evt_dt_link': item[9]
+            'evt_list_link': item[6],
+            'evt_dt_link': item[7]
+        }
+        datas.append(data)
+
+    return jsonify(datas)
+
+@app.route('/getHoiDay', methods=["POST"])
+def getHoiDay():
+    results = execute_mysql_query_select("Q19", [])
+
+    datas = []
+    for item in results:
+        data = {
+            'hoi_date': item[0],
+            'hoi_name': item[1]
         }
         datas.append(data)
 
