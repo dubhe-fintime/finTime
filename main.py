@@ -1293,7 +1293,8 @@ def batchStatus():
 @app.route('/batchResultSearch', methods=["POST"])
 def batchResultSearch():
     results = execute_mysql_query_select("Q19", [])
-
+    print("##############1")
+    print(results)
     datas = []
     for item in results:
         data = {
@@ -1306,7 +1307,8 @@ def batchResultSearch():
             'fail': item[12]
         }
         datas.append(data)
-
+    print("##############2")
+    print(datas)
     return jsonify(datas)
 
 ################## 배치 관리 END ###############################
