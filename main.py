@@ -1298,13 +1298,13 @@ def batchResultSearch():
     datas = []
     for item in results:
         data = {
-            'task_nm': item[4],
-            'st_date': item[5],
-            'ed_date': item[6],
-            'status': item[7],
-            'tot_cnt': item[10],
-            'success_cnt': item[11],
-            'fail': item[12]
+            'task_nm': item[0],
+            'st_date': item[1],
+            'ed_date': item[3],
+            'status': item[3],
+            'tot_cnt': item[4],
+            'success_cnt': item[5],
+            'fail': item[6]
         }
         datas.append(data)
     print("##############2")
