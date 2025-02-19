@@ -9,17 +9,47 @@
         .container { width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
         button { margin: 10px; padding: 10px 15px; font-size: 16px; cursor: pointer; }
         #status { font-size: 18px; font-weight: bold; margin-top: 20px; }
+        .summary-container { margin-top: 20px; }
+        .summary { font-size: 16px; font-weight: bold; margin: 10px 0; }
+        .success { color: green; }
+        .fail { color: red; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f4f4f4; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>배치 테스트</h2>
+        <h2>배치 컨트롤</h2>
         <button onclick="startBatch()">🚀 배치 시작</button>
         <button onclick="stopBatch()">🛑 배치 중지</button>
         <button onclick="checkBatchStatus()">🔍 상태 확인</button>
 
         <p id="status">⏳ 배치 상태 확인 중...</p>
+
+        <div class="summary-container">
+            <h2>배치 실행 결과</h2>
+            <div class="summary">
+                <strong>전체 건수:</strong> <span id="totalCount"></span> | 
+                <strong>성공 건수:</strong> <span id="successCount" class="success"></span> | 
+                <strong>실패 건수:</strong> <span id="failCount" class="fail"></span>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>업체명</th>
+                    <th>성공 여부</th>
+                    <th>실행 시작 시간</th>
+                    <th>실행 종료 시간</th>
+                </tr>
+            </thead>
+            <tbody id="batchResults">
+                <!-- 데이터가 들어갈 자리 -->
+            </tbody>
+        </table>
     </div>
 
     <script>
