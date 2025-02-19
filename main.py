@@ -1263,10 +1263,10 @@ def uploadTest():
     return render_template("common/uploadTest.html", domain=domain, port=port)    
 ################## 파일 관리 END ###############################
 ################## 배치 관리 START ###############################
-# 배치관리 샘플 화면
-@app.route("/batchTest")
-def batchTest():
-    return render_template("common/batchTest.html", domain=domain, port=port)    
+# 배치관리 화면
+@app.route("/batchControl")
+def batchControl():
+    return render_template("common/batchControl.html", domain=domain, port=port)    
 
 @app.route('/batchStart', methods=["POST"])
 def batchStart():
