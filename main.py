@@ -925,9 +925,9 @@ def set_batch_holiday(hol_date,hoi_yn,hoi_name):
 
 
 # SET BATCH LOG
-def set_batch_log(batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data, seq):
+def set_batch_log(batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data, seq, realType):
     result_data_str = json.dumps(result_data, ensure_ascii=False)
-    values = (batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data_str, seq)
+    values = (batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data_str, seq, realType)
     execute_mysql_query_insert("Q1",values) # BATCH LOG 등록
 
 # SET BATCH 데이터

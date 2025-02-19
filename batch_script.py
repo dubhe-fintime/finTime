@@ -129,7 +129,7 @@ async def my_batch_job():
                                     )
 
                     # 배치 로그 DB 저장
-                    set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, status, res['result'], random_number)
+                    set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, status, res['result'], random_number, is_batch_running())
 
                 # 로그 파일 저장
                 with open(log_file_path, "a", encoding="utf-8") as log_file:
