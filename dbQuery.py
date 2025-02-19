@@ -188,7 +188,6 @@ def selectQuery(qType, values):
         if len(values[1])>0 :
             query += f" AND a.EVT_TITLE LIKE '%{values[1]}%'"
 
-        print(query)
     elif qType == "A2": # 배치데이터 이벤트 테이블 적용
         query =  "INSERT INTO EVT_MST "
         query += "	(	 "
@@ -253,6 +252,26 @@ def selectQuery(qType, values):
             query += f" AND a.EVT_TITLE LIKE '%{values[1]}%'"
         if len(values[2])>0 :
             query += f" AND a.USE_YN = '{values[2]}'"
+
+
+    elif qType == "C1": # 로그인 기능
+        query = """
+                SELECT  USER_ID,
+                    NAME,
+                    COALESCE(FIRST_LOGINT,"") 
+                    FROM CLIENT_USER WHERE USER_ID = %s AND PASSWORD = %s
+                """
+    elif qType == "C2":  # 로그인 이력 업데이트
+        query = "UPDATE CLIENT_USER SET RECENT_LOGIN = SYSDATE() "
+        if len(values) == 2: 
+            values.pop()
+            query += ", FIRST_LOGINT = SYSDATE() "
+        query += " WHERE USER_ID =  %s "
+
+
+
+
+
 
     # print("###################################")
     # print(query)

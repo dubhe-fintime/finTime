@@ -1029,17 +1029,20 @@ def adminLogin_check():
     #     return [success]
     # 로그인 기능 없으므로 주석 종료 kcr 250211
 
-# 클라이언트 로그인 API
 @app.route('/clientLogin', methods=["POST"])
 def clientLogin_check():
-    data = request.get_json()  # 전송된 JSON 데이터 받아오기
-    username = data.get("username")
-    password = data.get("password")
-    values = [username, password]
-    results = execute_mysql_query_select("Q27", values)
-    print(results)
+    data = request.get_json()
+    username, password = data.get("id"), data.get("pw")
+    results = execute_mysql_query_select("C1", [username, password])
+    if not results:
+        return [error]
 
-    return results
+    target = [username, ""] if not results[0][2] else [username]
+    execute_mysql_query_update("C2", target)
+    return [success]
+
+
+
 
 # 관리자 메인 화면 호출
 @app.route("/adminMain")
