@@ -136,8 +136,8 @@ def selectQuery(qType, values):
                 SELECT 
                     BATCH_NM, 
                     TASK_NM, 
-                    TO_CHAR(ST_DATE, 'YYYY.MM.DD HH24:MI:SS') AS ST_DATE, 
-                    TO_CHAR(ED_DATE, 'YYYY.MM.DD HH24:MI:SS') AS ED_DATE, 
+                    DATE_FORMAT(ST_DATE, '%Y.%m.%d %H:%i:%s') AS ST_DATE, 
+                    DATE_FORMAT(ED_DATE, '%Y.%m.%d %H:%i:%s') AS ED_DATE, 
                     STATUS,
                     (SELECT COUNT(*) FROM BATCH_LOG WHERE SEQ = (
                         SELECT SEQ FROM BATCH_LOG ORDER BY ST_DATE DESC LIMIT 1
@@ -152,7 +152,8 @@ def selectQuery(qType, values):
                 WHERE SEQ = (
                     SELECT SEQ FROM BATCH_LOG ORDER BY ST_DATE DESC LIMIT 1
                 )
-                ORDER BY TASK_ID ASC;
+                ORDER BY TASK_ID ASC
+                LIMIT 1000;
 
                 """
 
