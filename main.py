@@ -34,7 +34,6 @@ from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard
 from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock,shinhanStock,kiwoomStock,hanaStock
 
 from batch_handler import start_batch, stop_batch, check_batch_status
-from batch_script import is_batch_running
 
 from util import getHoliday
 
@@ -1317,10 +1316,6 @@ def batchResultSearch():
     print(datas)
     return jsonify(datas)
 
-@app.route("/batchStatus", methods=["GET"])
-def batch_status():
-    status = is_batch_running()
-    return jsonify({"status": status})
 
 ################## 배치 관리 END ###############################
 ############## 관리자 START ############################
