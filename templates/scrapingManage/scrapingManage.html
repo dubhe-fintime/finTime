@@ -53,13 +53,14 @@
         <button id="searchBtn" class="btn primary md search-btn" onclick="javascript:selectList()">검색</button>
       </form>
       <div class="table-area">
-        <div class="flex justify-between align-end" style ="display:none">
+        <div class="flex justify-between align-end" style="position:sticky">
           <strong class="count"></strong>
-          <button class="btn tertiary sm" id="addBtn" onclick=""> + 그룹 추가</button>
+          <button class="btn tertiary sm" id="multiApplyBtn" onclick=""> 선택 적용</button>
         </div>
         <table class="table intent-table">
           <caption>스크래핑 데이터 관리 테이블</caption>
           <colgroup>
+            <col width="30px" />
             <col width="80px" />
             <col />
             <col width="80px" />
@@ -72,6 +73,10 @@
           </colgroup>
           <thead class="thead type2">
             <tr>
+              <th>
+                <input id="allCheck" type="checkbox" class="checkbox" />
+                <label for="allCheck" class="checkbox-label" onclick="ChangeCheckBox2('allCheck')">체크</label>
+              </th>
               <th>기관명</th>
               <th>이벤트제목</th>
               <th>시작일</th>
@@ -102,6 +107,9 @@
     
   })
 
+  $("#multiApplyBtn").click(function () {
+    insertEvent(true,'')
+  })
   $("#addBtn").click(function () {
     addModal()
   })
@@ -151,23 +159,29 @@
                 values = ``
                 data.forEach((v, i) => {
                   var status = v['evt_status'];
+                  var chkCol =''
                   var statusCol = ''
                   if(status =='NONE')
                   {
-                    statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="insertEvent(this)">적용</button></td>`
+                    chkCol = `<td><input id='chk${i+1}' type="checkbox" class="checkbox" /><label for='chk${i+1}' class="checkbox-label chi" onclick="ChangeCheckBox2('chk${i+1}')">체크</label></td>`
+                    statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="insertEvent(false,this)">적용</button></td>`
                   }
                   else if(status =='Y')
                   {
                     // statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="updateEvent(this)">비노출</button></td>`
+                    chkCol = `<td></td>`
                     statusCol = `<td>노출</td>`
                   }
                   else if(status =='N')
                   {
                     // statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="updateEvent(this)">재노출</button></td>`
+                    chkCol = `<td></td>`
                     statusCol = `<td>비노출</td>`
                   }
                   values += `    
-                    <tr data-id="${i+1}" name="${v['evt_title']}" explain="${v['evt_title']}">
+                    <tr data-id="${i+1}" name="${v['evt_title']}" explain="${v['evt_title']}">` 
+                  values += chkCol
+                  values += ` 
                       <td>${v['cor_nm']}</td>
                       <td>${v['evt_title']}</td>
                       <td>${v['evt_st_date']} </td>
@@ -187,11 +201,38 @@
             });
   
   }
-  function insertEvent(button) {
+  function insertEvent(multiFlag,button) {
 
     let formData = new FormData();
+    let check_data = [];
     
-    formData.append("datas", JSON.stringify(JSON.parse(button.getAttribute("data-json"))));
+    if(multiFlag){
+      $("label.checked.chi").each(function (index) {
+          console.log(index)
+          console.log($(this).parent().closest("tr").find("td").eq(2).html())
+          let jsonData = $(this).parent().closest("tr").find("td:last button").attr("data-json");
+          console.log(jsonData)
+          check_data.push(JSON.parse(jsonData));  // 문자열 → JSON 객체 변환
+      });
+      var cnt = check_data.length;
+      if(cnt==0)
+      {
+        alert('선택 된 이벤트가 없습니다')
+        return false;
+      }
+      else
+      {
+        confirm(cnt+'개의 이벤트를 적용하시겠습니까?')
+        return false
+      }
+    }
+    else
+    {
+      check_data.push(JSON.parse(button.getAttribute("data-json")));  // JSON 객체로 변환하여 저장
+    }
+    console.log(check_data.length);
+    console.log(check_data);
+    formData.append("datas", JSON.stringify(check_data));  // JSON 배열로 변환 후 전송
 
     fetch("/insertEvent", {
                 method: "POST",
@@ -199,11 +240,53 @@
             })
             .then(response => response.json())
             .then(data => {
-              selectList()
+              if(multiFlag){
+                $("label.checked").each(function () {
+                  
+                    let lastTd = $(this).closest("tr").find("td").last(); // 해당 label이 있는 행의 마지막 <td> 찾기
+                    lastTd.find("button").remove(); // 마지막 <td> 안의 버튼 삭제
+                    lastTd.text("노출"); // "노출" 텍스트 추가
+                    $(this).parent().empty();
+                });
+              }
+              else
+              {
+                $(button).parent().text('노출');
+              }
             })
             .catch(error => {
               console.error("Error:", error);
             });
+  }
+  function multiInsEvent() {
+
+    let formData = new FormData();
+    console.log('abcd')
+
+    let check_data = [];
+    $("label.checked").each(function () {
+      let jsonData = $(this).parent().closest("tr").find("td:last button").attr("data-json");
+      check_data.push(JSON.parse(jsonData));  // 문자열 → JSON 객체 변환
+    });
+
+    console.log(check_data.length);
+    console.log(check_data);
+
+    formData.append("datas", JSON.stringify(check_data));  // JSON 배열로 변환 후 전송
+
+
+    fetch("/insertTestEvent", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+              
+            })
+            .catch(error => {
+              console.error("Error:", error);
+            });
+
   }
   function updateEvent(button) {
 
@@ -217,7 +300,7 @@
             })
             .then(response => response.json())
             .then(data => {
-              selectList()
+              button.text("새 이름");
             })
             .catch(error => {
               console.error("Error:", error);
