@@ -1305,7 +1305,8 @@ def batchResultSearch():
             'status': item[4],
             'tot_cnt': item[5],
             'success_cnt': item[6],
-            'fail_cnt': item[7]
+            'fail_cnt': item[7],
+            'result_data': item[8],
         }
         datas.append(data)
     print("##############2")

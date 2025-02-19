@@ -108,6 +108,7 @@
                     document.getElementById("failCount").innerText = data[0].fail_cnt;
                     const tableBody = document.getElementById("batchResults");
                     tableBody.innerHTML = ""; // 기존 데이터 초기화
+                    debugger;
                     data.forEach(item => {
                         const row = document.createElement("tr");
                         row.innerHTML = `

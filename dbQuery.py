@@ -147,7 +147,8 @@ def selectQuery(qType, values):
                     ) AND STATUS = 'SUCCESS') AS SUCCESS_COUNT,
                     (SELECT COUNT(*) FROM BATCH_LOG WHERE SEQ = (
                         SELECT SEQ FROM BATCH_LOG ORDER BY ST_DATE DESC LIMIT 1
-                    ) AND STATUS = 'FAIL') AS FAIL_COUNT
+                    ) AND STATUS = 'FAIL') AS FAIL_COUNT,
+                    RESULT_DATA
                 FROM BATCH_LOG 
                 WHERE SEQ = (
                     SELECT SEQ FROM BATCH_LOG ORDER BY ST_DATE DESC LIMIT 1
