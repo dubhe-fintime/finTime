@@ -106,6 +106,17 @@
                     document.getElementById("totalCount").innerText = data[0].tot_cnt;
                     document.getElementById("successCount").innerText = data[0].success_cnt;
                     document.getElementById("failCount").innerText = data[0].fail_cnt;
+                    debugger;
+                    data.results.forEach(item => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${item.taskName}</td>
+                            <td class="${item.status === 'SUCCESS' ? 'success' : 'fail'}">${item.status}</td>
+                            <td>${item.startTime}</td>
+                            <td>${item.endTime}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
                 })
                 .catch(error => {
                     console.error("Error:", error);
