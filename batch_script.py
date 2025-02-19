@@ -3,7 +3,7 @@ import time
 import datetime
 import schedule
 import os
-import json
+import random
 from main import set_batch_log, set_batch_rst, del_batch_rst, set_user_mapp, set_batch_holiday, app  # Flask 앱을 임포트
 from main import test1, test2, test3, test4, test5, test6,test7,test8,test9,test10,test11,test12,test13
 from main import card1,card2,card3,card4,card5,card6
@@ -13,7 +13,7 @@ from main import holidayAPI
 
 BATCH_ID = "B000000001"
 BATCH_NM = "이벤트 메인 배치"
-
+random_number = random.randint(100000, 999999)
 # 비동기 작업 함수
 async def my_batch_job():
     # logs 폴더 경로 설정 (현재 실행 경로의 한 단계 위)
@@ -122,7 +122,7 @@ async def my_batch_job():
                                     )
 
                         # 배치 로그 DB 저장
-                        set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, status, res['result'])
+                        set_batch_log(BATCH_ID , BATCH_NM, res['fin_id'], task_name, now, task_time, status, res['result'], random_number)
 
                 # 로그 파일 저장
                 with open(log_file_path, "a", encoding="utf-8") as log_file:
