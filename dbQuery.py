@@ -89,13 +89,14 @@ def selectQuery(qType, values):
         query = """
             SELECT 
                 EM.COR_NO,
-                COALESCE(CM.cor_nm, '미등록기관') AS cor_nm,
+                COALESCE(CM.COR_NM, '미등록기관') AS COR_NM,
                 EM.EVT_TITLE,
                 EM.EVT_ST_DATE,
                 EM.EVT_ED_DATE,
                 EM.EVT_THUMBNAIL,
                 EM.EVT_LiST_LINK,
-                EM.EVT_DT_LINK
+                EM.EVT_DT_LINK,
+                CM.PRI_COLOR
             FROM EVT_MST EM
             LEFT JOIN COR_MST CM 
                 ON EM.COR_NO = CM.COR_NO
