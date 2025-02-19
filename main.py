@@ -1285,7 +1285,7 @@ def batchStop():
     logger.info(str(result))
     return result
 
-# 배치 상태 조회회
+# 배치 상태 조회
 @app.route('/batchStatus', methods=["POST"])
 def batchStatus():
     result = check_batch_status()
@@ -1310,6 +1310,7 @@ def batchResultSearch():
             'success_cnt': item[6],
             'fail_cnt': item[7],
             'result_data': item[8],
+            'row_num': item[9]
         }
         datas.append(data)
     print("##############2")

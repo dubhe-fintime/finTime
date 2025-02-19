@@ -142,6 +142,7 @@
                     data.forEach(item => {
                         const row = document.createElement("tr");
                         row.innerHTML = `
+                            <td>${item.row_num}</td>
                             <td>${item.task_nm}</td>
                             <td class="${item.status === 'SUCCESS' ? 'success' : 'fail'}">${item.status}</td>
                             <td>${item.st_date}</td>
