@@ -13,6 +13,7 @@ from main import holidayAPI
 
 BATCH_ID = "B000000001"
 BATCH_NM = "이벤트 메인 배치"
+task_status = {}
 
 # 비동기 작업 함수
 async def my_batch_job():
@@ -77,8 +78,11 @@ async def my_batch_job():
         with app.app_context():
             # 비동기 작업 실행
             task_futures = {name: asyncio.create_task(func) for name, func in tasks.items()}
+            task_status = {name: "RUNNING" for name in task_futures.keys()}
             responses = await asyncio.gather(*task_futures.values(), return_exceptions=True)
             cnt = 0  # 배치 결과 정상 처리 건수
+
+             # 실행 중인 태스크 저장
             
             # 응답 처리 및 로그 기록
             for (task_name, response) in zip(task_futures.keys(), responses):
@@ -87,10 +91,12 @@ async def my_batch_job():
                 if isinstance(response, Exception):
                     log_message = f"[{task_time}] {task_name} 실행 실패: {response}"
                     # 배치 로그 DB 저장
+                    task_status[task_name] = "FAIL"
                     set_batch_log(BATCH_ID , BATCH_NM, '', task_name, now, task_time, "FAIL", str(response))
                 else:
                     res = response.get_json()
                     status = "SUCCESS" if res['status_code'] == 200 else "FAIL"
+                    task_status[task_name] = status
                     log_message = f"[{task_time}] {task_name} 실행 완료 - 상태: {status}, 응답: {res['result']}"
                     
                     if res['status_code'] == 200:
@@ -154,6 +160,12 @@ def run_batch_job():
 schedule.every(5).minutes.do(run_batch_job)
 
 print("배치 작업이 스케줄링되었습니다. (매일 5분마다 실행)")
+
+# 배치 TASK 실행 완료 확인
+def is_batch_running():
+    if any(status == "RUNNING" for status in task_status.values()):
+        return "RUNNING"
+    return "COMPLETED"
 
 # 무한 루프 실행 (배치 스케줄 유지)
 while True:
