@@ -6,7 +6,7 @@
     <title>배치 재기동</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        .container { width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        .container { width: 1200px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
         button { margin: 10px; padding: 10px 15px; font-size: 16px; cursor: pointer; }
         #status { font-size: 18px; font-weight: bold; margin-top: 20px; }
         .summary-container { margin-top: 20px; }
@@ -28,6 +28,10 @@
 
         <p id="status">⏳ 배치 상태 확인 중...</p>
 
+        
+    </div>
+    
+    <div class="container">
         <div class="summary-container">
             <h2>배치 실행 결과</h2>
             <div class="summary">
@@ -36,7 +40,6 @@
                 <strong>실패 건수:</strong> <span id="failCount" class="fail"></span>
             </div>
         </div>
-
         <table>
             <thead>
                 <tr>
