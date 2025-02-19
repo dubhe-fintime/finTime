@@ -106,14 +106,15 @@
                     document.getElementById("totalCount").innerText = data[0].tot_cnt;
                     document.getElementById("successCount").innerText = data[0].success_cnt;
                     document.getElementById("failCount").innerText = data[0].fail_cnt;
-                    debugger;
-                    data.results.forEach(item => {
+                    const tableBody = document.getElementById("batchResults");
+                    tableBody.innerHTML = ""; // 기존 데이터 초기화
+                    data.forEach(item => {
                         const row = document.createElement("tr");
                         row.innerHTML = `
-                            <td>${item.taskName}</td>
+                            <td>${item.task_nm}</td>
                             <td class="${item.status === 'SUCCESS' ? 'success' : 'fail'}">${item.status}</td>
-                            <td>${item.startTime}</td>
-                            <td>${item.endTime}</td>
+                            <td>${item.st_date}</td>
+                            <td>${item.ed_date}</td>
                         `;
                         tableBody.appendChild(row);
                     });
