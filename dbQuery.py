@@ -20,7 +20,7 @@ def selectQuery(qType, values):
     #     print(len(values))
     # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@E")
     if qType == "Q1": # BACTH LOG 등록
-        query = "INSERT INTO BATCH_LOG (BATCH_ID, BATCH_NM, TASK_ID, TASK_NM, ST_DATE, ED_DATE, STATUS, RESULT_DATA, SEQ, REAL_TYPE) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        query = "INSERT INTO BATCH_LOG (BATCH_ID, BATCH_NM, TASK_ID, TASK_NM, ST_DATE, ED_DATE, STATUS, RESULT_DATA, SEQ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
     elif qType == "Q2": # BACTH 데이터 등록
         query = "INSERT INTO BATCH_RST (COR_NO, EVT_TITLE, EVT_ID, EVT_ST_DATE, EVT_ED_DATE, EVT_THUMBNAIL, EVT_IMG, EVT_NOTI, EVT_LIST_LINK, EVT_DT_LINK) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     elif qType == "Q3": # BACTH 데이터 전체 삭제
