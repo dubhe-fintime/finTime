@@ -1141,14 +1141,29 @@ def changeYnFinance():
     except:
         return [error]
 
-# 공통 코드 조회
+# 공통 코드 조회 (API 호출)
 @app.route('/getCommonCd', methods=["POST"])
-def getCommonCd():
+def getCommonCdApi():
     data = request.get_json()
-    print("#####################################")
-    print("gp_id:", data.get("gp_id"))
-    print("#####################################")
     results = execute_mysql_query_select("COMMON_CD", [data.get("gp_id")])
+    if not results:
+        return [error]
+
+    datas = []
+    for item in results:
+        data = {
+            'RN': item[0],
+            'GP_NM': item[1],
+            'CD_ID': item[2],
+            'CD_NM': item[3]
+        }
+        datas.append(data)
+    
+    return jsonify(success, datas)
+
+# 공통 코드 조회 (함수 호출)
+def getCommonCdFun(gp_id):
+    results = execute_mysql_query_select("COMMON_CD", [gp_id])
     if not results:
         return [error]
 
