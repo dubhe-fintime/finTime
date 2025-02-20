@@ -1334,8 +1334,6 @@ def batchStatus():
 @app.route('/batchResultSearch', methods=["POST"])
 def batchResultSearch():
     results = execute_mysql_query_select("Q19", [])
-    print("##############1")
-    print(results)
     datas = []
     for item in results:
         data = {
@@ -1351,8 +1349,6 @@ def batchResultSearch():
             'row_num': item[9]
         }
         datas.append(data)
-    print("##############2")
-    print(datas)
     return jsonify(datas)
 
 
