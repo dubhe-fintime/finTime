@@ -65,6 +65,15 @@
     </div>
     
     <div class="container">
+        <label for="refreshRate">갱신 주기 (분): </label>
+        <select id="refreshRate" onchange="updateRefreshRate()">
+            <!-- 1~30분까지 옵션 추가 -->
+            <script>
+                for (let i = 1; i <= 30; i++) {
+                    document.write(`<option value="${i}">${i}분</option>`);
+                }
+            </script>
+        </select>
         <div class="summary-container">
             <h2>배치 실행 결과</h2>
             <div class="summary">
@@ -148,7 +157,6 @@
                     document.getElementById("failCount").innerText = data[0].fail_cnt;
                     const tableBody = document.getElementById("batchResults");
                     tableBody.innerHTML = ""; // 기존 데이터 초기화
-                    debugger;
                     data.forEach(item => {
                         const row = document.createElement("tr");
                         row.innerHTML = `
@@ -183,12 +191,28 @@
             document.getElementById("popupLayer").style.display = "none";
         }
         
-        setInterval(batchResultSearch, 5*60*1000);  
+        let refreshInterval = 60000; // 기본 1분 (60000ms)
+        let intervalId = null; // setInterval ID 저장
+
+        // 주기적으로 배치 실행 결과 갱신하는 함수
+        function startAutoRefresh(interval) {
+            if (intervalId) clearInterval(intervalId); // 기존 인터벌 제거
+            intervalId = setInterval(batchResultSearch, interval);
+        }
+
+        // 사용자가 select box에서 갱신 주기를 변경할 때 실행
+        function updateRefreshRate() {
+            let selectedMinutes = document.getElementById("refreshRate").value;
+            refreshInterval = selectedMinutes * 60000; // 분 → 밀리초 변환
+            startAutoRefresh(refreshInterval);
+        }
         
         // 페이지 로드 시 상태 확인
-        checkBatchStatus();
-        
-        batchResultSearch();
+        document.addEventListener("DOMContentLoaded", function() {
+            checkBatchStatus();
+            batchResultSearch();
+            startAutoRefresh(refreshInterval); // 기본 1분으로 실행
+        });
     </script>
 
 <div id="popupLayer" class="popup">
