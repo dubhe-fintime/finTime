@@ -1148,6 +1148,8 @@ def getCommonCd(gp_id):
     if not gp_id:
         data = request.get_json()
         id = data.get("gp_id")
+        print("#####################################")
+        print(id)
     else:
         id = gp_id
 
