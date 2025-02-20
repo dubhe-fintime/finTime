@@ -285,6 +285,16 @@ def selectQuery(qType, values):
             query += ", FIRST_LOGINT = SYSDATE() "
         query += " WHERE USER_ID =  %s "
 
+    elif qType == "COMMON_CD":  # 공통 코드 조회
+        query = """
+                SELECT 
+                    ROW_NUMBER() OVER (ORDER BY CD_ID ASC) AS RN,
+                    GP_NM, CD_ID, CD_NM FROM COMMON_CD cc
+                JOIN COMMON_GP_CD cgc ON cgc.GP_ID = cc.GP_ID 
+                    WHERE cc.GP_ID =%s;
+                """
+        
+
 
 
 
