@@ -1145,6 +1145,9 @@ def changeYnFinance():
 @app.route('/getCommonCd', methods=["POST"])
 def getCommonCd():
     data = request.get_json()
+    print("#####################################")
+    print("gp_id:", data.get("gp_id"))
+    print("#####################################")
     results = execute_mysql_query_select("COMMON_CD", [data.get("gp_id")])
     if not results:
         return [error]
