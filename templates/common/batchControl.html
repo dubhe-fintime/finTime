@@ -182,9 +182,12 @@
         function closePopup() {
             document.getElementById("popupLayer").style.display = "none";
         }
-
+        
+        setInterval(batchResultSearch, 5*60*1000);  
+        
         // 페이지 로드 시 상태 확인
         checkBatchStatus();
+        
         batchResultSearch();
     </script>
 
