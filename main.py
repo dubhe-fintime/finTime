@@ -1447,7 +1447,6 @@ def insertEvent():
     try:
         # FormData에서 "datas" 키 가져오기
         event_data_str = request.form.get("datas")  # str 타입 반환
-        event_data_str = urllib.parse.unquote(event_data_str)  # ✅ 올바른 방식
         event_data = json.loads(event_data_str)  # 문자열을 리스트로 변환
         print("###########################################")
         print(event_data)
