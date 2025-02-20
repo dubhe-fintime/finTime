@@ -1140,6 +1140,32 @@ def changeYnFinance():
         return [success]
     except:
         return [error]
+
+# 공통 코드 조회
+@app.route('/getCommonCd', methods=["POST"])
+def getCommonCd(gp_id):
+    id = ""
+    if not gp_id:
+        data = request.get_json()
+        id = data.get("gp_id")
+    else:
+        id = gp_id
+
+    results = execute_mysql_query_select("COMMON_CD", [id])
+    if not results:
+        return [error]
+
+    datas = []
+    for item in results:
+        data = {
+            'RN': item[0],
+            'GP_NM': item[1],
+            'CD_ID': item[2],
+            'CD_NM': item[3]
+        }
+        datas.append(data)
+    
+    return jsonify(success, datas)
     
 
 ################## 관리자 업무 END ###############################
