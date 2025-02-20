@@ -1542,6 +1542,35 @@ def getHoiDay():
 
     return jsonify(datas)
 
+
+@app.route('/getSetting', methods=["POST"])
+def getSetting():
+    data = request.get_json()  # 전송된 JSON 데이터 받아오기
+    results = execute_mysql_query_select("C3", [data.get("id"),data.get("id")])
+
+    datas = []
+    for item in results:
+        data = {
+            'cor_no': item[0],
+            'cor_nm': item[1],
+            'evt_title': item[2],
+            'evt_id': item[3],
+            'cor_gp': item[4],
+            'group_yn': item[5],
+            'evt_user_yn': item[6]
+        }
+        datas.append(data)
+
+    return jsonify(datas)
+
+@app.route('/updateSetting', methods=["POST"])
+def updateSetting():
+    data = request.get_json()  # 전송된 JSON 데이터 받아오기
+    execute_mysql_query_delete("C4", [data.get("id")])
+    results = execute_mysql_query_insert("C5", [data.get("id"),data.get("cor_no"),data.get("evt_no")])
+
+    return [success]
+
 if __name__ == "__main__":
     while True:
         try:

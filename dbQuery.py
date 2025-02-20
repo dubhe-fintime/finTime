@@ -285,6 +285,51 @@ def selectQuery(qType, values):
             query += ", FIRST_LOGINT = SYSDATE() "
         query += " WHERE USER_ID =  %s "
 
+    elif qType == "C3":  # 설정 > 캘린더 설정
+        query = """
+            SELECT 
+            EM.COR_NO,
+            COALESCE(CM.cor_nm, '미등록기관') AS cor_nm,
+            EM.EVT_TITLE,
+            EVT_ID ,
+            CM.COR_GP,
+            CASE 
+                    WHEN FIND_IN_SET(EM.COR_NO, (
+                        SELECT UEO.COR_NO 
+                        FROM USER_EVT_OPT UEO 
+                        WHERE UEO.USER_ID = %s
+                    )) > 0 THEN 'N'
+                    ELSE 'Y'
+                END AS GROUP_USE_YN,
+                CASE 
+                    WHEN FIND_IN_SET(EM.EVT_ID, (
+                        SELECT UEO.EVT_ID 
+                        FROM USER_EVT_OPT UEO 
+                        WHERE UEO.USER_ID = %s
+                    )) > 0 THEN 'N'
+                    ELSE 'Y'
+                END AS EVT_USE_YN
+            FROM EVT_MST EM
+            LEFT JOIN COR_MST CM 
+                ON EM.COR_NO = CM.COR_NO
+                AND CM.USE_YN = 'Y'
+                ORDER BY EM.COR_NO ASC
+        """
+
+    elif qType == "C4":  # 설정 > 캘린더 설정 > 삭제 
+        query = """
+            DELETE FROM USER_EVT_OPT
+            WHERE USER_ID = %s
+        """
+
+    elif qType == "C5":  # 설정 > 캘린더 설정 > 추가 
+        query = """
+            INSERT INTO USER_EVT_OPT 
+                (USER_ID,COR_NO,EVT_ID,C_DATE)
+            VALUES
+                (%s, %s, %s, SYSDATE())
+        """
+
     elif qType == "COMMON_CD":  # 공통 코드 조회
         query = """
                 SELECT 
