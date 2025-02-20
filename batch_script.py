@@ -152,7 +152,8 @@ def run_batch_job():
         print(f"배치 작업 실행 중 오류 발생: {e}")
 
 # 매일 1분마다 실행하도록 설정
-schedule.every(5).minutes.do(run_batch_job)
+#schedule.every(5).minutes.do(run_batch_job)
+schedule.every().day.at("09:00").do(run_batch_job)
 
 print("배치 작업이 스케줄링되었습니다. (매일 5분마다 실행)")
 
