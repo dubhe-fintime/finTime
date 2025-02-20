@@ -97,7 +97,7 @@
             </div>
         </div>
     
-        <h2>배치 실행 결과</h2>
+        <h2>배치 실행 결과<p id="running"></p></h2>
         <table>
             <thead>
                 <tr>
@@ -171,6 +171,11 @@
                     document.getElementById("totalCount").innerText = data[0].tot_cnt;
                     document.getElementById("successCount").innerText = data[0].success_cnt;
                     document.getElementById("failCount").innerText = data[0].fail_cnt;
+                    var runningTitle = "🔴대기중";
+                    if(data[0].tot_cnt < 36){
+                        runningTitle = "🟢진행중"
+                    }
+                    document.getElementById("running").innerText = runningTitle;
                     const tableBody = document.getElementById("batchResults");
                     tableBody.innerHTML = ""; // 기존 데이터 초기화
                     data.forEach(item => {
