@@ -1143,17 +1143,9 @@ def changeYnFinance():
 
 # 공통 코드 조회
 @app.route('/getCommonCd', methods=["POST"])
-def getCommonCd(gp_id):
-    id = ""
-    if not gp_id:
-        data = request.get_json()
-        id = data.get("gp_id")
-        print("#####################################")
-        print(id)
-    else:
-        id = gp_id
-
-    results = execute_mysql_query_select("COMMON_CD", [id])
+def getCommonCd():
+    data = request.get_json()
+    results = execute_mysql_query_select("COMMON_CD", [data.get("gp_id")])
     if not results:
         return [error]
 
