@@ -50,7 +50,7 @@
             </li>
           </ul>
         </div>
-        <button id="searchBtn" class="btn primary md search-btn" onclick="javascript:selectList()">검색</button>
+        <button id="searchBtn" class="btn primary md search-btn" >검색</button>
       </form>
       <div class="table-area">
         <div class="flex justify-between align-end" style="position:sticky">
@@ -110,32 +110,7 @@
   $("#multiApplyBtn").click(function () {
     insertEvent(true,'')
   })
-  $("#addBtn").click(function () {
-    addModal()
-  })
-
-  //모달 
-  function addModal() {
-    session_ok("{{domain}}", "{{port}}");
-    values = `
-                    <h3>회사 명</h3>
-                    <fieldset>
-                        <div class="input-wrap">
-                            <input id="groupname" class="input" placeholder="회사 명을 입력해주세요" 
-                                onfocus="FocusInput('groupname')" oninput="ChangeInput('groupname')" onblur="BlurInput('groupname')"
-                                value="">
-                            <span class="delete-btn" onclick="DeleteInput('groupname')"></span>
-                        </div>
-                    </fieldset>
-                    <br>
-                    <h3>그룹 설명</h3>
-                    <fieldset>
-                        <textarea id="groupinfo" class="textarea" onfocus="FocusInput('command')"
-                            placeholder="신한은행 챗봇 데모 관리자 그룹"></textarea>
-                    </fieldset>`
-    OpenModal("그룹 추가", "", true, true, "addGroup()", "확인", "취소", "", "md", values)
-  }
-
+  
   // 전체 조회
   function selectList() {
 
@@ -155,26 +130,24 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log('success')
                 values = ``
                 data.forEach((v, i) => {
                   var status = v['evt_status'];
                   var chkCol =''
                   var statusCol = ''
+                  var encodingJSON = encodeURIComponent(JSON.stringify(v));
                   if(status =='NONE')
                   {
                     chkCol = `<td><input id='chk${i+1}' type="checkbox" class="checkbox" /><label for='chk${i+1}' class="checkbox-label chi" onclick="ChangeCheckBox2('chk${i+1}')">체크</label></td>`
-                    statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="insertEvent(false,this)">적용</button></td>`
+                    statusCol = "<td><button id='applyBtn' class='btn primary sm' data-json="+encodingJSON+"  onclick='insertEvent(false,this)'>적용</button></td>"
                   }
                   else if(status =='Y')
                   {
-                    // statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="updateEvent(this)">비노출</button></td>`
                     chkCol = `<td></td>`
                     statusCol = `<td>노출</td>`
                   }
                   else if(status =='N')
                   {
-                    // statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="updateEvent(this)">재노출</button></td>`
                     chkCol = `<td></td>`
                     statusCol = `<td>비노출</td>`
                   }
@@ -208,11 +181,9 @@
     
     if(multiFlag){
       $("label.checked.chi").each(function (index) {
-          console.log(index)
-          console.log($(this).parent().closest("tr").find("td").eq(2).html())
-          let jsonData = $(this).parent().closest("tr").find("td:last button").attr("data-json");
-          console.log(jsonData)
-          check_data.push(JSON.parse(jsonData));  // 문자열 → JSON 객체 변환
+          let data = $(this).parent().closest("tr").find("td:last button").attr("data-json");
+          var decodeData = decodeURIComponent(data);
+          check_data.push(JSON.parse(decodeData));  // 문자열 → JSON 객체 변환
       });
       var cnt = check_data.length;
       if(cnt==0)
@@ -222,16 +193,16 @@
       }
       else
       {
-        confirm(cnt+'개의 이벤트를 적용하시겠습니까?')
-        return false
+        if(!confirm(cnt+'개의 이벤트를 적용하시겠습니까?')){
+          return false
+        }
       }
     }
     else
     {
-      check_data.push(JSON.parse(button.getAttribute("data-json")));  // JSON 객체로 변환하여 저장
+      var decodeData = decodeURIComponent(button.getAttribute("data-json"));
+      check_data.push(JSON.parse(decodeData));  // JSON 객체로 변환하여 저장
     }
-    console.log(check_data.length);
-    console.log(check_data);
     formData.append("datas", JSON.stringify(check_data));  // JSON 배열로 변환 후 전송
 
     fetch("/insertEvent", {
@@ -242,7 +213,6 @@
             .then(data => {
               if(multiFlag){
                 $("label.checked").each(function () {
-                  
                     let lastTd = $(this).closest("tr").find("td").last(); // 해당 label이 있는 행의 마지막 <td> 찾기
                     lastTd.find("button").remove(); // 마지막 <td> 안의 버튼 삭제
                     lastTd.text("노출"); // "노출" 텍스트 추가
@@ -251,6 +221,8 @@
               }
               else
               {
+                let firstTd = $(button).closest("tr").find("td").first();
+                firstTd.empty();
                 $(button).parent().text('노출');
               }
             })
@@ -258,36 +230,7 @@
               console.error("Error:", error);
             });
   }
-  function multiInsEvent() {
-
-    let formData = new FormData();
-    console.log('abcd')
-
-    let check_data = [];
-    $("label.checked").each(function () {
-      let jsonData = $(this).parent().closest("tr").find("td:last button").attr("data-json");
-      check_data.push(JSON.parse(jsonData));  // 문자열 → JSON 객체 변환
-    });
-
-    console.log(check_data.length);
-    console.log(check_data);
-
-    formData.append("datas", JSON.stringify(check_data));  // JSON 배열로 변환 후 전송
-
-
-    fetch("/insertTestEvent", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-              
-            })
-            .catch(error => {
-              console.error("Error:", error);
-            });
-
-  }
+  
   function updateEvent(button) {
 
     let formData = new FormData();
@@ -310,19 +253,7 @@
   //검색 기능
   $("#searchBtn").click(function (e) {
     e.preventDefault();
-    // session_ok("{{domain}}", "{{port}}");
-
-
-    let search_list = []
-
-    //검색 결과가 없을 경우
-    // if (search_list.length == 0) {
-    //   values = `<p>검색 결과가 없습니다.</p>`
-    //   OpenModal("검색어 결과 없음", "", true, "", "", "확인", "", true, "md", values)
-    // } else {
-    //   $("#dataContent tr").hide();
-    //   $(search_list).show();
-    // }
+    selectList();
   })
 
   function openImgModal(button) {
