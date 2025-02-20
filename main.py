@@ -14,6 +14,8 @@ from flask import jsonify
 
 import uuid
 
+import urllib.parse
+
 import time
 from datetime import datetime
 
@@ -1334,8 +1336,6 @@ def batchStatus():
 @app.route('/batchResultSearch', methods=["POST"])
 def batchResultSearch():
     results = execute_mysql_query_select("Q19", [])
-    print("##############1")
-    print(results)
     datas = []
     for item in results:
         data = {
@@ -1351,8 +1351,6 @@ def batchResultSearch():
             'row_num': item[9]
         }
         datas.append(data)
-    print("##############2")
-    print(datas)
     return jsonify(datas)
 
 
@@ -1449,8 +1447,11 @@ def insertEvent():
     try:
         # FormData에서 "datas" 키 가져오기
         event_data_str = request.form.get("datas")  # str 타입 반환
+        event_data_str = urllib.parse.unquote(event_data_str)  # ✅ 올바른 방식
         event_data = json.loads(event_data_str)  # 문자열을 리스트로 변환
-
+        print("###########################################")
+        print(event_data)
+        print("###########################################")
         for v in event_data:
             if v == "":
                 pass
