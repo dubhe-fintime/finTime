@@ -222,9 +222,26 @@
             refreshInterval = selectedMinutes * 60000; // 분 → 밀리초 변환
             startAutoRefresh(refreshInterval);
         }
+
+        function fetchCommonCd(gd_id) {
+            $.ajax({
+                url: "/getCommonCd",  // API 엔드포인트 URL
+                type: "POST",         // 요청 방식 (POST 또는 GET, API 요구사항에 맞게 설정)
+                contentType: "application/json",
+                data: JSON.stringify({ gd_id: "EVT_TYPE" }),  // JSON 데이터 전송
+                success: function(response) {
+                    console.log("응답 데이터:", response);
+                    // 성공 시 처리 로직 추가
+                },
+                error: function(xhr, status, error) {
+                    console.error("에러 발생:", error);
+                }
+            });
+        }
         
         // 페이지 로드 시 상태 확인
         document.addEventListener("DOMContentLoaded", function() {
+            fetchCommonCd();
             checkBatchStatus();
             batchResultSearch();
             startAutoRefresh(refreshInterval); // 기본 1분으로 실행
