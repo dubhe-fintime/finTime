@@ -96,11 +96,28 @@ def selectQuery(qType, values):
                 EM.EVT_THUMBNAIL,
                 EM.EVT_LiST_LINK,
                 EM.EVT_DT_LINK,
-                CM.PRI_COLOR
+                CM.PRI_COLOR,
+                CASE 
+                    WHEN FIND_IN_SET(EM.COR_NO, (
+                        SELECT UEO.COR_NO 
+                        FROM USER_EVT_OPT UEO 
+                        WHERE UEO.USER_ID = '1'
+                    )) > 0 THEN 'N'
+                    ELSE 'Y'
+                END AS GROUP_USE_YN,
+                CASE 
+                    WHEN FIND_IN_SET(EM.EVT_ID, (
+                        SELECT UEO.EVT_ID 
+                        FROM USER_EVT_OPT UEO 
+                        WHERE UEO.USER_ID = '1'
+                    )) > 0 THEN 'N'
+                    ELSE 'Y'
+                END AS EVT_USE_YN
             FROM EVT_MST EM
             LEFT JOIN COR_MST CM 
                 ON EM.COR_NO = CM.COR_NO
-                AND CM.USE_YN = 'Y';
+                AND CM.USE_YN = 'Y'
+                HAVING GROUP_USE_YN = 'Y' AND EVT_USE_YN = 'Y'
         """
     
     elif qType == "Q14": # USER, EVENT 매핑 테이블 등록
