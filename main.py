@@ -1606,7 +1606,7 @@ def getYouTube():
         result_id = getChannelId(youtube_key, channel)
         results = getChannelData(youtube_key,result_id)
         arr_results.append(results)
-    return [arr_results]
+    return [results]
 ################## YOUTUBE END #############################
 if __name__ == "__main__":
     while True:
