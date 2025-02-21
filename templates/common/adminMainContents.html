@@ -201,6 +201,18 @@
                 });
         }
 
+          // 배치 상태 확인
+          function getYouTube() {
+            fetch("/getYouTube", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                   debugger;
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        }
+
         // 팝업 열기
         function showPopup(resultData) {
             document.getElementById("popupText").innerText = resultData;
@@ -232,6 +244,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             checkBatchStatus();
             batchResultSearch();
+            getYouTube();
             startAutoRefresh(refreshInterval); // 기본 1분으로 실행
         });
     </script>

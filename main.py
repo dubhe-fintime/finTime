@@ -35,6 +35,9 @@ from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBa
 from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard
 from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock,shinhanStock,kiwoomStock,hanaStock,miraeAssetStock
 
+from youtubu.youtube_channel_id import getChannelId
+from youtubu.youtube_channel import getChannelData
+
 from batch_handler import start_batch, stop_batch, check_batch_status
 
 from util import getHoliday
@@ -1590,6 +1593,16 @@ def updateSetting():
 
     return [success]
 
+################## YOUTUBE START #############################
+# 금융사 유튜브 정보 가져오기
+@app.route('/getYouTube', methods=["POST"])
+def getYouTube():
+    youtube_key = config['SERVER']['youtubu_key']
+    result_id = getChannelId(youtube_key, "신한은행")
+    results = getChannelData(youtube_key,result_id)
+    print(results)
+    return [results]
+################## YOUTUBE END #############################
 if __name__ == "__main__":
     while True:
         try:
