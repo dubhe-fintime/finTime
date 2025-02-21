@@ -1598,7 +1598,6 @@ def updateSetting():
 @app.route('/getYouTube', methods=["POST"])
 def getYouTube():
     youtube_key = config['SERVER']['youtubu_key']
-    print(youtube_key)
     channels = ["신한은행", "우리은행", "국민은행", "하나은행", "농협은행"]
     arr_results = []
 
