@@ -33,7 +33,7 @@ from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,
 from corp.assurance import samsungFire,heungkukFire,kbInsure,nhInsure
 from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBank,ibkBank,kakaoBank
 from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard
-from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock,shinhanStock,kiwoomStock,hanaStock
+from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock,shinhanStock,kiwoomStock,hanaStock,miraeAssetStock
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
@@ -664,7 +664,7 @@ async def stock8():
 # 미래에셋증권
 @app.route('/stock9', methods=["POST"])
 async def stock9():
-    results = await hanaStock.get238Data()
+    results = await miraeAssetStock.get238Data()
     status = 200
     for item in results:
         if 'ERROR' in item:
