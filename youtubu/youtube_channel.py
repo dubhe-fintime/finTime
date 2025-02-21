@@ -2,7 +2,7 @@ import requests
 
 event_list = []
 def getChannelData(apiKey, channel_id):
-    API_KEY = "AIzaSyBr8qXBtrZZCFyFtS7StNReyppt3b_K7dQ"  # 유튜브 API 키 입력
+    API_KEY = apiKey
     CHANNEL_ID = channel_id
     BASE_URL = "https://www.googleapis.com/youtube/v3/search"
 
