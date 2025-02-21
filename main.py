@@ -660,6 +660,27 @@ async def stock8():
     response = jsonify(data_to_return)
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
+
+# 미래에셋증권
+@app.route('/stock9', methods=["POST"])
+async def stock9():
+    results = await hanaStock.get238Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "238",
+        "fin_id": "T000000037", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
 ################## 증권 END ###############################
 
 ################## 보험 START #############################
