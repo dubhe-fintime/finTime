@@ -1599,14 +1599,14 @@ def updateSetting():
 def getYouTube():
     youtube_key = config['SERVER']['youtubu_key']
     print(youtube_key)
-    channels = ["신한은행", "우리은행", "국민은행", "하나은행", "농협협은행"]
+    channels = ["신한은행", "우리은행", "국민은행", "하나은행", "농협은행"]
     arr_results = []
 
     for channel in channels:
-        result_id = getChannelId(youtube_key, channel)
-        results = getChannelData(youtube_key,result_id)
-        arr_results.append(results)
-    return [results]
+        result_id = getChannelId(youtube_key, channel) # 채널 ID 취득
+        results = getChannelData(youtube_key,result_id) # 채널의데이터 취득(5개)
+        arr_results.extend(results)
+    return [success, arr_results]
 ################## YOUTUBE END #############################
 if __name__ == "__main__":
     while True:
