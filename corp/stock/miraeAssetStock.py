@@ -23,7 +23,7 @@ HEADERS = {
 event_list = []
 
 
-def get238Data():
+async def get238Data():
     # 페이지 탐색 시작
     page = 1
     list_domain = "https://securities.miraeasset.com/hki/hki7000/r05.do"  # 리스트 URL
