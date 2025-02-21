@@ -2,7 +2,7 @@ from googleapiclient.discovery import build
 
 def getChannelId(apiKey, channelNm):
     # ✅ 유튜브 API 키 입력
-    API_KEY = "AIzaSyBr8qXBtrZZCFyFtS7StNReyppt3b_K7dQ"  # 유튜브 API 키 입력
+    API_KEY = apiKey  # 유튜브 API 키 입력
 
     # ✅ YouTube API 클라이언트 생성
     youtube = build("youtube", "v3", developerKey=API_KEY)

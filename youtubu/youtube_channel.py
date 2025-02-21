@@ -35,4 +35,5 @@ def getChannelData(apiKey, channel_id):
             "thumbnail": thumbnail,
             "video_url": video_url
         })
+        print(event_list)
     return event_list
