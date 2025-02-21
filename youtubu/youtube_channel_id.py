@@ -2,7 +2,7 @@ from googleapiclient.discovery import build
 
 def getChannelId(apiKey, channelNm):
     # ✅ 유튜브 API 키 입력
-    API_KEY = apiKey  # 유튜브 API 키 입력
+    API_KEY = apiKey
 
     # ✅ YouTube API 클라이언트 생성
     youtube = build("youtube", "v3", developerKey=API_KEY)
@@ -24,5 +24,6 @@ def getChannelId(apiKey, channelNm):
         channel_title = search_response["items"][0]["snippet"]["title"]
         print(f"🔹 채널명: {channel_title}")
         print(f"🔹 채널 ID: {channel_id}")
+        return channel_id
     else:
         print("❌ 채널을 찾을 수 없습니다.")
