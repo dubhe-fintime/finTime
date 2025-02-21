@@ -72,7 +72,7 @@ async def my_batch_job():
         "kiwoom_stock":stock6(),
         "shinhan_stock":stock7(),
         "hana_stock":stock8(),
-        "miraeasset_stock":stock9()
+        "miraeasset_stock":stock9(),
         
     }
 
@@ -154,12 +154,12 @@ def run_batch_job():
         print(f"배치 작업 실행 중 오류 발생: {e}")
 
 # 매일 1분마다 실행하도록 설정
-#schedule.every(5).minutes.do(run_batch_job)
-schedule.every().day.at("10:10").do(run_batch_job)
+schedule.every(1).minutes.do(run_batch_job)
+#schedule.every().day.at("10:10").do(run_batch_job)
 
-print("배치 작업이 스케줄링되었습니다. (매일 5분마다 실행)")
+print("배치 작업이 스케줄링되었습니다. (매일 01:00 실행)")
 
 # 무한 루프 실행 (배치 스케줄 유지)
 while True:
     schedule.run_pending()
-    time.sleep(60)  # 1초마다 스케줄 체크
+    time.sleep(60)  # 1분마다 스케줄 체크

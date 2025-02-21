@@ -665,6 +665,7 @@ async def stock8():
 @app.route('/stock9', methods=["POST"])
 async def stock9():
     results = await miraeAssetStock.get238Data()
+    print(results)
     status = 200
     for item in results:
         if 'ERROR' in item:

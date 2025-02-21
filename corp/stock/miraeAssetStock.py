@@ -22,20 +22,22 @@ HEADERS = {
 # 이벤트 리스트를 저장할 리스트
 event_list = []
 
-# 페이지 탐색 시작
-page = 1
-list_domain = "https://securities.miraeasset.com/hki/hki7000/r05.do"  # 리스트 URL
-detail_domain = "https://securities.miraeasset.com/event/view/"  # 상세 이벤트 URL
 
 def get238Data():
+    # 페이지 탐색 시작
+    page = 1
+    list_domain = "https://securities.miraeasset.com/hki/hki7000/r05.do"  # 리스트 URL
+    detail_domain = "https://securities.miraeasset.com/event/view/"  # 상세 이벤트 URL
+
     global event_list
     while True:
         url = BASE_URL.format(page)
+        
         try:
             # 웹 페이지 요청
             response = requests.get(url, headers=HEADERS)
+
             if response.status_code != 200:
-                print(f"페이지 {page} 불러오기 실패, 크롤링 종료. (status: {response.status_code})")
                 break
 
             # BeautifulSoup으로 HTML 파싱
@@ -45,7 +47,6 @@ def get238Data():
             events = soup.select("ul.split.col3.eventLstWrap li.colSec")
 
             if not events:
-                print(f"페이지 {page}: 더 이상 이벤트 없음. 크롤링 종료.")
                 break  # 이벤트가 없으면 종료
 
             for event in events:
@@ -81,13 +82,14 @@ def get238Data():
             # 다음 페이지로 이동
             page += 1
             time.sleep(1)  # 서버 부하 방지를 위해 1초 대기
-            print(f"미래에셋증권 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
+            
 
         except requests.exceptions.RequestException as e:
-            print(f"미래에셋증권 요청 오류 발생: {e}")
+            print(f"미래에셋증권권 요청 오류 발생: {e}")
             return [{"ERROR": str(e)}]
         except Exception as e:
-            print(f"미래에셋증권 크롤링 오류 발생: {e}")
+            print(f"미래에셋증권권 크롤링 오류 발생: {e}")
             return [{"ERROR": str(e)}]
-
+    
+    print(f"미래에셋증권권 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
     return event_list
