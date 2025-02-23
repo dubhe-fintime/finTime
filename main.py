@@ -14,8 +14,6 @@ from flask import jsonify
 
 import uuid
 
-import urllib.parse
-
 import time
 from datetime import datetime
 
@@ -949,7 +947,6 @@ async def test13():
 def set_batch_holiday(hol_date,hoi_yn,hoi_name):
     values = (hol_date, hoi_yn, hoi_name, hol_date, hoi_yn, hoi_name)
     execute_mysql_query_insert("Q18",values) # BATCH LOG 등록
-
 
 # SET BATCH LOG
 def set_batch_log(batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data, seq):

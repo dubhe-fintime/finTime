@@ -4,7 +4,7 @@ import datetime
 import schedule
 import os
 import random
-from main import set_batch_log, set_batch_rst, del_batch_rst, set_user_mapp, set_batch_holiday, app  # Flask 앱을 임포트
+from main import set_batch_log, set_batch_rst, del_batch_rst, set_user_mapp, set_batch_holiday, app, jsonify  # Flask 앱을 임포트
 from main import test1, test2, test3, test4, test5, test6,test7,test8,test9,test10,test11,test12,test13
 from main import card1,card2,card3,card4,card5,card6
 from main import bank1,bank2,bank3,bank4,bank5,bank6,bank7,bank8
@@ -17,7 +17,6 @@ task_status = {}
 
 # 비동기 작업 함수
 async def my_batch_job():
-    
     # logs 폴더 경로 설정 (현재 실행 경로의 한 단계 위)
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
     os.makedirs(log_dir, exist_ok=True)  # logs 폴더가 없으면 생성
@@ -90,7 +89,7 @@ async def my_batch_job():
                 if isinstance(response, Exception):
                     log_message = f"[{task_time}] {task_name} 실행 실패: {response}"
                     # 배치 로그 DB 저장
-                    set_batch_log(BATCH_ID , BATCH_NM, '', task_name, now, task_time, "FAIL", str(response))
+                    set_batch_log(BATCH_ID , BATCH_NM, '', task_name, now, task_time, "FAIL", str(response), random_number)
                 else:
                     res = response.get_json()
                     status = "SUCCESS" if res['status_code'] == 200 else "FAIL"
@@ -134,7 +133,6 @@ async def my_batch_job():
             
     except Exception as e:
         print(f"[{now}] 배치 실행 중 오류 발생: {e}")
-
 
 def run_batch_job():
     try:
