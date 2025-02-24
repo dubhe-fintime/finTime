@@ -1597,17 +1597,17 @@ def updateSetting():
 ################## YOUTUBE START #############################
 # 금융사 유튜브 정보 가져오기
 @app.route('/getYouTube', methods=["POST"])
-def getYouTube():
+async def getYouTube():
     youtube_key = config['SERVER']['youtube_key']
     channels = ["신한은행", "우리은행", "국민은행", "하나은행", "농협은행"]
 
+    results = []
     for channel in channels:
-        result_id = getChannelId(youtube_key, channel) # 채널 ID 취득
-        results = getChannelData(youtube_key,result_id) # 채널의데이터 취득(5개)
-    print("#"*50)
-    print(results)
-    print("#"*50)
-    return [success, results]
+        result_id = await getChannelId(youtube_key, channel)  # 채널 ID 취득
+        data = await getChannelData(youtube_key, result_id)  # 비동기 함수 실행
+        results.append(data)
+
+    return jsonify({"success": True, "results": results})  # JSON 응답
 ################## YOUTUBE END #############################
 if __name__ == "__main__":
     while True:

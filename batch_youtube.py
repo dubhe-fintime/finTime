@@ -30,7 +30,7 @@ async def youtube_batch_job():
             if success:
                 status = "SUCCESS"
                 cnt = 0  # 정상 처리된 데이터 개수
-                del_batch_rst(cnt)  # 기존 데이터 삭제
+                #del_batch_rst(cnt)  # 기존 데이터 삭제
                 print(results)
                 for video in results:
                     # DB 저장 (각 비디오 정보)
