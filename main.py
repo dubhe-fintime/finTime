@@ -1604,6 +1604,9 @@ def getYouTube():
     for channel in channels:
         result_id = getChannelId(youtube_key, channel) # 채널 ID 취득
         results = getChannelData(youtube_key,result_id) # 채널의데이터 취득(5개)
+    print("#"*50)
+    print(results)
+    print("#"*50)
     return [success, results]
 ################## YOUTUBE END #############################
 if __name__ == "__main__":
