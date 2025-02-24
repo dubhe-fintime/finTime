@@ -30,6 +30,7 @@ def get_recent_news(targets: list):
         response = requests.get(url, params=params)
         soup = BeautifulSoup(response.text, "html.parser")
         container = soup.find("ul", class_="list_news")
+        print(container)
 
         for element in container.find_all("li", class_="bx")[:5]:
             result = re.split(pattern, element.find("div", class_="dsc_wrap").text.strip())
