@@ -24,7 +24,7 @@ def youtube_batch_job():
 
     try:
         with app.app_context():
-            success, results = getYouTube()  # 유튜브 데이터 가져오기
+            success, results = await getYouTube()  # 유튜브 데이터 가져오기
             task_time = datetime.datetime.now()
             
             if success:
