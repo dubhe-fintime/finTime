@@ -199,6 +199,15 @@ def selectQuery(qType, values):
                 VALUES 
                     ( %s, %s, %s, %s )
         """
+    elif qType == "Q22": # 기관 코드 조회 
+        placeholders = ', '.join(['%s'] * len(values))
+        query = f"""
+            SELECT 
+                COR_NO,
+                COR_NM,
+                COR_GP 
+            FROM COR_MST
+            WHERE COR_NM IN (  {placeholders} )  """
 
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
