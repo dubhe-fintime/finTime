@@ -19,7 +19,7 @@ def getChannelData(apiKey, channel_id):
     # API 요청 보내기
     response = requests.get(BASE_URL, params=params)
     data = response.json()
-    print(data)
+    
     # 결과 출력
     for item in data.get("items", []):
         video_id = item["id"]["videoId"]
@@ -35,4 +35,5 @@ def getChannelData(apiKey, channel_id):
             "thumbnail": thumbnail,
             "video_url": video_url
         })
+        print(event_list)
     return event_list
