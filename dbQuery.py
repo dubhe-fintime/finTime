@@ -192,6 +192,14 @@ def selectQuery(qType, values):
             WHERE HOI_YN = 'Y';
         """
 
+    elif qType == "Q21": # 유튜브 컨텐츠 등록
+        query = """
+            INSERT INTO YOUTUBE_CONTENTS 
+                    ( COR_NO, CONTENT_TITLE, CONTENT_URL, PRIORITY ) 
+                VALUES 
+                    ( %s, %s, %s, %s )
+        """
+
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
         query += "    a.COR_NO cor_no, "
