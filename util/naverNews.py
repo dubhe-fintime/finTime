@@ -14,7 +14,7 @@ import dbconn
 ##############################
 
 
-async def get_recent_news(targets: list):
+def get_recent_news(targets: list):
     cor_gp = dbconn.execute_mysql_query_select("Q22",(targets))
     event_list = []
     url = "https://search.naver.com/search.naver"
@@ -51,3 +51,4 @@ async def get_recent_news(targets: list):
         print(f"네이버 뉴스 크롤링 오류 발생: {e}")
         return [{"ERROR": e}]
 
+get_recent_news(["신한은행", "국민은행"])
