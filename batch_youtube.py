@@ -24,7 +24,10 @@ async def youtube_batch_job():
 
     try:
         with app.app_context():
-            success, results = await getYouTube()  # 유튜브 데이터 가져오기
+            response = await getYouTube()  # 유튜브 데이터 가져오기
+            response_json = response.json  # JSON 데이터 추출
+            success = response_json.get("success", False)
+            results = response_json.get("results", [])
             task_time = datetime.datetime.now()
             
             if success:
