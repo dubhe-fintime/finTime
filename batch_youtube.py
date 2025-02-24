@@ -31,9 +31,8 @@ async def youtube_batch_job():
                 status = "SUCCESS"
                 cnt = 0  # 정상 처리된 데이터 개수
                 del_batch_rst(cnt)  # 기존 데이터 삭제
-                
+                print(results)
                 for video in results:
-                    print(video)
                     # DB 저장 (각 비디오 정보)
                     # set_batch_rst(
                     #     "YT",  # YouTube 식별 코드
@@ -82,9 +81,10 @@ def run_youtube_batch_job():
 
 # 매일 01:00에 실행
 #schedule.every().day.at("13:00").do(run_youtube_batch_job)
-schedule.every(1).minutes.do(run_youtube_batch_job)
+delayTime = 1
+schedule.every(delayTime).minutes.do(run_youtube_batch_job)
 
-print("유튜브 배치 작업이 스케줄링되었습니다. (매일 01:00 실행)")
+print(f"유튜브 배치 작업이 스케줄링되었습니다. (매일 {delayTime} 실행)")
 
 # 무한 루프 실행 (배치 스케줄 유지)
 while True:
