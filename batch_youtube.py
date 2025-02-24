@@ -11,7 +11,7 @@ BATCH_ID = "B000000002"  # 유튜브 배치 ID
 BATCH_NM = "유튜브 데이터 수집 배치"
 
 # 비동기 작업 함수
-def youtube_batch_job():
+async def youtube_batch_job():
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
     os.makedirs(log_dir, exist_ok=True)  # logs 폴더가 없으면 생성
 
