@@ -1596,6 +1596,8 @@ def updateSetting():
 
 ################## YOUTUBE START #############################
 # 금융사 유튜브 정보 가져오기
+from quart import Quart, jsonify
+app = Quart(__name__)
 @app.route('/getYouTube', methods=["POST"])
 async def getYouTube():
     youtube_key = config['SERVER']['youtube_key']
