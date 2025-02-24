@@ -39,6 +39,7 @@ from youtubu.youtube_channel import getChannelData
 from batch_handler import start_batch, stop_batch, check_batch_status
 
 from util import getHoliday
+from util import naverNews
 
 from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
 
@@ -168,8 +169,6 @@ async def holidayAPI():
     response = jsonify(data_to_return)
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
-
-
 
 # 하나은행 배치 호출
 @app.route('/test1', methods=["POST"])
@@ -948,6 +947,10 @@ def set_batch_holiday(hol_date,hoi_yn,hoi_name):
     values = (hol_date, hoi_yn, hoi_name, hol_date, hoi_yn, hoi_name)
     execute_mysql_query_insert("Q18",values) # BATCH LOG 등록
 
+# SET NAVERNEWS DATA
+def set_batch_news(press_name,press_img,title,conetent,URL,search_term):
+    execute_mysql_query_insert("Q23",(press_name,press_img,title,conetent,URL,search_term)) # BATCH LOG 등록
+
 # SET BATCH LOG
 def set_batch_log(batch_id, batch_nm, task_id, task_nm, st_date, ed_date, status, result_data, seq):
     result_data_str = json.dumps(result_data, ensure_ascii=False)
@@ -1547,6 +1550,7 @@ def getEventMst():
 
     return jsonify(datas)
 
+#공휴일 API
 @app.route('/getHoiDay', methods=["POST"])
 def getHoiDay():
     results = execute_mysql_query_select("Q20", [])
@@ -1593,16 +1597,13 @@ def updateSetting():
 ################## YOUTUBE START #############################
 # 금융사 유튜브 정보 가져오기
 @app.route('/getYouTube', methods=["POST"])
-async def getYouTube():
+def getYouTube():
     youtube_key = config['SERVER']['youtube_key']
     channels = ["신한은행", "우리은행", "국민은행", "하나은행", "농협은행"]
 
     for channel in channels:
-        result_id = await getChannelId(youtube_key, channel) # 채널 ID 취득
-        results =  await getChannelData(youtube_key, result_id) # 채널의데이터 취득(5개)
-        #( COR_NO, CONTENT_TITLE, CONTENT_URL, PRIORITY ) 
-    #execute_mysql_query_insert("C5", [data.get("id"),data.get("cor_no"),data.get("evt_no")])
-    print(results)
+        result_id = getChannelId(youtube_key, channel) # 채널 ID 취득
+        results = getChannelData(youtube_key,result_id) # 채널의데이터 취득(5개)
     return [success, results]
 ################## YOUTUBE END #############################
 if __name__ == "__main__":

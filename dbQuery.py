@@ -208,6 +208,14 @@ def selectQuery(qType, values):
                 COR_GP 
             FROM COR_MST
             WHERE COR_NM IN (  {placeholders} )  """
+        
+    elif qType == "Q23": # 네이버 뉴스 배치 추가
+        query = """
+            REPLACE INTO NEWS_CONTENTS 
+                (PRESS_NM, PRESS_IMG, TITLE, CONTENT, LINK, COR_NO, C_DATE) 
+            VALUES 
+                (%s,%s,%s,%s,%s,%s,SYSDATE());
+        """
 
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
