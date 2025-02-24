@@ -28,7 +28,7 @@ def getChannelData(apiKey, channel_id):
         thumbnail = item["snippet"]["thumbnails"]["medium"]["url"]
         video_url = f"https://www.youtube.com/watch?v={video_id}"
         
-        event_list.extend({
+        event_list.append({
             "title": title,
             "video_id": video_id,
             "published_at": published_at,
