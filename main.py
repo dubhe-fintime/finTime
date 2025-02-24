@@ -33,8 +33,8 @@ from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBa
 from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard
 from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock,shinhanStock,kiwoomStock,hanaStock,miraeAssetStock
 
-from youtubu.youtube_channel_id import getChannelId
-from youtubu.youtube_channel import getChannelData
+from youtube.youtube_channel_id import getChannelId
+from youtube.youtube_channel import getChannelData
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
