@@ -1,6 +1,6 @@
 from googleapiclient.discovery import build
 
-async def getChannelId(apiKey, channelNm):
+def getChannelId(apiKey, channelNm):
     # ✅ 유튜브 API 키 입력
     API_KEY = apiKey
 

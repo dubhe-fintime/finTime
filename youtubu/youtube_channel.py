@@ -1,7 +1,7 @@
 import requests
 
 event_list = []
-async def getChannelData(apiKey, channel_id):
+def getChannelData(apiKey, channel_id):
     API_KEY = apiKey
     CHANNEL_ID = channel_id
     BASE_URL = "https://www.googleapis.com/youtube/v3/search"
