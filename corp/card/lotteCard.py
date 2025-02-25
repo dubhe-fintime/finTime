@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-async def get368Data():
+def get368Data():
     url = "https://www.lottecard.co.kr/app/LPBNFDA_A100.lc"
     headers = {
         "Accept": "application/json, text/javascript, */*; q=0.01",
@@ -21,7 +21,7 @@ async def get368Data():
     }
 
     data = {
-        "pageNo": "3",
+        "pageNo": "1",  # 처음 페이지부터 시작
         "bigTabGubun": "2",
         "tabGubun": "9999",
         "evnBultSeq": "",
@@ -40,52 +40,65 @@ async def get368Data():
         "wcs_bt": "s_1f0b82dcd5c7:1740445299"
     }
 
-    try:
-        response = requests.post(url, headers=headers, data=data, cookies=cookies)
+    events = []  # 전체 이벤트를 저장할 리스트
 
-        if response.status_code == 200:
-            response_data = response.json()
-            soup = BeautifulSoup(response_data["Content"], "html.parser")
-            
-            events = []
-            
-            # 이벤트 정보 추출
-            for li in soup.find_all("li"):
-                event_list = {}
-                title_tag = li.find("b")
-                date_tag = li.find("span", class_="date")
-                img_tag = li.find("img")
-                a_tag = li.find("a", href=True)
+    page_no = 1
+    while True:
+        data["pageNo"] = str(page_no)  # 현재 페이지 번호 설정
+        
+        try:
+            response = requests.post(url, headers=headers, data=data, cookies=cookies)
+
+            if response.status_code == 200:
+                response_data = response.json()
+                soup = BeautifulSoup(response_data["Content"], "html.parser")
                 
-                event_list["title"] = title_tag.text.strip() if title_tag else "제목 없음"
-                event_list["startDt"], event_list["endDt"] = date_tag.text.strip().split(" ~ ") if date_tag else ("알 수 없음", "알 수 없음")
-                event_list["thumbNail"] = img_tag["src"] if img_tag else "이미지 없음"
-                event_list["thumbNail"] = "https:"+event_list["thumbNail"]
+                page_events = []  # 현재 페이지의 이벤트 정보
+                # 이벤트 정보 추출
+                for li in soup.find_all("li"):
+                    event_list = {}
+                    title_tag = li.find("b")
+                    date_tag = li.find("span", class_="date")
+                    img_tag = li.find("img")
+                    a_tag = li.find("a", href=True)
+                    
+                    event_list["title"] = title_tag.text.strip() if title_tag else "제목 없음"
+                    event_list["startDt"], event_list["endDt"] = date_tag.text.strip().split(" ~ ") if date_tag else ("알 수 없음", "알 수 없음")
+                    event_list["thumbNail"] = img_tag["src"] if img_tag else "이미지 없음"
+                    event_list["thumbNail"] = "https:" + event_list["thumbNail"] if event_list["thumbNail"].startswith("/") else event_list["thumbNail"]
 
-                # event_cd 추출 부분 수정
-                event_url = a_tag["href"] if a_tag else ""
-                if event_url:
-                    try:
-                        event_list["event_cd"] = event_url.replace("javascript:tlfLoad(", "").split(",")[2].strip("'")
-                    except IndexError:
+                    # event_cd 추출 부분 수정
+                    event_url = a_tag["href"] if a_tag else ""
+                    if event_url:
+                        try:
+                            event_list["event_cd"] = event_url.replace("javascript:tlfLoad(", "").split(",")[2].strip("'")
+                        except IndexError:
+                            event_list["event_cd"] = "URL 없음"
+                    else:
                         event_list["event_cd"] = "URL 없음"
-                else:
-                    event_list["event_cd"] = "URL 없음"
-                
-                event_list["listURL"] = "https://www.lottecard.co.kr/app/LPBNFDA_V100.lc"
-                event_list["detailURL"] = f"https://www.lottecard.co.kr/app/LPBNFDA_V300.lc?evnBultSeq={event_list['event_cd']}&evnCtgSeq=9999&bigTabGubun=2"
-                
-                events.append(event_list)  # 이벤트 리스트에 추가
+                    
+                    event_list["listURL"] = "https://www.lottecard.co.kr/app/LPBNFDA_V100.lc"
+                    event_list["detailURL"] = f"https://www.lottecard.co.kr/app/LPBNFDA_V300.lc?evnBultSeq={event_list['event_cd']}&evnCtgSeq=9999&bigTabGubun=2"
+                    
+                    page_events.append(event_list)  # 페이지 이벤트 리스트에 추가
 
-            print(events)
-            print(f"롯데카드 크롤링 완료 | 이벤트 개수 : {len(events)}")
-            return events
-        else:
-            print(f"롯데카드 오류 발생: {response.status_code}")
-            return [{"ERROR": "접속불가"}]
-    except Exception as e:
-        print(f"롯데카드 오류 발생: {e}")
-        return [{"ERROR": str(e)}]
+                events.extend(page_events)  # 전체 이벤트 리스트에 추가
+
+                # 만약 한 페이지에서 이벤트가 없다면 종료 (더 이상 페이지가 없다는 의미)
+                if len(page_events) == 0:
+                    print(f"전체 크롤링 완료 | 이벤트 개수 : {len(events)}")
+                    break
+
+                page_no += 1  # 페이지 번호 증가
+
+            else:
+                print(f"롯데카드 오류 발생: {response.status_code}")
+                break
+        except Exception as e:
+            print(f"롯데카드 오류 발생: {e}")
+            break
+
+    return events
 
 # 호출
-get368Data()
+events = get368Data()
