@@ -6,7 +6,7 @@ import os
 import random
 from main import set_batch_log, set_batch_rst, del_batch_rst, set_user_mapp, set_batch_holiday, app, jsonify  # Flask 앱을 임포트
 from main import test1, test2, test3, test4, test5, test6,test7,test8,test9,test10,test11,test12,test13
-from main import card1,card2,card3,card4,card5,card6
+from main import card1,card2,card3,card4,card5,card6,card7
 from main import bank1,bank2,bank3,bank4,bank5,bank6,bank7,bank8
 from main import stock1,stock2,stock3,stock4,stock5,stock6,stock7,stock8,stock9
 from main import holidayAPI
@@ -53,6 +53,7 @@ async def my_batch_job():
         "samsung_card":card4(),
         "shinhan_card":card5(),
         "woori_card":card6(),
+        "lotte_card":card7(),
 
         "citi_bank":bank1(),
         "im_bank":bank2(),

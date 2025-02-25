@@ -30,7 +30,7 @@ from check_session import check_session
 from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,kdbLife,samsungLife,hanhwaLife,miraeAssetLife
 from corp.assurance import samsungFire,heungkukFire,kbInsure,nhInsure
 from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBank,ibkBank,kakaoBank
-from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard
+from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard, lotteCard
 from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock,shinhanStock,kiwoomStock,hanaStock,miraeAssetStock
 
 from youtube.youtube_channel_id import getChannelId
@@ -311,6 +311,27 @@ async def card6():
         "status_code": status,  # 응답코드
         "bank_cd": "041",
         "fin_id": "T000000019", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 우리카드
+@app.route('/card7', methods=["POST"])
+async def card7():
+    results = await lotteCard.get368Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "368",
+        "fin_id": "T000000038", # TASK ID 지정
         "result": results     # 응답결과
     }
     
