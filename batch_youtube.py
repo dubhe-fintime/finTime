@@ -48,7 +48,7 @@ async def youtube_batch_job():
                 status = "FAIL"
 
             # 배치 로그 저장
-            set_batch_log(BATCH_ID, BATCH_NM, random_number, "getYouTube", now, task_time, status, str(results))
+            set_batch_log(BATCH_ID, BATCH_NM, "TU00000001", "getYouTube", now, task_time, status, str(results))
 
             # 로그 파일 저장
             log_message = f"[{task_time}] getYouTube 실행 완료 - 상태: {status}, 데이터 개수: {cnt}"
