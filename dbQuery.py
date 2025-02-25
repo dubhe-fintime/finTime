@@ -254,6 +254,12 @@ def selectQuery(qType, values):
             query += f" AND c.COR_NM LIKE '%{values[0]}%'"
         if len(values[1])>0 :
             query += f" AND a.EVT_TITLE LIKE '%{values[1]}%'"
+        if len(values[2])>0 and values[2]=='NONE' :
+            query += f" AND a.EVT_ID IS NULL OR a.EVT_ID =''"
+        if len(values[2])>0 and values[2]!='NONE' and values[2]!='all' :
+            query += f" AND b.USE_YN = '{values[2]}'"
+
+        query += " ORDER BY COR_NM, EVT_ST_DATE DESC"
 
     elif qType == "A2": # 배치데이터 이벤트 테이블 적용
         query =  "INSERT INTO EVT_MST "
@@ -319,7 +325,8 @@ def selectQuery(qType, values):
             query += f" AND a.EVT_TITLE LIKE '%{values[1]}%'"
         if len(values[2])>0 :
             query += f" AND a.USE_YN = '{values[2]}'"
-
+        
+        query += " ORDER BY cor_nm, evt_st_date desc"
 
     elif qType == "C1": # 로그인 기능
         query = """
@@ -395,7 +402,7 @@ def selectQuery(qType, values):
 
 
 
-    # print("###################################")
-    # print(query)
-    # print("###################################")
+    print("###################################")
+    print(query)
+    print("###################################")
     return query

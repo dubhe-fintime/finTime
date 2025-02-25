@@ -48,6 +48,9 @@
             <li class="option" onclick="ClickSelectOption('useYn','비노출','N')">
               비노출
             </li>
+            <li class="option" onclick="ClickSelectOption('useYn','미적용','NONE')">
+              미적용
+            </li>
           </ul>
         </div>
         <button id="searchBtn" class="btn primary md search-btn" >검색</button>
@@ -123,6 +126,7 @@
 
     formData.append("corNm",corNm)
     formData.append("corSub",corSub)
+    formData.append("useYn",option)
 
     fetch("/batchDataList", {
                 method: "POST",

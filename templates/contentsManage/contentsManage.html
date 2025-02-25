@@ -229,15 +229,18 @@ function changeTest(){
                 data.forEach((v, i) => {
                   var status = v['use_yn'];
                   var statusCol = ''
+                  var encodingJSON = encodeURIComponent(JSON.stringify(v));
                   if(status =='Y')
                   {
                     // statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="updateEvent(this)">비노출</button></td>`
-                    statusCol = `<td>노출</td>`
+                    
+                    statusCol = "<td><button id='useYnBtn' class='btn primary sm' data-json="+encodingJSON+" >노출중</button></td>"
                   }
                   else if(status =='N')
                   {
                     // statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="updateEvent(this)">재노출</button></td>`
-                    statusCol = `<td>비노출</td>`
+                    
+                    statusCol = "<td><button id='useYnBtn' class='btn primary sm' data-json="+encodingJSON+" >비노출</button></td>"
                   }
                   values += `    
                     <tr data-id="${i+1}" name="${v['evt_title']}" explain="${v['evt_title']}">
@@ -253,7 +256,7 @@ function changeTest(){
                   values += `  </tr>`
                 });
                 $("#dataContent").append(values)
-                
+                CloseModal()
             })
             .catch(error => {
                 console.error("Error:", error);
@@ -281,14 +284,13 @@ function changeTest(){
               console.error("Error:", error);
             });
   }
+
   function updateEvent(button) {
 
     let formData = new FormData();
-    
-    formData.append("datas", JSON.stringify(JSON.parse(button.getAttribute("data-json"))));
-    formData.forEach((value, key) => {
-        console.log(`${key}: ${value}`);
-    });
+
+    var decodeData = decodeURIComponent(button.getAttribute("data-json"));
+    formData.append("datas", JSON.stringify(JSON.parse(decodeData)));
 
     fetch("/updateEvent", {
                 method: "POST",
@@ -296,7 +298,7 @@ function changeTest(){
             })
             .then(response => response.json())
             .then(data => {
-              selectList()
+              button.text("새 이름");
             })
             .catch(error => {
               console.error("Error:", error);
@@ -335,6 +337,46 @@ function changeTest(){
     e.preventDefault();
   })
 
+  //노출여부 수정
+  $("#useYnBtn").click(function (e) {
+    e.preventDefault();
+  })
+  //노출/비노출 모달
+  function ynModal(tag){
+    var decodeData = decodeURIComponent($(tag).find("button").attr("data-json"));
+    let data = JSON.parse(decodeData )
+    let button = $(tag).find("button");
+    var before_yn =  data.use_yn == "Y" ? "비노출" : "노출" 
+    target_data = JSON.stringify({
+      "change_yn" : data.use_yn == "Y" ? "N" : "Y" ,
+      "evt_id" :  data.evt_id
+    })
+    values = `<p>${before_yn} 상태로 변경하시겠습니까 ?</p>`
+    OpenModal("노출여부 변경", ``, true, true, `changeYN(${target_data})`, "확인", "취소", "", "md", values)
+  }
+  
+  function changeYN(data) {
+
+   let formData = new FormData();
+
+    formData.append("datas", JSON.stringify(data));
+    
+    console.log(data.change_yn)
+    fetch("/updateEvent", {
+              method: "POST",
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+            CloseModal();
+            let values = `<p>사용여부 변경이 완료되었습니다.</p>`;
+            values += `<br>`;
+            OpenModal("사용여부 변경", "", true, "", "selectList()", "확인", "", true, "md", values);
+          })
+          .catch(error => {
+            console.error("Error:", error);
+          });
+  }
   //추가 기능
   function addGroup() {
     session_ok("{{domain}}", "{{port}}");

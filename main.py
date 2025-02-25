@@ -1386,8 +1386,9 @@ def batchDataList():
 
     corNm = request.form.get('corNm', default='', type=str)
     corSub = request.form.get('corSub', default='', type=str)
+    useYn = request.form.get('useYn', default='', type=str)
 
-    values = [corNm, corSub]
+    values = [corNm, corSub, useYn]
 
     try:
         results = execute_mysql_query_rest("A1", values)
@@ -1399,7 +1400,6 @@ def batchDataList():
         # return jsonify(results)  # JSON 형식으로 응답
     
         datas = []
-        # logger.info(str(results))
         for item in results:
             data = {
                 'cor_no': item[0],
@@ -1508,13 +1508,7 @@ def updateEvent():
         # JSON 문자열을 파이썬 딕셔너리로 변환
         event_dict = json.loads(event_data)
         
-        useYn = "Y"
-        if event_dict["evt_status"] == "Y" :
-            useYn = "N"
-        else :
-            useYn = "Y"
-            
-        values = [useYn,event_dict["evt_id"]]
+        values = [event_dict["change_yn"],event_dict["evt_id"]]
 
         execute_mysql_query_update("A4",values) # 이벤트 노출여부 업데이트(EVT_MST)
 
