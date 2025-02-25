@@ -4,7 +4,7 @@ import datetime
 import schedule
 import os
 import random
-from main import set_batch_log, del_batch_rst, set_user_mapp, app
+from main import set_batch_youtube, set_user_mapp, app
 from main import getYouTube  # 유튜브 데이터 가져오는 함수 임포트
 
 BATCH_ID = "B000000002"  # 유튜브 배치 ID
@@ -35,20 +35,15 @@ async def youtube_batch_job():
                 cnt = 0  # 정상 처리된 데이터 개수
                 #del_batch_rst(cnt)  # 기존 데이터 삭제
                 print(results)
-                for video in results:
+                for channel in results:
                     # DB 저장 (각 비디오 정보)
-                    # set_batch_rst(
-                    #     "YT",  # YouTube 식별 코드
-                    #     video.get('title', ""),
-                    #     video.get('channelTitle', ""),
-                    #     video.get('publishedAt', None),
-                    #     None,
-                    #     video.get('thumbnail', ""),
-                    #     "",
-                    #     "",
-                    #     video.get('videoUrl', ""),
-                    #     video.get('videoUrl', "")
-                    # )
+                    #corNo, contentTitle, contentUrl, priority
+                    set_batch_youtube(
+                        "001",
+                        channel.get('title', ""),
+                        channel.get('video_url', None),
+                        channel.get(cnt+1)
+                    )
                     cnt += 1
             else:
                 status = "FAIL"
