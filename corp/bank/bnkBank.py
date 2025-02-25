@@ -32,6 +32,9 @@ while True:
     
     # 이벤트 리스트 추출
     event_list = soup.select("ul.event-list > li")
+    print("#"*50)
+    print(event_list)
+    print("#"*50)
     if not event_list:
         print("✅ 모든 페이지 크롤링 완료!")
         break  # 더 이상 데이터가 없으면 종료
