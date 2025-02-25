@@ -1606,10 +1606,7 @@ async def getYouTube():
         result_id = await getChannelId(youtube_key, channel)  # 채널 ID 취득
         data = await getChannelData(youtube_key, result_id)  # 비동기 함수 실행
         results.append(data)
-    print("#"*50)
-    print(results)
-    print("#"*50)
-    return jsonify({"success": True, "results": results})  # JSON 응답
+    return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
 
 def set_batch_youtube(corNo, contentTitle, contentUrl, priority):
     values = (corNo, contentTitle, contentUrl, priority)
