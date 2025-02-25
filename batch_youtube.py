@@ -29,7 +29,7 @@ async def youtube_batch_job():
             success = response_json.get("success", False)
             results = response_json.get("results", [])
             corNm = response_json.get("corNm", [])
-            #corNm = ["신한은행", "우리은행", "국민은행", "하나은행", "농협은행"]
+            #corNm = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
             task_time = datetime.datetime.now()
             
             if success:
@@ -38,7 +38,6 @@ async def youtube_batch_job():
                 print(results)
                 for channel in results:
                     # DB 저장 (각 비디오 정보)
-                    #corNo, contentTitle, contentUrl, priority
                     corNo = corNm[cnt // 5] if cnt // 5 < len(corNm) else "None"
                     set_batch_youtube(
                         corNo,
