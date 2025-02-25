@@ -1,7 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import time
@@ -23,6 +22,7 @@ driver.get(BASE_URL)
 # 크롤링할 데이터 리스트
 events = []
 page = 1
+prev_event_list = set()  # 이전 페이지 이벤트 저장용
 
 while True:
     print(f"📌 페이지 {page} 크롤링 중...")
@@ -32,12 +32,21 @@ while True:
     
     # 이벤트 리스트 추출
     event_list = soup.select("ul.event-list > li")
-    print("#"*50)
-    print(event_list)
-    print("#"*50)
+
+    # 현재 페이지 이벤트를 집합(set)으로 변환하여 비교
+    current_event_set = set(event.text.strip() for event in event_list)
+
     if not event_list:
         print("✅ 모든 페이지 크롤링 완료!")
         break  # 더 이상 데이터가 없으면 종료
+
+    # 이전 페이지와 데이터가 같으면 크롤링 종료
+    if prev_event_list == current_event_set:
+        print("✅ 같은 데이터가 반복됨! 크롤링 종료")
+        break
+
+    # 현재 이벤트 데이터를 저장
+    prev_event_list = current_event_set
 
     for event in event_list:
         try:
