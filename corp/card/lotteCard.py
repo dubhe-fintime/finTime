@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-def get368Data():
+async def get368Data():
     url = "https://www.lottecard.co.kr/app/LPBNFDA_A100.lc"
     headers = {
         "Accept": "application/json, text/javascript, */*; q=0.01",
@@ -100,5 +100,3 @@ def get368Data():
 
     return events
 
-# 호출
-events = get368Data()
