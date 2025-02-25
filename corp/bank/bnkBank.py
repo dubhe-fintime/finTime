@@ -13,7 +13,7 @@ chrome_options.add_argument("--disable-gpu")
 chrome_options.add_argument("--no-sandbox")
 
 # 크롬 드라이버 실행
-service = Service("/path/to/chromedriver")  # Chromedriver 경로 수정 필요
+service = Service("/usr/bin/chromedriver")  # Chromedriver 경로 수정 필요
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
 # 페이지 이동할 URL
