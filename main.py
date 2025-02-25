@@ -319,7 +319,7 @@ async def card6():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
-# 우리카드
+# 롯데카드
 @app.route('/card7', methods=["POST"])
 async def card7():
     results = await lotteCard.get368Data()
