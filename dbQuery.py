@@ -157,6 +157,16 @@ def selectQuery(qType, values):
     
     elif qType == "Q19": # 배치 실행 결과 통계 조회
         query = """
+                WITH LatestSEQ AS (
+                    SELECT BATCH_ID, SEQ 
+                    FROM (
+                        SELECT BATCH_ID, SEQ, ROW_NUMBER() OVER (PARTITION BY BATCH_ID ORDER BY ST_DATE DESC) AS RN
+                        FROM BATCH_LOG 
+                        WHERE BATCH_ID IN ('B000000002', 'B000000003')
+                    ) AS t
+                    WHERE RN = 1
+                )
+
                 SELECT 
                     BATCH_NM, 
                     TASK_NM, 
@@ -175,12 +185,12 @@ def selectQuery(qType, values):
                     RESULT_DATA,
                     ROW_NUMBER() OVER (ORDER BY TASK_ID ASC) AS RN
                 FROM BATCH_LOG 
-                WHERE SEQ = (
-                    SELECT SEQ FROM BATCH_LOG ORDER BY ST_DATE DESC LIMIT 1
-                )
+                WHERE 
+                    (BATCH_ID = 'B000000001' AND SEQ = (SELECT SEQ FROM BATCH_LOG WHERE BATCH_ID = 'B000000001' ORDER BY ST_DATE DESC LIMIT 1))
+                    OR
+                    (BATCH_ID IN ('B000000002', 'B000000003') AND SEQ IN (SELECT SEQ FROM LatestSEQ))
                 ORDER BY TASK_ID ASC
                 LIMIT 1000;
-
                 """
 
     elif qType == "Q20": # 배치 공휴일 등록 
