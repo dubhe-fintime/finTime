@@ -116,8 +116,16 @@
 
     <script>
         // 배치 시작
-        function startBatch() {
-            fetch("/batchStart", { method: "POST" })
+        
+        function startBatch(type) {
+            var requestData = { "type": type}
+            fetch("/batchStart", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"  // 요청 헤더에서 JSON 형식 지정
+                    },
+                    body: JSON.stringify(requestData)  // JSON 형식으로 변환하여 body에 담아 전송
+                })
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("status").innerText = `✅ ${data.message}`;
@@ -129,8 +137,15 @@
         }
 
         // 배치 중지
-        function stopBatch() {
-            fetch("/batchStop", { method: "POST" })
+        function stopBatch(type) {
+            var requestData = { "type": type}
+                fetch("/batchStop", { 
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"  // 요청 헤더에서 JSON 형식 지정
+                    },
+                    body: JSON.stringify(requestData)  // JSON 형식으로 변환하여 body에 담아 전송
+                })
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("status").innerText = `✅ ${data.message}`;
@@ -142,8 +157,15 @@
         }
 
         // 배치 상태 확인
-        function checkBatchStatus() {
-            fetch("/batchStatus", { method: "POST" })
+        function checkBatchStatus(type) {
+            var requestData = { "type": type}
+            fetch("/batchStatus", { 
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"  // 요청 헤더에서 JSON 형식 지정
+                    },
+                    body: JSON.stringify(requestData)  // JSON 형식으로 변환하여 body에 담아 전송
+                })
                 .then(response => response.json())
                 .then(data => {
                     let statusText = data.status === "running" 

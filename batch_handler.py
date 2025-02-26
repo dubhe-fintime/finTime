@@ -4,8 +4,17 @@ import subprocess
 import psutil
 from flask import jsonify
 
+# 금융사 이벤트
 BATCH_SCRIPT = "batch_script.py"  # 실행할 배치 스크립트 파일명
 PID_FILE = "batch_pid.txt"  # 실행된 프로세스의 PID 저장 파일
+
+# 유튜브
+BATCH_SCRIPT_YOUTUBE = "batch_youtube.py"  # 실행할 배치 스크립트 파일명
+PID_FILE = "batch_pid_youtube.txt"  # 실행된 프로세스의 PID 저장 파일
+
+# 네이버 뉴스
+BATCH_SCRIPT_PORTAL = "batch_naverNews.py"  # 실행할 배치 스크립트 파일명
+PID_FILE_PORTAL = "batch_pid_naverNews.txt"  # 실행된 프로세스의 PID 저장 파일
 
 # 프로세스 PID 확인
 def get_running_pid():
@@ -20,7 +29,10 @@ def get_running_pid():
     return None
 
 # 배치 스크립트 실행
-def start_batch():
+def start_batch(type):
+    print("##########################")
+    print(type)
+    print("##########################")
     if get_running_pid():
         return jsonify({"status": "already_running", "message": "배치가 이미 실행 중입니다."}), 400
     
@@ -39,7 +51,10 @@ def start_batch():
     return jsonify({"status": "started", "message": "배치를 실행했습니다.", "pid": process.pid}), 200
 
 # 배치 스크립트 중지
-def stop_batch():
+def stop_batch(type):
+    print("##########################")
+    print(type)
+    print("##########################")
     pid = get_running_pid()
     if not pid:
         return jsonify({"status": "already_stopped", "message": "배치가 이미 중지 상태입니다."}), 400
@@ -50,7 +65,10 @@ def stop_batch():
     return jsonify({"status": "stopped", "message": "배치를 중지했습니다."}), 200
 
 # 배치 실행 상태 확인
-def check_batch_status():
+def check_batch_status(type):
+    print("##########################")
+    print(type)
+    print("##########################")
     pid = get_running_pid()
     if pid:
         return jsonify({"status": "running", "pid": pid}), 200
