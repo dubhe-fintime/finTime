@@ -1646,8 +1646,10 @@ async def getYouTube():
     return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
 
 def set_batch_youtube(corNo, contentTitle, contentUrl, thumbnailUrl, priority):
+    print("★"*100)
     values = (corNo, contentTitle, contentUrl, thumbnailUrl, priority)
     execute_mysql_query_insert("Q24",values) # BATCH LOG 등록
+    print("☆"*100)
 ################## YOUTUBE END #############################
 if __name__ == "__main__":
     while True:
