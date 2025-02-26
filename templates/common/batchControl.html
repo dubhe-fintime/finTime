@@ -72,32 +72,6 @@
 
         
     </div>
-    
-    <div class="container">
-        <div class="summary-container">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-                <!-- 갱신 주기 설정 -->
-                <div>
-                    <label for="refreshRate">갱신 주기 (분): </label>
-                    <select id="refreshRate" onchange="updateRefreshRate()">
-                        <script>
-                            for (let i = 1; i <= 30; i++) {
-                                document.write(`<option value="${i}">${i}분</option>`);
-                            }
-                        </script>
-                    </select>
-                </div>
-    
-                <!-- 전체 건수, 성공 건수, 실패 건수 -->
-                <div class="summary">
-                    <strong>전체 건수:</strong> <span id="totalCount"></span> | 
-                    <strong>성공 건수:</strong> <span id="successCount" class="success"></span> | 
-                    <strong>실패 건수:</strong> <span id="failCount" class="fail"></span>
-                </div>
-            </div>
-        </div>
-    </div>
-    
 
     <script>
         // 배치 시작
