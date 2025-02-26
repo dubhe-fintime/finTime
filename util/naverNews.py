@@ -17,7 +17,6 @@ import dbconn
 environment = os.getenv('ENVIRONMENT', 'development')
 if environment == 'production':
     config_path = os.path.join(os.getcwd(), 'config.ini')
-    print(config_path)
 else:
     config_path = os.path.join(os.getcwd(), 'config_development.ini')
 config = configparser.ConfigParser()
@@ -48,12 +47,8 @@ async def get_recent_news(targets: list):
             }
             # 웹페이지 요청
             response = requests.get(url, params=params,headers=header)
-            print(response.request.headers)
-
             soup = BeautifulSoup(response.text, "html.parser")
-            print(soup)
             container = soup.find("ul", class_="list_news")
-            print(container)
 
             for element in container.find_all("li", class_="bx")[:5]:
                 result = re.split(pattern, element.find("div", class_="dsc_wrap").text.strip())

@@ -24,15 +24,13 @@ async def naver_batch_job():
 
     try:
         with app.app_context():
-            results = await naverNews.get_recent_news(["흥국화재"])  # <<<<< 원하는 은행,증권사 오타없이
+            results = await naverNews.get_recent_news(["신한은행","하나은행","우리은행","국민은행"])  # <<<<< 원하는 은행,증권사 오타없이
             task_time = datetime.datetime.now()
             
             if results :
                 status = "SUCCESS"
                 cnt = 0  # 정상 처리된 데이터 개수
                 # del_batch_rst(cnt)  # 기존 데이터 삭제
-                print(">>>>>>>>>>>>>>>>>>>>>1단계")
-                print(results)
                 for data in results:
                     set_batch_news(
                         data.get('press_name', ""),
