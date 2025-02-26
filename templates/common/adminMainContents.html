@@ -162,28 +162,29 @@
             fetch("/batchResultSearch", { method: "POST" })
                 .then(response => response.json())
                 .then(data => {
-                    data.map((item, index) => {
-                        console.log(`Index: ${index}, Total Count: ${JSON.stringify(item)}`);
-                    });
                     if(data.length === 0){
                         document.getElementById("batchResults").innerHTML = "<tr><td colspan='5'>데이터가 없습니다.</td></tr>";
                         document.getElementById("totalCount").innerText = 0;
                         document.getElementById("successCount").innerText = 0;
                         document.getElementById("failCount").innerText = 0;
                     }
-                    debugger;
-                    
-                    document.getElementById("totalCount").innerText = data[0].tot_cnt;
-                    document.getElementById("successCount").innerText = data[0].success_cnt;
-                    document.getElementById("failCount").innerText = data[0].fail_cnt;
-                    var runningTitle = "🔴대기중";
-                    if(data[0].tot_cnt < 41){
-                        runningTitle = "🟢진행중"
-                    }
                     document.getElementById("running").innerText = runningTitle;
                     const tableBody = document.getElementById("batchResults");
                     tableBody.innerHTML = ""; // 기존 데이터 초기화
-                    data.forEach(item => {
+                    
+                    debugger;
+                    // 'batch_nm': item[0],
+                    // 'task_nm': item[1],
+                    // 'st_date': item[2],
+                    // 'ed_date': item[3],
+                    // 'status': item[4],
+                    // 'tot_cnt': item[5],
+                    // 'success_cnt': item[6],
+                    // 'fail_cnt': item[7],
+                    // 'result_data': item[8],
+                    // 'row_num': item[9]
+                    data.map((item, index) => {
+                        console.log(`Index: ${index}, Total Count: ${JSON.stringify(item)}`);
                         const row = document.createElement("tr");
                         row.innerHTML = `
                             <td>${item.row_num}</td>
@@ -200,6 +201,13 @@
                         }
                         tableBody.appendChild(row);
                     });
+                    document.getElementById("totalCount").innerText = data[0].tot_cnt;
+                    document.getElementById("successCount").innerText = data[0].success_cnt;
+                    document.getElementById("failCount").innerText = data[0].fail_cnt;
+                    var runningTitle = "🔴대기중";
+                    if(data[0].tot_cnt < 41){
+                        runningTitle = "🟢진행중"
+                    }
                 })
                 .catch(error => {
                     console.error("Error:", error);

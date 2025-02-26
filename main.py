@@ -1404,16 +1404,17 @@ def batchResultSearch():
     datas = []
     for item in results:
         data = {
-            'batch_nm': item[0],
-            'task_nm': item[1],
-            'st_date': item[2],
-            'ed_date': item[3],
-            'status': item[4],
-            'tot_cnt': item[5],
-            'success_cnt': item[6],
-            'fail_cnt': item[7],
-            'result_data': item[8],
-            'row_num': item[9]
+            'batch_id': item[0],
+            'batch_nm': item[1],
+            'task_nm': item[2],
+            'st_date': item[3],
+            'ed_date': item[4],
+            'status': item[5],
+            'tot_cnt': item[6],
+            'success_cnt': item[7],
+            'fail_cnt': item[8],
+            'result_data': item[9],
+            'row_num': item[10]
         }
         datas.append(data)
     return jsonify(datas)
