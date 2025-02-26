@@ -102,6 +102,7 @@
             <thead>
                 <tr>
                     <th>순번</th>
+                    <th>배치명</th>
                     <th>업체명</th>
                     <th>성공 여부</th>
                     <th>실행 시작 시간</th>
@@ -179,6 +180,7 @@
                         const row = document.createElement("tr");
                         row.innerHTML = `
                             <td>${item.row_num}</td>
+                            <td>${item.batch_nm}</td>
                             <td>${item.task_nm}</td>
                             <td class="${item.status === 'SUCCESS' ? 'success' : 'fail'}">${item.status}</td>
                             <td>${item.st_date}</td>
