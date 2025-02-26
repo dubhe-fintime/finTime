@@ -221,8 +221,8 @@ def selectQuery(qType, values):
         query = """
             INSERT INTO YOUTUBE_CONTENTS 
                 (COR_NO, CONTENT_TITLE, CONTENT_URL, THUMBNAIL_URL, PRIORITY) 
-            VALUES 
-                (SELECT COR_NO FROM COR_MST WHERE COR_NM = %s LIMIT 1,%s,%s,%s,%s);
+            SELECT 
+                (SELECT COR_NO FROM COR_MST WHERE COR_NM = %s LIMIT 1), %s, %s, %s, %s;
         """
 
     elif qType == "A1": # 배치 데이터 조회

@@ -708,7 +708,6 @@ async def stock8():
 @app.route('/stock9', methods=["POST"])
 async def stock9():
     results = await miraeAssetStock.get238Data()
-    print(results)
     status = 200
     for item in results:
         if 'ERROR' in item:
@@ -1287,7 +1286,6 @@ def list_files():
 def download_file():
     # 클라이언트가 보낸 데이터에서 파일 경로 및 다운로드 경로 가져오기
     file_name = request.form.get('file_name', default='', type=str)
-    print(file_name)
     file_path = os.path.join(app.config['FILE_FOLDER'], file_name)
     
     # 클라이언트에게 파일 다운로드 제안
