@@ -1223,7 +1223,9 @@ def getCommonCdApi():
             'RN': item[0],
             'GP_NM': item[1],
             'CD_ID': item[2],
-            'CD_NM': item[3]
+            'CD_NM': item[3],
+            'EX_FIELD1': item[4],
+            'EX_FIELD2': item[5]
         }
         datas.append(data)
     
@@ -1241,7 +1243,9 @@ def getCommonCdFun(gp_id):
             'RN': item[0],
             'GP_NM': item[1],
             'CD_ID': item[2],
-            'CD_NM': item[3]
+            'CD_NM': item[3],
+            'EX_FIELD1': item[4],
+            'EX_FIELD2': item[5]
         }
         datas.append(data)
     
@@ -1648,13 +1652,15 @@ def updateSetting():
 @app.route('/getYouTube', methods=["POST"])
 async def getYouTube():
     youtube_key = config['SERVER']['youtube_key']
-    channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
+    #channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
+    channels = getCommonCdFun("YOUTUBE_ID")
     #channels = ["신한은행"]
 
     results = []
     for channel in channels:
-        result_id = await getChannelId(youtube_key, channel)  # 채널 ID 취득
-        data = await getChannelData(youtube_key, result_id)  # 비동기 함수 실행
+        print(channel["EX_FIELD1"])
+        #result_id = await getChannelId(youtube_key, channel)  # 채널 ID 취득
+        data = await getChannelData(youtube_key, channel["EX_FIELD1"])  # 비동기 함수 실행
         results.append(data)
     return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
 
