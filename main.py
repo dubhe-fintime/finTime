@@ -1603,6 +1603,17 @@ def getHoiDay():
 
     return jsonify(datas)
 
+#뉴스 기사 API
+@app.route('/getNews', methods=["POST"])
+def getNews():
+    results = execute_mysql_query_select("Q26", [])
+
+    datas = []
+    return_col_name = ["title","press_nm","press_img","content","link","cor_gp"]
+    return_result = [dict(zip(return_col_name, data)) for data in results]
+
+    return return_result
+
 
 @app.route('/getSetting', methods=["POST"])
 def getSetting():

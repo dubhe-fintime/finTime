@@ -254,6 +254,12 @@ def selectQuery(qType, values):
     elif qType == "Q25": # 유튜브 정보 전체 삭제
         query = "DELETE FROM YOUTUBE_CONTENTS "
 
+    elif qType == "Q26": # 네이버 뉴스 조회
+        query = "SELECT TITLE,PRESS_NM,PRESS_IMG,CONTENT,LINK,COR_NO FROM NEWS_CONTENTS "
+
+
+    
+
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
         query += "    a.COR_NO cor_no, "
