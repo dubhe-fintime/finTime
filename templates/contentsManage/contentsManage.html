@@ -200,7 +200,7 @@ function clickEvtSelOpt(id, option, name){
                           <input id="thumbUrlInput" class="input" placeholder="썸네일 이미지 URL을 입력 해 주세요"
                             onfocus="FocusInput('thumbUrlInput')" oninput="ChangeInput('thumbUrlInput')" onblur="BlurInput('thumbUrlInput')"
                             value="${thumbnail_url}">
-                            <button data-value="${thumbnail_url}" onclick="openImgModal(this)">미리보기</button>
+                            
                           <span class="delete-btn" onclick="DeleteInput('thumbUrlInput')"></span>
                         </div>
                         <div class="input-wrap sm" id="thumbFileArea" style="${thumbFileSt}">
@@ -228,7 +228,7 @@ function clickEvtSelOpt(id, option, name){
                             onfocus="FocusInput('imgUrlInput')" oninput="ChangeInput('imgUrlInput')" onblur="BlurInput('imgUrlInput')"
                             value="${img_url}">
                           <span class="delete-btn" onclick="DeleteInput('imgUrlInput')"></span>
-                          <button data-value="${img_url}" onclick="openImgModal(this)">미리보기</button>
+                          
                         </div>
                         <div class="input-wrap sm" id="imgFileArea" style="${imgFileSt}">
                           <input type="file" id="img-file-input" accept="image/*" >
