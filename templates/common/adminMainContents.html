@@ -162,6 +162,9 @@
             fetch("/batchResultSearch", { method: "POST" })
                 .then(response => response.json())
                 .then(data => {
+                    data.map((item, index) => {
+                        console.log(`Index: ${index}, Total Count: ${item.tot_cnt}`);
+                    });
                     if(data.length === 0){
                         document.getElementById("batchResults").innerHTML = "<tr><td colspan='5'>데이터가 없습니다.</td></tr>";
                         document.getElementById("totalCount").innerText = 0;
@@ -169,6 +172,7 @@
                         document.getElementById("failCount").innerText = 0;
                     }
                     debugger;
+                    
                     document.getElementById("totalCount").innerText = data[0].tot_cnt;
                     document.getElementById("successCount").innerText = data[0].success_cnt;
                     document.getElementById("failCount").innerText = data[0].fail_cnt;
