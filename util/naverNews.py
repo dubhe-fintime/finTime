@@ -14,7 +14,7 @@ import dbconn
 ##############################
 
 
-def get_recent_news(targets: list):
+async def get_recent_news(targets: list):
     session = requests.Session()
     print(print(session.headers))
     cor_gp = dbconn.execute_mysql_query_select("Q22",(targets))
@@ -53,9 +53,5 @@ def get_recent_news(targets: list):
     return event_list
 
 
-get_recent_news(["흥국생명"])
         
-    # except Exception as e:
-    #     print(f"네이버 뉴스 크롤링 오류 발생: {e}")
-    #     return [{"ERROR": e}]
 
