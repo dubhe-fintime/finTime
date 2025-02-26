@@ -1655,10 +1655,12 @@ async def getYouTube():
     #channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
     channels = getCommonCdFun("YOUTUBE_ID")
     #channels = ["신한은행"]
-
+    print("a"*10)
     results = []
     for channel in channels:
+        print("b"*10)
         print(channel["EX_FIELD1"])
+        print("c"*10)
         #result_id = await getChannelId(youtube_key, channel)  # 채널 ID 취득
         data = await getChannelData(youtube_key, channel["EX_FIELD1"])  # 비동기 함수 실행
         results.append(data)
