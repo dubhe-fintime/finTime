@@ -165,32 +165,48 @@ def selectQuery(qType, values):
                         WHERE BATCH_ID IN ('B000000002', 'B000000003')
                     ) AS t
                     WHERE RN = 1
+
+                    UNION ALL
+
+                    -- B000000001의 최신 SEQ 찾기
+                    SELECT BATCH_ID, SEQ 
+                    FROM (
+                        SELECT BATCH_ID, SEQ, ROW_NUMBER() OVER (PARTITION BY BATCH_ID ORDER BY ST_DATE DESC) AS RN
+                        FROM BATCH_LOG 
+                        WHERE BATCH_ID = 'B000000001'
+                    ) AS t
+                    WHERE RN = 1
+                ),
+
+                AggregatedCounts AS (
+                    -- SEQ별 TOTAL_COUNT, SUCCESS_COUNT, FAIL_COUNT 계산
+                    SELECT 
+                        SEQ,
+                        COUNT(*) AS TOTAL_COUNT,
+                        SUM(CASE WHEN STATUS = 'SUCCESS' THEN 1 ELSE 0 END) AS SUCCESS_COUNT,
+                        SUM(CASE WHEN STATUS = 'FAIL' THEN 1 ELSE 0 END) AS FAIL_COUNT
+                    FROM BATCH_LOG
+                    WHERE SEQ IN (SELECT SEQ FROM LatestSEQ)
+                    GROUP BY SEQ
                 )
 
                 SELECT 
-                    BATCH_NM, 
-                    TASK_NM, 
-                    DATE_FORMAT(ST_DATE, '%Y.%m.%d %H:%i:%s') AS ST_DATE, 
-                    DATE_FORMAT(ED_DATE, '%Y.%m.%d %H:%i:%s') AS ED_DATE, 
-                    STATUS,
-                    (SELECT COUNT(*) FROM BATCH_LOG WHERE SEQ = (
-                        SELECT SEQ FROM BATCH_LOG WHERE BATCH_ID = 'B000000001' ORDER BY ST_DATE DESC LIMIT 1
-                    )) AS TOTAL_COUNT,
-                    (SELECT COUNT(*) FROM BATCH_LOG WHERE SEQ = (
-                        SELECT SEQ FROM BATCH_LOG WHERE BATCH_ID = 'B000000001' ORDER BY ST_DATE DESC LIMIT 1
-                    ) AND STATUS = 'SUCCESS') AS SUCCESS_COUNT,
-                    (SELECT COUNT(*) FROM BATCH_LOG WHERE SEQ = (
-                        SELECT SEQ FROM BATCH_LOG WHERE BATCH_ID = 'B000000001' ORDER BY ST_DATE DESC LIMIT 1
-                    ) AND STATUS = 'FAIL') AS FAIL_COUNT,
-                    RESULT_DATA,
-                    ROW_NUMBER() OVER (ORDER BY TASK_ID ASC) AS RN
-                FROM BATCH_LOG 
-                WHERE 
-                    (BATCH_ID = 'B000000001' AND SEQ = (SELECT SEQ FROM BATCH_LOG WHERE BATCH_ID = 'B000000001' ORDER BY ST_DATE DESC LIMIT 1))
-                    OR
-                    (BATCH_ID IN ('B000000002', 'B000000003') AND SEQ IN (SELECT SEQ FROM LatestSEQ))
-                ORDER BY TASK_ID ASC
-                LIMIT 1000;
+                    b.BATCH_ID,
+                    b.BATCH_NM, 
+                    b.TASK_NM, 
+                    DATE_FORMAT(b.ST_DATE, '%Y.%m.%d %H:%i:%s') AS ST_DATE, 
+                    DATE_FORMAT(b.ED_DATE, '%Y.%m.%d %H:%i:%s') AS ED_DATE, 
+                    b.STATUS,
+                    a.TOTAL_COUNT,
+                    a.SUCCESS_COUNT,
+                    a.FAIL_COUNT,
+                    b.RESULT_DATA,
+                    ROW_NUMBER() OVER (ORDER BY b.TASK_ID ASC) AS RN
+                FROM BATCH_LOG b
+                JOIN LatestSEQ l ON b.SEQ = l.SEQ
+                LEFT JOIN AggregatedCounts a ON b.SEQ = a.SEQ
+                ORDER BY b.TASK_ID ASC
+                LIMIT 1000
                 """
 
     elif qType == "Q20": # 배치 공휴일 등록 
