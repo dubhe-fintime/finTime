@@ -1645,8 +1645,12 @@ async def getYouTube():
 
 def set_batch_youtube(corNo, contentTitle, contentUrl, thumbnailUrl, priority):
     values = (corNo, contentTitle, contentUrl, thumbnailUrl, priority)
-    execute_mysql_query_delete("Q25",values) # YOUTUBE BATCH 결과 전체 삭제
     execute_mysql_query_insert("Q24",values) # YOUTUBE BATCH 결과 등록
+
+def del_batch_youtube(cnt):
+    if cnt == 1:
+        execute_mysql_query_delete('Q25', []) # YOUTUBE BATCH 데이터 전체 삭제
+
 ################## YOUTUBE END #############################
 if __name__ == "__main__":
     while True:

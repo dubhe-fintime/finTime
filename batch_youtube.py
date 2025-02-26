@@ -4,7 +4,7 @@ import datetime
 import schedule
 import os
 import random
-from main import set_batch_youtube, set_user_mapp, set_batch_log, app
+from main import set_batch_youtube, set_user_mapp, set_batch_log, del_batch_youtube, app
 from main import getYouTube  # 유튜브 데이터 가져오는 함수 임포트
 
 BATCH_ID = "B000000002"  # 유튜브 배치 ID
@@ -62,6 +62,8 @@ async def youtube_batch_job():
                     if not isinstance(channel, dict):
                         raise TypeError(f"채널 데이터 형식 오류: {type(channel)}, 데이터: {channel}")
 
+                    # 스크레핑 결과 정보 DB 삭제(cnt = 1 일때)
+                    del_batch_youtube(cnt)
                     corNo = corNm[cnt // 5] if cnt // 5 < len(corNm) else "None"
                     set_batch_youtube(
                         corNo,
