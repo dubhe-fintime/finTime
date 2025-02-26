@@ -63,17 +63,6 @@
 <body>
 
     <div class="container">
-        <h2>배치 컨트롤</h2>
-        <button onclick="startBatch()">🚀 배치 시작</button>
-        <button onclick="stopBatch()">🛑 배치 중지</button>
-        <button onclick="checkBatchStatus()">🔍 상태 확인</button>
-
-        <p id="status">⏳ 배치 상태 확인 중...</p>
-
-        
-    </div>
-    
-    <div class="container">
         <div class="summary-container">
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <!-- 갱신 주기 설정 -->
@@ -102,6 +91,7 @@
             <thead>
                 <tr>
                     <th>순번</th>
+                    <th>배치명</th>
                     <th>업체명</th>
                     <th>성공 여부</th>
                     <th>실행 시작 시간</th>
@@ -115,48 +105,6 @@
     
 
     <script>
-        // 배치 시작
-        function startBatch() {
-            fetch("/batchStart", { method: "POST" })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("status").innerText = `✅ ${data.message}`;
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    document.getElementById("status").innerText = "❌ 배치 실행 중 오류 발생";
-                });
-        }
-
-        // 배치 중지
-        function stopBatch() {
-            fetch("/batchStop", { method: "POST" })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("status").innerText = `✅ ${data.message}`;
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    document.getElementById("status").innerText = "❌ 배치 중지 중 오류 발생";
-                });
-        }
-
-        // 배치 상태 확인
-        function checkBatchStatus() {
-            fetch("/batchStatus", { method: "POST" })
-                .then(response => response.json())
-                .then(data => {
-                    let statusText = data.status === "running" 
-                        ? `🟢 실행 중 (PID: ${data.pid})` 
-                        : "🔴 중지됨";
-                    document.getElementById("status").innerText = statusText;
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    document.getElementById("status").innerText = "❌ 상태 확인 중 오류 발생";
-                });
-        }
-
         // 배치 상태 확인
         function batchResultSearch() {
             fetch("/batchResultSearch", { method: "POST" })
@@ -172,24 +120,14 @@
                     const tableBody = document.getElementById("batchResults");
                     tableBody.innerHTML = ""; // 기존 데이터 초기화
                     
-                    debugger;
-                    // 'batch_nm': item[0],
-                    // 'task_nm': item[1],
-                    // 'st_date': item[2],
-                    // 'ed_date': item[3],
-                    // 'status': item[4],
-                    // 'tot_cnt': item[5],
-                    // 'success_cnt': item[6],
-                    // 'fail_cnt': item[7],
-                    // 'result_data': item[8],
-                    // 'row_num': item[9]
-                    const tot_cnt = data[0].tot_cnt; // B000000001 의 TOT_CNT를 초기 셋팅
-                    const success_cnt = data[0].success_cnt; // B000000001 의 success_cnt 초기 셋팅
-                    const fail_cnt = data[0].fail_cnt; // B000000001 의 fail_cnt 초기 셋팅
+                    var tot_cnt = Number(data[0].tot_cnt); // B000000001 의 TOT_CNT를 초기 셋팅
+                    var success_cnt = Number(data[0].success_cnt); // B000000001 의 success_cnt 초기 셋팅
+                    var fail_cnt = Number(data[0].fail_cnt); // B000000001 의 fail_cnt 초기 셋팅
                     data.map((item, index) => {
                         const row = document.createElement("tr");
                         row.innerHTML = `
                             <td>${item.row_num}</td>
+                            <td>${item.batch_nm}</td>
                             <td>${item.task_nm}</td>
                             <td class="${item.status === 'SUCCESS' ? 'success' : 'fail'}">${item.status}</td>
                             <td>${item.st_date}</td>
@@ -203,11 +141,12 @@
                         }
                         tableBody.appendChild(row);
 
-                        if(item.batch_id != "B000000001"){
-                            tot_cnt = tot_cnt + item.tot_cnt;
-                            success_cnt = success_cnt + item.success_cnt;
-                            fail_cnt = fail_cnt + item.fail_cnt;
+                        if (item.batch_id !== "B000000001") {
+                            tot_cnt += Number(item.tot_cnt) || 0;
+                            success_cnt += Number(item.success_cnt) || 0;
+                            fail_cnt += Number(item.fail_cnt) || 0;
                         }
+
                     });
                     
                     document.getElementById("totalCount").innerText = tot_cnt;
@@ -219,18 +158,6 @@
                         runningTitle = "🟢진행중"
                     }
                     document.getElementById("running").innerText = runningTitle;
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                });
-        }
-
-          // 배치 상태 확인
-          function getYouTube() {
-            fetch("/getYouTube", { method: "POST" })
-                .then(response => response.json())
-                .then(data => {
-                   debugger;
                 })
                 .catch(error => {
                     console.error("Error:", error);
@@ -266,9 +193,7 @@
 
         // 페이지 로드 시 상태 확인
         document.addEventListener("DOMContentLoaded", function() {
-            checkBatchStatus();
             batchResultSearch();
-            //getYouTube();
             startAutoRefresh(refreshInterval); // 기본 1분으로 실행
         });
     </script>

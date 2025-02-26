@@ -64,60 +64,49 @@
 
     <div class="container">
         <h2>배치 컨트롤</h2>
-        <button onclick="startBatch()">🚀 배치 시작</button>
-        <button onclick="stopBatch()">🛑 배치 중지</button>
-        <button onclick="checkBatchStatus()">🔍 상태 확인</button>
+        <button onclick="startBatch(1)">🚀 배치 시작</button>
+        <button onclick="stopBatch(1)">🛑 배치 중지</button>
+        <button onclick="checkBatchStatus(1)">🔍 상태 확인</button>
 
         <p id="status">⏳ 배치 상태 확인 중...</p>
 
         
     </div>
-    
+
     <div class="container">
-        <div class="summary-container">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-                <!-- 갱신 주기 설정 -->
-                <div>
-                    <label for="refreshRate">갱신 주기 (분): </label>
-                    <select id="refreshRate" onchange="updateRefreshRate()">
-                        <script>
-                            for (let i = 1; i <= 30; i++) {
-                                document.write(`<option value="${i}">${i}분</option>`);
-                            }
-                        </script>
-                    </select>
-                </div>
-    
-                <!-- 전체 건수, 성공 건수, 실패 건수 -->
-                <div class="summary">
-                    <strong>전체 건수:</strong> <span id="totalCount"></span> | 
-                    <strong>성공 건수:</strong> <span id="successCount" class="success"></span> | 
-                    <strong>실패 건수:</strong> <span id="failCount" class="fail"></span>
-                </div>
-            </div>
-        </div>
-    
-        <h2>배치 실행 결과(<span id="running"></span>)</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>순번</th>
-                    <th>업체명</th>
-                    <th>성공 여부</th>
-                    <th>실행 시작 시간</th>
-                    <th>실행 종료 시간</th>
-                </tr>
-            </thead>
-            <tbody id="batchResults">
-            </tbody>
-        </table>
+        <h2>YOUTUBE 배치 컨트롤</h2>
+        <button onclick="startBatch(2)">🚀 배치 시작</button>
+        <button onclick="stopBatch(2)">🛑 배치 중지</button>
+        <button onclick="checkBatchStatus(2)">🔍 상태 확인</button>
+
+        <p id="status">⏳ 배치 상태 확인 중...</p>
+
+        
     </div>
-    
+
+    <div class="container">
+        <h2>NAVER NEWS 배치 컨트롤</h2>
+        <button onclick="startBatch(3)">🚀 배치 시작</button>
+        <button onclick="stopBatch(3)">🛑 배치 중지</button>
+        <button onclick="checkBatchStatus(3)">🔍 상태 확인</button>
+
+        <p id="status">⏳ 배치 상태 확인 중...</p>
+
+        
+    </div>
 
     <script>
         // 배치 시작
-        function startBatch() {
-            fetch("/batchStart", { method: "POST" })
+        
+        function startBatch(type) {
+            var requestData = { "type": type}
+            fetch("/batchStart", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"  // 요청 헤더에서 JSON 형식 지정
+                    },
+                    body: JSON.stringify(requestData)  // JSON 형식으로 변환하여 body에 담아 전송
+                })
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("status").innerText = `✅ ${data.message}`;
@@ -129,8 +118,15 @@
         }
 
         // 배치 중지
-        function stopBatch() {
-            fetch("/batchStop", { method: "POST" })
+        function stopBatch(type) {
+            var requestData = { "type": type}
+                fetch("/batchStop", { 
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"  // 요청 헤더에서 JSON 형식 지정
+                    },
+                    body: JSON.stringify(requestData)  // JSON 형식으로 변환하여 body에 담아 전송
+                })
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("status").innerText = `✅ ${data.message}`;
@@ -142,8 +138,15 @@
         }
 
         // 배치 상태 확인
-        function checkBatchStatus() {
-            fetch("/batchStatus", { method: "POST" })
+        function checkBatchStatus(type) {
+            var requestData = { "type": type}
+            fetch("/batchStatus", { 
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"  // 요청 헤더에서 JSON 형식 지정
+                    },
+                    body: JSON.stringify(requestData)  // JSON 형식으로 변환하여 body에 담아 전송
+                })
                 .then(response => response.json())
                 .then(data => {
                     let statusText = data.status === "running" 
@@ -157,91 +160,7 @@
                 });
         }
 
-        // 배치 상태 확인
-        function batchResultSearch() {
-            fetch("/batchResultSearch", { method: "POST" })
-                .then(response => response.json())
-                .then(data => {
-                    if(data.length === 0){
-                        document.getElementById("batchResults").innerHTML = "<tr><td colspan='5'>데이터가 없습니다.</td></tr>";
-                        document.getElementById("totalCount").innerText = 0;
-                        document.getElementById("successCount").innerText = 0;
-                        document.getElementById("failCount").innerText = 0;
-                    }
-                    document.getElementById("totalCount").innerText = data[0].tot_cnt;
-                    document.getElementById("successCount").innerText = data[0].success_cnt;
-                    document.getElementById("failCount").innerText = data[0].fail_cnt;
-                    var runningTitle = "🔴대기중";
-                    if(data[0].tot_cnt < 37){
-                        runningTitle = "🟢진행중"
-                    }
-                    document.getElementById("running").innerText = runningTitle;
-                    const tableBody = document.getElementById("batchResults");
-                    tableBody.innerHTML = ""; // 기존 데이터 초기화
-                    data.forEach(item => {
-                        const row = document.createElement("tr");
-                        row.innerHTML = `
-                            <td>${item.row_num}</td>
-                            <td>${item.task_nm}</td>
-                            <td class="${item.status === 'SUCCESS' ? 'success' : 'fail'}">${item.status}</td>
-                            <td>${item.st_date}</td>
-                            <td>${item.ed_date}</td>
-                        `;
-
-                        // 실패한 경우 클릭 이벤트 추가
-                        if (item.status === 'FAIL') {
-                            row.style.cursor = "pointer"; // 마우스 커서 변경
-                            row.addEventListener("click", () => showPopup(item.result_data));
-                        }
-                        tableBody.appendChild(row);
-                    });
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                });
-        }
-
-        // 팝업 열기
-        function showPopup(resultData) {
-            document.getElementById("popupText").innerText = resultData;
-            document.getElementById("popupLayer").style.display = "block";
-        }
-
-        // 팝업 닫기
-        function closePopup() {
-            document.getElementById("popupLayer").style.display = "none";
-        }
-        
-        let refreshInterval = 60000; // 기본 1분 (60000ms)
-        let intervalId = null; // setInterval ID 저장
-
-        // 주기적으로 배치 실행 결과 갱신하는 함수
-        function startAutoRefresh(interval) {
-            if (intervalId) clearInterval(intervalId); // 기존 인터벌 제거
-            intervalId = setInterval(batchResultSearch, interval);
-        }
-
-        // 사용자가 select box에서 갱신 주기를 변경할 때 실행
-        function updateRefreshRate() {
-            let selectedMinutes = document.getElementById("refreshRate").value;
-            refreshInterval = selectedMinutes * 60000; // 분 → 밀리초 변환
-            startAutoRefresh(refreshInterval);
-        }
-
-        // 페이지 로드 시 상태 확인
-        document.addEventListener("DOMContentLoaded", function() {
-            checkBatchStatus();
-            batchResultSearch();
-            startAutoRefresh(refreshInterval); // 기본 1분으로 실행
-        });
     </script>
 
-<div id="popupLayer" class="popup">
-    <div class="popup-content">
-        <span class="close-btn" onclick="closePopup()">&times;</span>
-        <h3>에러 상세 정보</h3>
-        <pre id="popupText"></pre>
-    </div>
-</div>
 </body>
 </html>

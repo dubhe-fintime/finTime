@@ -1379,21 +1379,27 @@ def batchControl():
 # 배치 시작
 @app.route('/batchStart', methods=["POST"])
 def batchStart():
-    result = start_batch()
+    datas = request.get_json()
+    print(datas['type'])
+    result = start_batch(datas['type'])
     logger.info(str(result))
     return result
 
 # 배치 종료
 @app.route('/batchStop', methods=["POST"])
 def batchStop():
-    result = stop_batch()
+    datas = request.get_json()
+    print(datas['type'])
+    result = stop_batch(datas['type'])
     logger.info(str(result))
     return result
 
 # 배치 상태 조회
 @app.route('/batchStatus', methods=["POST"])
 def batchStatus():
-    result = check_batch_status()
+    datas = request.get_json()
+    print(datas['type'])
+    result = check_batch_status(datas['type'])
     logger.info(str(result))
     return result
 

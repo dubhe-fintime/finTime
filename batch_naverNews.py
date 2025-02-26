@@ -71,7 +71,7 @@ def run_naver_batch_job():
     except Exception as e:
         print(f"네이버뉴스 배치 작업 실행 중 오류 발생: {e}")
 
-# 매일 01:00에 실행
+# 매일 03:00에 실행
 schedule.every().day.at("03:00").do(run_naver_batch_job)
 
 print(f"네이버뉴스 배치 작업이 스케줄링되었습니다. (매일 03:00 실행)")
@@ -79,4 +79,4 @@ print(f"네이버뉴스 배치 작업이 스케줄링되었습니다. (매일 03
 # 무한 루프 실행 (배치 스케줄 유지)
 while True:
     schedule.run_pending()
-    time.sleep(1)  # 1분마다 체크
+    time.sleep(60)  # 1분마다 체크
