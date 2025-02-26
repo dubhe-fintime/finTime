@@ -163,7 +163,7 @@
                 .then(response => response.json())
                 .then(data => {
                     data.map((item, index) => {
-                        console.log(`Index: ${index}, Total Count: ${item.tot_cnt}`);
+                        console.log(`Index: ${index}, Total Count: ${item}`);
                     });
                     if(data.length === 0){
                         document.getElementById("batchResults").innerHTML = "<tr><td colspan='5'>데이터가 없습니다.</td></tr>";
