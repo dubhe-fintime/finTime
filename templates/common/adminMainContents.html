@@ -183,9 +183,9 @@
                     // 'fail_cnt': item[7],
                     // 'result_data': item[8],
                     // 'row_num': item[9]
-                    const tot_cnt = data[0].tot_cnt; // B000000001 의 TOT_CNT를 초기 셋팅
-                    const success_cnt = data[0].success_cnt; // B000000001 의 success_cnt 초기 셋팅
-                    const fail_cnt = data[0].fail_cnt; // B000000001 의 fail_cnt 초기 셋팅
+                    var tot_cnt = data[0].tot_cnt; // B000000001 의 TOT_CNT를 초기 셋팅
+                    var success_cnt = data[0].success_cnt; // B000000001 의 success_cnt 초기 셋팅
+                    var fail_cnt = data[0].fail_cnt; // B000000001 의 fail_cnt 초기 셋팅
                     data.map((item, index) => {
                         const row = document.createElement("tr");
                         row.innerHTML = `
