@@ -172,9 +172,9 @@
                     const tableBody = document.getElementById("batchResults");
                     tableBody.innerHTML = ""; // 기존 데이터 초기화
                     
-                    var tot_cnt = data[0].tot_cnt; // B000000001 의 TOT_CNT를 초기 셋팅
-                    var success_cnt = data[0].success_cnt; // B000000001 의 success_cnt 초기 셋팅
-                    var fail_cnt = data[0].fail_cnt; // B000000001 의 fail_cnt 초기 셋팅
+                    var tot_cnt = Number(data[0].tot_cnt); // B000000001 의 TOT_CNT를 초기 셋팅
+                    var success_cnt = Number(data[0].success_cnt); // B000000001 의 success_cnt 초기 셋팅
+                    var fail_cnt = Number(data[0].fail_cnt); // B000000001 의 fail_cnt 초기 셋팅
                     data.map((item, index) => {
                         const row = document.createElement("tr");
                         row.innerHTML = `
