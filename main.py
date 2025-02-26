@@ -1051,7 +1051,6 @@ def get_next_id(letter):
 # 고유ID 등록
 def save_id(letter, sequence, new_id):
     values = [letter, sequence, new_id]
-    print(values)
     execute_mysql_query_insert("Q8",values) # BATCH 데이터 등록
 
 
