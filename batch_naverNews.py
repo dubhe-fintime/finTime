@@ -31,8 +31,6 @@ async def naver_batch_job():
                 status = "SUCCESS"
                 cnt = 0  # 정상 처리된 데이터 개수
                 # del_batch_rst(cnt)  # 기존 데이터 삭제
-                print(">>>>>>>>>>>>>>>>>>>>>1단계")
-                print(results)
                 for data in results:
                     set_batch_news(
                         data.get('press_name', ""),
