@@ -68,14 +68,12 @@
             <col />
             <col width="80px" />
             <col width="80px" />
-            <col width="80px" />
-            <col width="80px" />
-            <col width="80px" />
-            <col width="80px" />
+            <col width="160px" />
+            <col width="160px" />
             <col width="80px" />
           </colgroup>
           <thead class="thead type2">
-            <tr>
+            <tr >
               <th>
                 <input id="allCheck" type="checkbox" class="checkbox" />
                 <label for="allCheck" class="checkbox-label" onclick="ChangeCheckBox2('allCheck')">체크</label>
@@ -84,9 +82,9 @@
               <th>이벤트제목</th>
               <th>시작일</th>
               <th>종료일</th>
-              <th colspan="2">이미지</th>
+              <th >이미지</th>
               <!-- <th>이미지</th> -->
-              <th colspan="2">URL</th>
+              <th>URL</th>
               <!-- <th></th> -->
               <th>상태</th>
             </tr>
@@ -139,6 +137,8 @@
                   var status = v['evt_status'];
                   var chkCol =''
                   var statusCol = ''
+                  var imgCol = ''
+                  var listUrlCol = ''
                   var encodingJSON = encodeURIComponent(JSON.stringify(v));
                   if(status =='NONE')
                   {
@@ -155,6 +155,23 @@
                     chkCol = `<td></td>`
                     statusCol = `<td>비노출</td>`
                   }
+                  if(v['evt_thumbnail']!='')
+                  {
+                    imgCol = `<button id='thumbBtn' class='btn primary sm' data-value="${v['evt_thumbnail']}" data-title='썸네일이미지' onclick="openImgModal(this)" >썸네일</button>`
+                  }
+
+                  if(v['evt_img']!='')
+                  {
+                    imgCol += ` <button id='imgBtn' class='btn primary sm' data-value="${v['evt_img']}" data-title='이미지' onclick="openImgModal(this)">이미지</button>`
+                  }
+                  if(v['evt_list_link']!='')
+                  {
+                    listUrlCol = `<button id='listBtn' class='btn primary sm' data-value="${v['evt_list_link']}" onclick="openUrl(this)" >리스트</button>`
+                  }
+                  if(v['evt_dt_link']!='')
+                  {
+                    listUrlCol += ` <button id='dtBtn' class='btn primary sm' data-value="${v['evt_dt_link']}" onclick="openUrl(this)" >디테일</button>`
+                  }
                   values += `    
                     <tr data-id="${i+1}" name="${v['evt_title']}" explain="${v['evt_title']}">` 
                   values += chkCol
@@ -163,10 +180,13 @@
                       <td>${v['evt_title']}</td>
                       <td>${v['evt_st_date']} </td>
                       <td>${v['evt_ed_date']} </td>
-                      <td><button id='thumbBtn' class='btn primary sm' data-value="${v['evt_thumbnail']}" data-title='썸네일이미지' onclick="openImgModal(this)" >썸네일</button></td>
-                      <td><button id='imgBtn' class='btn primary sm' data-value="${v['evt_img']}" data-title='이미지' onclick="openImgModal(this)">이미지</button></td>
-                      <td><button id='listBtn' class='btn primary sm' >리스트</button></td>
-                      <td><button id='dtBtn' class='btn primary sm' >디테일</button></td>`
+                      <td>
+                      `
+                  values += imgCol
+                  values +=`  </td>`
+                  values +=`  <td>`
+                  values += listUrlCol
+                  values +=`  </td>`
                   values += statusCol
                   values += `  </tr>`
                 });
@@ -179,79 +199,63 @@
   
   }
   function insertEvent(multiFlag,button) {
+    if(confirm('적용하시겠습니까?'))
+    {
 
-    let formData = new FormData();
-    let check_data = [];
-    
-    if(multiFlag){
-      $("label.checked.chi").each(function (index) {
-          let data = $(this).parent().closest("tr").find("td:last button").attr("data-json");
-          var decodeData = decodeURIComponent(data);
-          check_data.push(JSON.parse(decodeData));  // 문자열 → JSON 객체 변환
-      });
-      var cnt = check_data.length;
-      if(cnt==0)
-      {
-        alert('선택 된 이벤트가 없습니다')
-        return false;
+      let formData = new FormData();
+      let check_data = [];
+      
+      if(multiFlag){
+        $("label.checked.chi").each(function (index) {
+            let data = $(this).parent().closest("tr").find("td:last button").attr("data-json");
+            var decodeData = decodeURIComponent(data);
+            check_data.push(JSON.parse(decodeData));  // 문자열 → JSON 객체 변환
+        });
+        var cnt = check_data.length;
+        if(cnt==0)
+        {
+          alert('선택 된 이벤트가 없습니다')
+          return false;
+        }
+        else
+        {
+          if(!confirm(cnt+'개의 이벤트를 적용하시겠습니까?')){
+            return false
+          }
+        }
       }
       else
       {
-        if(!confirm(cnt+'개의 이벤트를 적용하시겠습니까?')){
-          return false
-        }
+        var decodeData = decodeURIComponent(button.getAttribute("data-json"));
+        check_data.push(JSON.parse(decodeData));  // JSON 객체로 변환하여 저장
       }
-    }
-    else
-    {
-      var decodeData = decodeURIComponent(button.getAttribute("data-json"));
-      check_data.push(JSON.parse(decodeData));  // JSON 객체로 변환하여 저장
-    }
-    formData.append("datas", JSON.stringify(check_data));  // JSON 배열로 변환 후 전송
-
-    fetch("/insertEvent", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-              if(multiFlag){
-                $("label.checked").each(function () {
-                    let lastTd = $(this).closest("tr").find("td").last(); // 해당 label이 있는 행의 마지막 <td> 찾기
-                    lastTd.find("button").remove(); // 마지막 <td> 안의 버튼 삭제
-                    lastTd.text("노출"); // "노출" 텍스트 추가
-                    $(this).parent().empty();
-                });
-              }
-              else
-              {
-                let firstTd = $(button).closest("tr").find("td").first();
-                firstTd.empty();
-                $(button).parent().text('노출');
-              }
-            })
-            .catch(error => {
-              console.error("Error:", error);
-            });
-  }
+      formData.append("datas", JSON.stringify(check_data));  // JSON 배열로 변환 후 전송
   
-  function updateEvent(button) {
-
-    let formData = new FormData();
-    
-    formData.append("datas", JSON.stringify(JSON.parse(button.getAttribute("data-json"))));
-
-    fetch("/updateEvent", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-              button.text("새 이름");
-            })
-            .catch(error => {
-              console.error("Error:", error);
-            });
+      fetch("/insertEvent", {
+                  method: "POST",
+                  body: formData
+              })
+              .then(response => response.json())
+              .then(data => {
+                if(multiFlag){
+                  $("label.checked").each(function () {
+                      let lastTd = $(this).closest("tr").find("td").last(); // 해당 label이 있는 행의 마지막 <td> 찾기
+                      lastTd.find("button").remove(); // 마지막 <td> 안의 버튼 삭제
+                      lastTd.text("노출"); // "노출" 텍스트 추가
+                      $(this).parent().empty();
+                  });
+                }
+                else
+                {
+                  let firstTd = $(button).closest("tr").find("td").first();
+                  firstTd.empty();
+                  $(button).parent().text('노출');
+                }
+              })
+              .catch(error => {
+                console.error("Error:", error);
+              });
+    }
   }
   
   //검색 기능
@@ -273,7 +277,11 @@
                     
     OpenModal(title, `viewImg`, false, false, '', "", "", true, "md", values)
   }
-
+  function openUrl(button)
+  {
+    var url = $(button).attr('data-value');
+    window.open(url, "newWindow", "width=1200,height=800,top=100,left=100,resizable=yes,scrollbars=yes");
+  }
   
 </script>
 

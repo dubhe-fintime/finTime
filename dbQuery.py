@@ -257,9 +257,6 @@ def selectQuery(qType, values):
     elif qType == "Q26": # 네이버 뉴스 조회
         query = "SELECT TITLE,PRESS_NM,PRESS_IMG,CONTENT,LINK,COR_NO FROM NEWS_CONTENTS "
 
-
-    
-
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
         query += "    a.COR_NO cor_no, "
@@ -272,8 +269,8 @@ def selectQuery(qType, values):
         query += "        WHEN b.USE_YN = 'N' THEN 'N'"
         query += "        ELSE NULL"
         query += "    END AS evt_status, " # 상태 컬럼 추가
-        query += "    DATE_FORMAT(a.EVT_ST_DATE, '%Y-%m-%d') evt_st_date, "
-        query += "    DATE_FORMAT(a.EVT_ED_DATE, '%Y-%m-%d') evt_ed_date, "
+        query += "    IFNULL(DATE_FORMAT(a.EVT_ST_DATE, '%Y-%m-%d'),'') evt_st_date, "
+        query += "    IFNULL(DATE_FORMAT(a.EVT_ED_DATE, '%Y-%m-%d'),'') evt_ed_date, "
         query += "    a.EVT_THUMBNAIL evt_thumbnail, "
         query += "    a.EVT_IMG evt_img, "
         query += "    a.EVT_NOTI evt_noti,"
@@ -323,7 +320,7 @@ def selectQuery(qType, values):
         query += "		%s, "
         query += "		%s, "
         query += "		%s,  "
-        query += "		NOW()  "
+        query += "		SYSDATE()  "
         query += "	); "
     
     elif qType == "A3": # 배치데이터 테이블 이벤트 아이디 업데이트
@@ -341,15 +338,16 @@ def selectQuery(qType, values):
         query += "    COALESCE(b.cor_nm, '미등록기관') cor_nm, "
         query += "	  a.EVT_TITLE evt_title, "
         query += "    a.EVT_ID evt_id, "
-        query += "    DATE_FORMAT(a.EVT_ST_DATE, '%Y-%m-%d') evt_st_date, "
-        query += "    DATE_FORMAT(a.EVT_ED_DATE, '%Y-%m-%d') evt_ed_date, "
+        query += "    IFNULL(DATE_FORMAT(a.EVT_ST_DATE, '%Y-%m-%d'),'') evt_st_date, "
+        query += "    IFNULL(DATE_FORMAT(a.EVT_ED_DATE, '%Y-%m-%d'),'') evt_ed_date, "
         query += "    a.EVT_THUMBNAIL evt_thumbnail, "
         query += "    a.EVT_IMG evt_img, "
         query += "    a.EVT_NOTI evt_noti, "
         query += "    a.EVT_LIST_LINK evt_list_link, "
         query += "    a.EVT_DT_LINK evt_dt_link, "
         query += "    a.USE_YN use_yn, "
-        query += "    a.C_DATE c_date "
+        query += "    a.C_DATE c_date, "
+        query += "    a.E_DATE e_date "
         query += "FROM EVT_MST a "
         query += "	LEFT JOIN COR_MST b ON a.COR_NO = b.COR_NO "
 
@@ -362,6 +360,22 @@ def selectQuery(qType, values):
             query += f" AND a.USE_YN = '{values[2]}'"
         
         query += " ORDER BY cor_nm, evt_st_date desc"
+
+    elif qType == "A6": #EVT_MST 컨텐츠 업데이트
+        query = """
+            UPDATE EVT_MST 
+            SET 
+                EVT_ST_DATE = %s,
+                EVT_ED_DATE = %s,
+                EVT_THUMBNAIL = %s,
+                EVT_IMG = %s,
+                EVT_NOTI = %s,
+                EVT_LIST_LINK = %s,
+                EVT_DT_LINK = %s,
+                E_DATE = SYSDATE()
+            WHERE
+                EVT_ID = %s
+        """
 
     elif qType == "C1": # 로그인 기능
         query = """
@@ -437,7 +451,7 @@ def selectQuery(qType, values):
 
 
 
-    print("###################################")
-    print(query)
-    print("###################################")
+    # print("###################################")
+    # print(query)
+    # print("###################################")
     return query

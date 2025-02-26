@@ -19,17 +19,6 @@
     <main class="main-area">
       <h2 class="title">컨텐츠 관리</h2>
       <form class="search-form" >
-        <div class="select-box md" style="display:none">
-          <strong class="label" onclick="ClickSelectLabel('searchCor')" id="searchCor" name="searchCor">기관명</strong>
-          <ul class="options type">
-            <li class="option" onclick="ClickSelectOption('searchCor','기관명','searchCor')">
-              기관명
-            </li>
-            <li class="option" onclick="ClickSelectOption('searchCor','이벤트제목','searchSubject')">
-              이벤트 제목
-            </li>
-          </ul>
-        </div>
         <div class="input-wrap">
           <input id="searchInputCor" class="input" placeholder="기관명 입력 후 검색" />
           <span class="delete-btn"></span>
@@ -55,10 +44,6 @@
         <button id="searchBtn" class="btn primary md search-btn" onclick="javascript:selectList()">검색</button>
       </form>
       <div class="table-area">
-        <div class="flex justify-between align-end" style ="display:none">
-          <strong class="count"></strong>
-          <button class="btn tertiary sm" id="addBtn" onclick=""> + 그룹 추가</button>
-        </div>
         <table class="table intent-table">
           <caption>컨텐츠 데이터 관리 테이블</caption>
           <colgroup>
@@ -66,10 +51,8 @@
             <col />
             <col width="80px" />
             <col width="80px" />
-            <col width="80px" />
-            <col width="80px" />
-            <col width="80px" />
-            <col width="80px" />
+            <col width="160px" />
+            <col width="160px" />
             <col width="80px" />
           </colgroup>
           <thead class="thead type2">
@@ -78,10 +61,8 @@
               <th>이벤트제목</th>
               <th>시작일</th>
               <th>종료일</th>
-              <th>썸네일</th>
               <th>이미지</th>
-              <th>목록 URL</th>
-              <th>상세 URL</th>
+              <th>URL</th>
               <th>노출여부</th>
             </tr>
           </thead>
@@ -108,48 +89,87 @@
       addModal(this)
   });  
 
-  $("#dataContent").on('dblclick', 'td:last-child', function(e) {
-      e.stopPropagation();  
-      ynModal(this)
-  });
-
-  $("#addBtn").click(function () {
-    addModal()
-  })
-
 
 function clickEvtSelOpt(id, option, name){
   ClickSelectOption(id,option,name)
-  
+  if(id=='thumbOpt'){
+    if(name=='url'){
+      $('#thumbFileArea').css('display','none')  
+      $('#thumbUrlArea').css('display','block')  
+    }
+    else
+    {
+      $('#thumbFileArea').css('display','block')  
+      $('#thumbUrlArea').css('display','none')  
+    }
+  }
+  if(id=='imgOpt'){
+    if(name=='url'){
+      $('#imgFileArea').css('display','none')  
+      $('#imgUrlArea').css('display','block')  
+    }
+    else
+    {
+      $('#imgFileArea').css('display','block')  
+      $('#imgUrlArea').css('display','none')  
+    }
+  }
+
 }
   //모달 
   function addModal(tag=false) {
     //session_ok("{{domain}}", "{{port}}");
-    var modal_title = tag ? "기관 수정" : "기관 추가"
-    console.log(tag)
-    var flag = tag ?  true : false  // true는 수정  // false는 추가
     //요소 바인딩
-    var cor_name = tag ? $(tag).find("td").eq(0).text() : ""
-    var title = tag ? $(tag).find("td").eq(1).text() : ""
-    var start_dt = tag ? $(tag).find("td").eq(2).text().trim() : ""
-    var end_dt = tag ? $(tag).find("td").eq(3).text().trim() : ""
-    var thumbnail_url = tag ? $(tag).find("td").eq(4).find("button").attr('data-value') : ""
-    var img_url = tag ? $(tag).find("td").eq(5).find("button").attr('data-value') : ""
-    values = `
+    var decodeData = decodeURIComponent($(tag).attr("data-json"));
+    let data = JSON.parse(decodeData)
+    var evt_id = data['evt_id']
+    var cor_name = data['cor_nm']
+    var title = data['evt_title']
+    var start_dt = data['evt_st_date']
+    var end_dt = data['evt_ed_date']
+    var thumbnail_url = data['evt_thumbnail']
+    var img_url = data['evt_img']
+    var listLink = data['evt_list_link']
+    var dtLink = data['evt_dt_link']
+    var evtNoti = data['evt_noti']
+    
+    var thumbUrlSt = ''
+    var thumbFileSt = ''
+    var imgUrlSt = ''
+    var imgFileSt = ''
+    if(thumbnail_url!='')
+    {
+      thumbUrlSt = 'display:block'
+      thumbFileSt = 'display:none'
+    }
+    else
+    {
+      thumbUrlSt = 'display:none'
+      thumbFileSt = 'display:block'
+    }
+    if(img_url!='')
+    {
+      imgUrlSt = 'display:block'
+      imgFileSt = 'display:none'
+    }
+    else
+    {
+      imgUrlSt = 'display:none'
+      imgFileSt = 'display:block'
+    }
+    values = `    <form>
                     <h3>기관명</h3>
                     <fieldset>
                         <div class="input-wrap sm">
-                            <input id="corNmInput" class="input" placeholder="기관명을 입력 해 주세요" 
-                                onfocus="FocusInput('corNmInput')" oninput="ChangeInput('corNmInput')" onblur="BlurInput('corNmInput')"
-                                value="${cor_name}" readonly>
+                            <input id="corNmInput" class="input"
+                                value="${cor_name}" readonly><input type="hidden" id="evtId" value="${evt_id}"/>
                         </div>
                     </fieldset>
                     <br>
                     <h3>이벤트제목</h3>
                     <fieldset>
                         <div class="input-wrap sm">
-                            <input id="corNmInput" class="input" placeholder="기관명을 입력 해 주세요" 
-                                onfocus="FocusInput('corNmInput')" oninput="ChangeInput('corNmInput')" onblur="BlurInput('corNmInput')"
+                            <input id="titleInput" class="input"
                                 value="${title}" readonly>
                         </div>
                     </fieldset>
@@ -157,53 +177,197 @@ function clickEvtSelOpt(id, option, name){
                     <h3>이벤트기간</h3>
                     <fieldset>
                       <div class="date-wrap align-center"  >
-                        <div class="date-box" style="width:47.5%;float:left"><input type="date" id="startDay" value="${start_dt}"></div>
+                        <input type="date" id="startDay" value="${start_dt}">
                         <span class="unit" >~</span>
-                        <div class="date-box" style="width:47.5%;float:right"><input type="date" id="endDay" value="${end_dt}"></div>
+                        <input type="date" id="endDay" value="${end_dt}">
                       </div>
                     </fieldset>
                     <h3>썸네일</h3>
                     <fieldset>
-                        <div class="input-wrap sm">
-                            <div class="select-box xs" >
-                              <strong class="label" onclick="ClickSelectLabel('thumbOpt')" id="thumbOpt" name="" >URL</strong>
-                              <ul class="options type">
-                                <li class="option thumb" onclick="clickEvtSelOpt('thumbOpt','URL','url')">
-                                  URL
-                                </li>
-                                <li class="option thumb" onclick="clickEvtSelOpt('thumbOpt','파일','file')">
-                                  파일
-                                </li>
-                              </ul>
-                            </div>
-                            <div class="input-wrap sm">
-                              <input id="thumbUrlInput" class="input" placeholder="썸네일 이미지 URL을 입력 해 주세요" 
-                                onfocus="FocusInput('thumbUrlInput')" oninput="ChangeInput('thumbUrlInput')" onblur="BlurInput('thumbUrlInput')"
-                                value="${thumbnail_url}">
-                              <span class="delete-btn" onclick="DeleteInput('thumbUrlInput')"></span>
-                              <button>미리보기</button>
-                            </div>
-                            <div class="input-wrap sm">
-                              <input type="file" id="file-input" accept="image/*" style="display:none">
-                            </div>
-                          </div>
-
+                      <div class="input-wrap sm" style="display:flex">
+                        <div class="select-box xs" >
+                          <strong class="label" onclick="ClickSelectLabel('thumbOpt')" id="thumbOpt" name="" >URL</strong>
+                          <ul class="options type">
+                            <li class="option thumb" onclick="clickEvtSelOpt('thumbOpt','URL','url')">
+                              URL
+                            </li>
+                            <li class="option thumb" onclick="clickEvtSelOpt('thumbOpt','파일','file')">
+                              파일
+                            </li>
+                          </ul>
+                        </div>
+                        <div class="input-wrap sm" id="thumbUrlArea" style="${thumbUrlSt};margin-left: 0px;">
+                          <input id="thumbUrlInput" class="input" placeholder="썸네일 이미지 URL을 입력 해 주세요"
+                            onfocus="FocusInput('thumbUrlInput')" oninput="ChangeInput('thumbUrlInput')" onblur="BlurInput('thumbUrlInput')"
+                            value="${thumbnail_url}">
+                            <button data-value="${thumbnail_url}" onclick="openImgModal(this)">미리보기</button>
+                          <span class="delete-btn" onclick="DeleteInput('thumbUrlInput')"></span>
+                        </div>
+                        <div class="input-wrap sm" id="thumbFileArea" style="${thumbFileSt}">
+                          <input type="file" id="thumb-file-input" accept="image/*" >
+                        </div>
+                      </div>
                     </fieldset>
                     <br>
                     <h3>이미지 URL</h3>
                     <fieldset>
-                        <div class="input-wrap sm">
-                            <input id="imgUrlInput" class="input" placeholder="이미지 URL을 입력 해 주세요" 
-                                onfocus="FocusInput('imgUrlInput')" oninput="ChangeInput('imgUrlInput')" onblur="BlurInput('imgUrlInput')"
-                                value="${img_url}">
-                            <span class="delete-btn" onclick="DeleteInput('imgUrlInput')"></span>
+                      <div class="input-wrap sm">
+                        <div class="select-box xs" >
+                          <strong class="label" onclick="ClickSelectLabel('imgOpt')" id="imgOpt" name="" >URL</strong>
+                          <ul class="options type">
+                            <li class="option thumb" onclick="clickEvtSelOpt('imgOpt','URL','url')">
+                              URL
+                            </li>
+                            <li class="option thumb" onclick="clickEvtSelOpt('imgOpt','파일','file')">
+                              파일
+                            </li>
+                          </ul>
                         </div>
-                    </fieldset>    `
-    OpenModal("이벤트 상세", "", true, true, "addGroup()", "확인", "취소", "", "lg", values)
+                        <div class="input-wrap sm" id="imgUrlArea" style="${imgUrlSt};margin-left: 0px;">
+                          <input id="imgUrlInput" class="input" placeholder="이미지 URL을 입력 해 주세요" 
+                            onfocus="FocusInput('imgUrlInput')" oninput="ChangeInput('imgUrlInput')" onblur="BlurInput('imgUrlInput')"
+                            value="${img_url}">
+                          <span class="delete-btn" onclick="DeleteInput('imgUrlInput')"></span>
+                          <button data-value="${img_url}" onclick="openImgModal(this)">미리보기</button>
+                        </div>
+                        <div class="input-wrap sm" id="imgFileArea" style="${imgFileSt}">
+                          <input type="file" id="img-file-input" accept="image/*" >
+                        </div>
+                       </div>
+                    </fieldset>
+                    <br>
+                    <h3>리스트 URL</h3>
+                    <fieldset>
+                      <div class="input-wrap sm" id="listLinkArea">
+                        <input id="listLinkInput" class="input" placeholder="이벤트 목록 URL을 입력 해 주세요" 
+                          onfocus="FocusInput('listLinkInput')" oninput="ChangeInput('listLinkInput')" onblur="BlurInput('listLinkInput')"
+                          value="${listLink}">
+                        <span class="delete-btn" onclick="DeleteInput('listLinkInput')"></span>
+                      </div>
+                    </fieldset>
+                    <br>
+                    <h3>상세 URL</h3>
+                    <fieldset>
+                      <div class="input-wrap sm" id="dtLinkArea">
+                        <input id="dtLinkInput" class="input" placeholder="이벤트 상세 URL을 입력 해 주세요" 
+                          onfocus="FocusInput('dtLinkInput')" oninput="ChangeInput('dtLinkInput')" onblur="BlurInput('dtLinkInput')"
+                          value="${dtLink}">
+                        <span class="delete-btn" onclick="DeleteInput('dtLinkInput')"></span>
+                      </div>
+                    </fieldset>
+                    <br>
+                    <h3>이벤트 내용</h3>
+                    <fieldset>
+                        <textarea id="notiInput" class="textarea" onfocus="FocusInput('notiInput')"
+                            placeholder="이벤트 상세내용을 입력해주세요" value="">${evtNoti}</textarea>
+                    </fieldset>
+                </form>  
+                `
+    OpenModal("이벤트 상세", "", true, true, `updateEventDetail()`, "확인", "취소", "", "lg", values)
   }
-function changeTest(){
-  console.log('test')
+
+async function updateEventDetail(){
+  const resultData = await fileUpload();
+  if(resultData.result || resultData)
+  {
+    
+    let formData = new FormData();
+
+    let data = {}
+    let evtId = $('#evtId').val() 
+    let startDay = $('#startDay').val()
+    let endDay = $('#endDay').val()
+    let evtNoti = $('#notiInput').val()
+    let evtListLink = $('#listLinkInput').val()
+    let evtDtLink = $('#dtLinkInput').val()
+    let thumbUrl = $('#thumbUrlInput').val()
+    let imgUrl = $('#imgUrlInput').val()
+
+    if(resultData.result)
+    {
+      resultData.files.forEach((v, i) => {
+        if(v['original_name'].indexOf('img_')>-1){
+          imgUrl = '/resources/'+v['filename']
+        }
+        if(v['original_name'].indexOf('thumb_')>-1){
+          thumbUrl = '/resources/'+v['filename']
+        }
+      })
+    }
+
+    data["evtId"] = evtId
+    data["startDt"] = startDay
+    data["endDt"] = endDay
+    data["thumbUrl"] = thumbUrl
+    data["imgUrl"] = imgUrl
+    data["evtNoti"] = evtNoti
+    data["evtListLink"] = evtListLink
+    data["evtDtLink"] = evtDtLink
+
+    formData.append("datas", JSON.stringify(data));
+
+    fetch("/updateEventDetail", {
+              method: "POST",
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+            CloseModal();
+            alert('이벤트상세 변경이 완료 되었습니다.')
+            selectList();  
+          })
+          .catch(error => {
+            console.error("Error:", error);
+            alert('이벤트상세 변경 중 오류가 발생하였습니다.\n'+error)
+          });
+
+  }
+  else
+  {
+    alert('이벤트상세 변경 중 오류가 발생하였습니다.')
+  }
 }
+function fileUpload() {
+    // 파일 입력 요소에서 파일 가져오기
+    const imgInput = document.getElementById('img-file-input');
+    const thumbInput = document.getElementById('thumb-file-input');
+
+    const imgFile = imgInput.files[0];
+    const thumbFile = thumbInput.files[0];
+
+    // 아무 파일도 선택되지 않은 경우 처리
+    if (!imgFile && !thumbFile) {
+        return true;
+    }
+
+    const formData = new FormData();
+    
+    // 각각의 파일이 존재하면 추가
+    if (imgFile) {
+        formData.append("file", imgFile, "img_"+imgFile.name);
+    }
+    if (thumbFile) {
+        formData.append("file", thumbFile, "thumb_"+thumbFile.name);
+    }
+
+    return fetch('/multiUpload', {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("응답:", data);
+        data.result = true;
+        return data;
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("이미지 업로드 중 오류가 발생했습니다.");
+        data.result = false;
+        return data.result;
+    });
+}
+
   // 전체 조회
   function selectList() {
 
@@ -224,112 +388,67 @@ function changeTest(){
             })
             .then(response => response.json())
             .then(data => {
-                console.log('success')
                 values = ``
                 data.forEach((v, i) => {
                   var status = v['use_yn'];
                   var statusCol = ''
+                  var imgCol = ''
+                  var listUrlCol = ''
                   var encodingJSON = encodeURIComponent(JSON.stringify(v));
                   if(status =='Y')
                   {
                     // statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="updateEvent(this)">비노출</button></td>`
                     
-                    statusCol = "<td><button id='useYnBtn' class='btn primary sm' data-json="+encodingJSON+" >노출중</button></td>"
+                    statusCol = "<td><button id='useYnBtn' class='btn primary sm' data-json="+encodingJSON+" onclick='changeYN(this)' >노출중</button></td>"
                   }
                   else if(status =='N')
                   {
                     // statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="updateEvent(this)">재노출</button></td>`
                     
-                    statusCol = "<td><button id='useYnBtn' class='btn primary sm' data-json="+encodingJSON+" >비노출</button></td>"
+                    statusCol = "<td><button id='useYnBtn' class='btn primary sm' data-json="+encodingJSON+" onclick='changeYN(this)' >비노출</button></td>"
+                  }
+                  if(v['evt_thumbnail']!='')
+                  {
+                    imgCol = `<button id='thumbBtn' class='btn primary sm' data-value="${v['evt_thumbnail']}" data-title='썸네일이미지' onclick="openImgModal(this)" >썸네일</button>`
+                  }
+
+                  if(v['evt_img']!='')
+                  {
+                    imgCol += ` <button id='imgBtn' class='btn primary sm' data-value="${v['evt_img']}" data-title='이미지' onclick="openImgModal(this)">이미지</button>`
+                  }
+                  if(v['evt_list_link']!='')
+                  {
+                    listUrlCol = `<button id='listBtn' class='btn primary sm' data-value="${v['evt_list_link']}" onclick="openUrl(this)" >리스트</button>`
+                  }
+                  if(v['evt_dt_link']!='')
+                  {
+                    listUrlCol += ` <button id='dtBtn' class='btn primary sm' data-value="${v['evt_dt_link']}" onclick="openUrl(this)" >디테일</button>`
                   }
                   values += `    
-                    <tr data-id="${i+1}" name="${v['evt_title']}" explain="${v['evt_title']}">
+                    <tr data-id="${i+1}" name="${v['evt_title']}" explain="${v['evt_title']}" data-value="${v['evt_id']}" data-json="${encodingJSON}">
                       <td>${v['cor_nm']}</td>
                       <td>${v['evt_title']}</td>
                       <td>${v['evt_st_date']} </td>
                       <td>${v['evt_ed_date']} </td>
-                      <td><button id='thumbBtn' class='btn primary sm' data-value="${v['evt_thumbnail']}">썸네일</button></td>
-                      <td><button id='imgBtn' class='btn primary sm' data-value="${v['evt_img']}" >이미지</button></td>
-                      <td><button id='listBtn' class='btn primary sm'>리스트</button></td>
-                      <td><button id='dtBtn' class='btn primary sm'>디테일</button></td>`
+                      <td>
+                      `
+                  values += imgCol
+                  values +=`  </td>`
+                  values +=`  <td>`
+                  values += listUrlCol
+                  values +=`  </td>`
                   values += statusCol
                   values += `  </tr>`
                 });
                 $("#dataContent").append(values)
-                CloseModal()
+                
             })
             .catch(error => {
                 console.error("Error:", error);
             });
   
   }
-  function insertEvent(button) {
 
-    let formData = new FormData();
-    
-    formData.append("datas", JSON.stringify(JSON.parse(button.getAttribute("data-json"))));
-    formData.forEach((value, key) => {
-        console.log(`${key}: ${value}`);
-    });
-
-    fetch("/insertEvent", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-              selectList()
-            })
-            .catch(error => {
-              console.error("Error:", error);
-            });
-  }
-
-  function updateEvent(button) {
-
-    let formData = new FormData();
-
-    var decodeData = decodeURIComponent(button.getAttribute("data-json"));
-    formData.append("datas", JSON.stringify(JSON.parse(decodeData)));
-
-    fetch("/updateEvent", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-              button.text("새 이름");
-            })
-            .catch(error => {
-              console.error("Error:", error);
-            });
-  }
-  // 전체 조회
-  function SearchGroupCode() {
-    $.ajax({
-      url: "{{domain}}:{{port}}/getAdminGroup",
-      type: "GET",
-      contentType: "application/json",
-      success: function (response) {
-        console.log(response)
-
-        $(".count").append(`Total : ${response.length}`)
-
-        values = ``
-        response.forEach((v, i) => {
-          values += `    
-            <tr data-id="${v['group_code']}" name="${v['group_name']}" explain="${v['group_info']}">
-              <td>${i + 1}</td>
-              <td>${v['group_code']}</td>
-              <td>${v['group_name']}</td>
-              <td>${v['group_info']} 챗봇 데모</td>
-              <td>${v['reg_date']}</td>
-            </tr>`
-        });
-        $("#dataContent").append(values)
-      }
-    });
-  }
 
 
   //검색 기능
@@ -340,81 +459,65 @@ function changeTest(){
   //노출여부 수정
   $("#useYnBtn").click(function (e) {
     e.preventDefault();
+    // changeYN(this)
   })
-  //노출/비노출 모달
-  function ynModal(tag){
-    var decodeData = decodeURIComponent($(tag).find("button").attr("data-json"));
-    let data = JSON.parse(decodeData )
-    let button = $(tag).find("button");
-    var before_yn =  data.use_yn == "Y" ? "비노출" : "노출" 
-    target_data = JSON.stringify({
-      "change_yn" : data.use_yn == "Y" ? "N" : "Y" ,
-      "evt_id" :  data.evt_id
-    })
-    values = `<p>${before_yn} 상태로 변경하시겠습니까 ?</p>`
-    OpenModal("노출여부 변경", ``, true, true, `changeYN(${target_data})`, "확인", "취소", "", "md", values)
-  }
   
-  function changeYN(data) {
+  function changeYN(button) {
+    if(confirm('노출 상태를 변경 하시겠습니까?'))
+    {
+      var decodeData = decodeURIComponent(button.getAttribute("data-json"));
+      let data = JSON.parse(decodeData )
 
-   let formData = new FormData();
-
-    formData.append("datas", JSON.stringify(data));
-    
-    console.log(data.change_yn)
-    fetch("/updateEvent", {
-              method: "POST",
-              body: formData
-          })
-          .then(response => response.json())
-          .then(data => {
-            CloseModal();
-            let values = `<p>사용여부 변경이 완료되었습니다.</p>`;
-            values += `<br>`;
-            OpenModal("사용여부 변경", "", true, "", "selectList()", "확인", "", true, "md", values);
-          })
-          .catch(error => {
-            console.error("Error:", error);
-          });
-  }
-  //추가 기능
-  function addGroup() {
-    session_ok("{{domain}}", "{{port}}");
-    let new_group_name = $("#groupname").val()
-    let new_group_info = $("#groupinfo").val()
-
-    //경우1: 그룹명을 입력하지 않을 경우
-    if (new_group_name.length == 0) {
-      values = `<p>그룹 명을 입력해주세요.</p>`
-      OpenModal("알림", "except1", true, "", `CloseModal("except2")`, "확인", "", true, "sm", values)
-
-      //경우2: 그룹 설명을 입력하지 않을 경우
-    } else if (new_group_info.length == 0) {
-      values = `<p>그룹 설명을 입력해주세요.</p>`
-      OpenModal("알림", "except2", true, "", `CloseModal("except2")`, "확인", "", true, "sm", values)
-
-    } else {
-      $.ajax({
-        url: "{{domain}}:{{port}}/insertAdminGroup",
-        type: "POST",
-        contentType: "application/json",
-        dataType: "json",
-        data: JSON.stringify([new_group_name, new_group_info]),
-        success: function (response) {
-
-          if (response[0] = "00000") {
-            CloseModal()
-            values = `<p>관리자 그룹 등록이 완료되었습니다.</p>`
-            OpenModal("완료", "", true, "", "CloseModal()", "확인", "", true, "sm", values)
-
-          } else {
-            values = `<p>관리자 그룹 등록이 실패했습니다. </p>`
-            OpenModal("실패", "except3", true, "", `CloseModal("except3")`, "확인", "", true, "sm", values)
-          }
-        }
+      target_data = JSON.stringify({
+        "change_yn" : data.use_yn == "Y" ? "N" : "Y" ,
+        "evt_id" :  data.evt_id
       })
+
+      let formData = new FormData();
+   
+      formData.append("datas", target_data);
+       
+      fetch("/updateEventUseYn", {
+                 method: "POST",
+                 body: formData
+             })
+             .then(response => response.json())
+             .then(data => {
+               alert('사용여부 변경이 완료되었습니다.');
+               if(data.use_yn=='Y')
+               {
+                 $(button).text('노출중');
+                }
+                else
+                {
+                 $(button).text('비노출');
+                }
+             })
+             .catch(error => {
+               console.error("Error:", error);
+             });
     }
   }
+  function openImgModal(button) {
+
+    var imgUrl = $(button).attr('data-value');
+    if(!imgUrl)
+    {
+      imgUrl='/static/assets/images/dobot_running.gif'
+    }
+    var title = $(button).attr('data-title');
+
+    values = '<img src="'+imgUrl+'"></img>'
+                    
+    OpenModal(title, `viewImg`, false, false, '', "", "", true, "md", values)
+  }
+  function openUrl(button)
+  {
+    var url = $(button).attr('data-value');
+    window.open(url, "newWindow", "width=1200,height=800,top=100,left=100,resizable=yes,scrollbars=yes");
+  }
+  
+  
 </script>
 
 </html>

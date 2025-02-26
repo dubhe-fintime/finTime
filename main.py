@@ -1328,6 +1328,40 @@ def upload_file():
     except Exception as e:
         # 예외 발생 시 에러 메시지 출력
         return jsonify({"error": f"파일 업로드 중 오류가 발생했습니다: {str(e)}"}), 50
+# 파일 멀티 업로드
+@app.route('/multiUpload', methods=['POST'])
+def multiUpload():
+    try:
+        files = request.files.getlist('file')
+        print(files)
+        if not files or len(files) == 0:
+            return jsonify({"error": "파일이 없습니다."}), 400
+
+        results = []
+        now = datetime.now().strftime("%Y%m%d_%H%M%S")
+        for file in files:
+            if file.filename == '':
+                continue  # 빈 파일은 건너뜁니다.
+            if file and allowed_file(file.filename):
+                ext = file.filename.rsplit('.', 1)[1].lower()
+                unique_id = uuid.uuid4().hex[:12]
+                filename = f"{now}_{unique_id}.{ext}"
+                file_path = os.path.join(app.config['FILE_FOLDER'], filename)
+                file.save(file_path)
+                # DB 등록 처리 예시
+                values = (filename, file.filename, ext, os.path.join(app.config['FILE_FOLDER']))
+                execute_mysql_query_insert("Q4", values)
+                results.append({
+                    "filename": filename,
+                    "original_name": file.filename
+                })
+            else:
+                return jsonify({"error": f"허용되지 않은 파일 형식입니다: {file.filename}"}), 400
+
+        return jsonify({"message": "파일 업로드 성공", "files": results}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"파일 업로드 중 오류가 발생했습니다: {str(e)}"}), 500
 
 # 파일 확장자 검증
 def allowed_file(filename):
@@ -1542,8 +1576,8 @@ def insertEvent():
         logger.error("에러 발생: %s", str(e))
         return jsonify({"error": str(e)}), 500
 
-@app.route('/updateEvent', methods=["POST"])
-def updateEvent():
+@app.route('/updateEventUseYn', methods=["POST"])
+def updateEventUseYn():
 
     try:
         # FormData에서 "datas" 키 가져오기
@@ -1558,6 +1592,28 @@ def updateEvent():
         values = [event_dict["change_yn"],event_dict["evt_id"]]
 
         execute_mysql_query_update("A4",values) # 이벤트 노출여부 업데이트(EVT_MST)
+
+        return jsonify({"message": "Data UPDATE", "data": event_dict})
+
+    except Exception as e:
+        logger.error("에러 발생: %s", str(e))
+        return jsonify({"error": str(e)}), 500
+@app.route('/updateEventDetail', methods=["POST"])
+def updateEventDetail():
+
+    try:
+        # FormData에서 "datas" 키 가져오기
+        event_data = request.form.get("datas")
+
+        if not event_data:
+            return jsonify({"error": "No data received"}), 400
+
+        # JSON 문자열을 파이썬 딕셔너리로 변환
+        event_dict = json.loads(event_data)
+
+        values = [event_dict["startDt"],event_dict["endDt"],event_dict["thumbUrl"],event_dict["imgUrl"],event_dict["evtNoti"],event_dict["evtListLink"],event_dict["evtDtLink"],event_dict["evtId"]]
+
+        execute_mysql_query_update("A6",values) # 이벤트 노출여부 업데이트(EVT_MST)
 
         return jsonify({"message": "Data UPDATE", "data": event_dict})
 
