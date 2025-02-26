@@ -26,31 +26,41 @@ async def youtube_batch_job():
         with app.app_context():
             response = await getYouTube()  # 유튜브 데이터 가져오기
             
-            if callable(response.json):  # JSON 데이터를 함수로 호출
-                response_json = response.json()  
+            if callable(response.json):
+                response_json = response.json()
             else:
-                response_json = response.json  # 혹시 이미 JSON 객체일 경우
+                response_json = response.json
 
-            if isinstance(response_json, dict):  # JSON이 딕셔너리인지 확인
-                success = response_json.get("success", False)
-                results = response_json.get("results", [])
-                corNm = response_json.get("corNm", [])
-            else:
-                raise ValueError(f"예상치 못한 데이터 형식: {type(response_json)}")
+            if not isinstance(response_json, dict):
+                raise ValueError(f"예상치 못한 데이터 형식: {type(response_json)}, 데이터: {response_json}")
+
+            success = response_json.get("success", False)
+            results = response_json.get("results", [])
+            corNm = response_json.get("corNm", [])
+
+            if not isinstance(results, list):
+                raise TypeError(f"results 데이터 형식 오류: {type(results)}")
+            
+            # 결과를 펼치는 로직 추가
+            flat_results = []
+            for item in results:
+                if isinstance(item, list):  # 리스트 내부 리스트가 있으면 펼치기
+                    flat_results.extend(item)
+                elif isinstance(item, dict):  # 올바른 dict라면 추가
+                    flat_results.append(item)
+                else:
+                    raise TypeError(f"잘못된 데이터 형식: {type(item)}, 데이터: {item}")
 
             task_time = datetime.datetime.now()
             
             if success:
                 status = "SUCCESS"
                 cnt = 0  # 정상 처리된 데이터 개수
-                print(results)
+                print(flat_results)
 
-                if not isinstance(results, list):
-                    raise TypeError(f"results 데이터 형식 오류: {type(results)}")
-
-                for channel in results:
+                for channel in flat_results:
                     if not isinstance(channel, dict):
-                        raise TypeError(f"채널 데이터 형식 오류: {type(channel)}")
+                        raise TypeError(f"채널 데이터 형식 오류: {type(channel)}, 데이터: {channel}")
 
                     corNo = corNm[cnt // 5] if cnt // 5 < len(corNm) else "None"
                     set_batch_youtube(
@@ -58,14 +68,14 @@ async def youtube_batch_job():
                         channel.get('title', ""),
                         channel.get('video_url', None),
                         channel.get('thumbnail', None),
-                        channel.get('cnt', cnt+1)  # 기존 오류 수정
+                        cnt+1
                     )
                     cnt += 1
             else:
                 status = "FAIL"
 
             # 배치 로그 저장
-            set_batch_log(BATCH_ID, BATCH_NM, "TU00000001", "getYouTube", now, task_time, status, str(results))
+            set_batch_log(BATCH_ID, BATCH_NM, "TU00000001", "getYouTube", now, task_time, status, str(flat_results))
 
             # 로그 파일 저장
             log_message = f"[{task_time}] getYouTube 실행 완료 - 상태: {status}, 데이터 개수: {cnt}"
