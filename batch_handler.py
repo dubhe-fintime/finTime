@@ -36,7 +36,10 @@ def get_running_pid(type):
 
 # 배치 스크립트 실행
 def start_batch(type):
-    if type== "1":
+    print("#"*100)
+    print(type)
+    print("#"*100)
+    if type == "1":
         script_file =BATCH_SCRIPT
         pid_file = PID_FILE
     elif type == "2":
@@ -65,6 +68,9 @@ def start_batch(type):
 
 # 배치 스크립트 중지
 def stop_batch(type):
+    print("#"*100)
+    print(type)
+    print("#"*100)
     if type== "1":
         pid_file = PID_FILE
     elif type == "2":
@@ -82,6 +88,9 @@ def stop_batch(type):
 
 # 배치 실행 상태 확인
 def check_batch_status(type):
+    print("#"*100)
+    print(type)
+    print("#"*100)
     pid = get_running_pid(type)
     if pid:
         return jsonify({"status": "running", "pid": pid}), 200
