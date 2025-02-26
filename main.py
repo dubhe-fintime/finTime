@@ -1235,7 +1235,7 @@ def getCommonCdApi():
 def getCommonCdFun(gp_id):
     results = execute_mysql_query_select("COMMON_CD", [gp_id])
     if not results:
-        return [error]
+        return []
 
     datas = []
     for item in results:
@@ -1248,8 +1248,7 @@ def getCommonCdFun(gp_id):
             'EX_FIELD2': item[5]
         }
         datas.append(data)
-    print("0"*30)
-    return jsonify(success, datas)
+    return datas
     
 
 ################## 관리자 업무 END ###############################
@@ -1651,27 +1650,28 @@ def updateSetting():
 # 금융사 유튜브 정보 가져오기
 @app.route('/getYouTube', methods=["POST"])
 async def getYouTube():
+    print("##############################################")
     youtube_key = config['SERVER']['youtube_key']
     #channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
-    print("="*10)
     channels = getCommonCdFun("YOUTUBE_ID")
     #channels = ["신한은행"]
-    print(channels)
-    print("a"*10)
     results = []
     for channel in channels:
-        print("b"*10)
-        print(channel["EX_FIELD1"])
-        print("c"*10)
+        if not isinstance(channel, dict) or "EX_FIELD1" not in channel:
+            print(f"잘못된 채널 데이터: {channel}")
+            continue
+        
         #result_id = await getChannelId(youtube_key, channel)  # 채널 ID 취득
         data = await getChannelData(youtube_key, channel["EX_FIELD1"])  # 비동기 함수 실행
         results.append(data)
     return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
 
+# YOUTUBE BATCH 결과 등록
 def set_batch_youtube(corNo, contentTitle, contentUrl, thumbnailUrl, priority):
     values = (corNo, contentTitle, contentUrl, thumbnailUrl, priority)
     execute_mysql_query_insert("Q24",values) # YOUTUBE BATCH 결과 등록
 
+ # YOUTUBE BATCH 데이터 전체 삭제
 def del_batch_youtube(cnt):
     if cnt == 0:
         execute_mysql_query_delete('Q25', []) # YOUTUBE BATCH 데이터 전체 삭제
