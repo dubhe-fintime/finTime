@@ -1248,7 +1248,7 @@ def getCommonCdFun(gp_id):
             'EX_FIELD2': item[5]
         }
         datas.append(data)
-    
+    print("0"*30)
     return jsonify(success, datas)
     
 
@@ -1655,6 +1655,7 @@ async def getYouTube():
     #channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
     channels = getCommonCdFun("YOUTUBE_ID")
     #channels = ["신한은행"]
+    print(channels)
     print("a"*10)
     results = []
     for channel in channels:
