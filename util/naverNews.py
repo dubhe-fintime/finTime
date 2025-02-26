@@ -26,6 +26,7 @@ async def get_recent_news(targets: list):
         client_secret = "dc9cDMiTL3"
 
         header = {
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
             "X-Naver-Client-Id":client_id,
             "X-Naver-Client-Secret":client_secret
         }
