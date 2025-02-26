@@ -22,8 +22,9 @@ def get_running_pid(type):
         pid_file = PID_FILE
     elif type == "2":
         pid_file = PID_FILE_YOUTUBE
-    elif type == "3":
+    else:
         pid_file = PID_FILE_NAVERNEWS
+    
     print(pid_file)
     if os.path.exists(pid_file):
         with open(pid_file, "r") as f:
