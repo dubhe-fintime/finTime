@@ -68,7 +68,7 @@
         <button onclick="stopBatch(1)">🛑 배치 중지</button>
         <button onclick="checkBatchStatus(1)">🔍 상태 확인</button>
 
-        <p id="status">⏳ 배치 상태 확인 중...</p>
+        <p id="status1">⏳ 배치 상태 확인 중...</p>
 
         
     </div>
@@ -79,7 +79,7 @@
         <button onclick="stopBatch(2)">🛑 배치 중지</button>
         <button onclick="checkBatchStatus(2)">🔍 상태 확인</button>
 
-        <p id="status">⏳ 배치 상태 확인 중...</p>
+        <p id="status2">⏳ 배치 상태 확인 중...</p>
 
         
     </div>
@@ -90,7 +90,7 @@
         <button onclick="stopBatch(3)">🛑 배치 중지</button>
         <button onclick="checkBatchStatus(3)">🔍 상태 확인</button>
 
-        <p id="status">⏳ 배치 상태 확인 중...</p>
+        <p id="status3">⏳ 배치 상태 확인 중...</p>
 
         
     </div>
@@ -109,11 +109,11 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("status").innerText = `✅ ${data.message}`;
+                    document.getElementById("status"+type).innerText = `✅ ${data.message}`;
                 })
                 .catch(error => {
                     console.error("Error:", error);
-                    document.getElementById("status").innerText = "❌ 배치 실행 중 오류 발생";
+                    document.getElementById("status"+type).innerText = "❌ 배치 실행 중 오류 발생";
                 });
         }
 
@@ -129,11 +129,11 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("status").innerText = `✅ ${data.message}`;
+                    document.getElementById("status"+type).innerText = `✅ ${data.message}`;
                 })
                 .catch(error => {
                     console.error("Error:", error);
-                    document.getElementById("status").innerText = "❌ 배치 중지 중 오류 발생";
+                    document.getElementById("status"+type).innerText = "❌ 배치 중지 중 오류 발생";
                 });
         }
 
@@ -152,11 +152,11 @@
                     let statusText = data.status === "running" 
                         ? `🟢 실행 중 (PID: ${data.pid})` 
                         : "🔴 중지됨";
-                    document.getElementById("status").innerText = statusText;
+                    document.getElementById("status"+type).innerText = statusText;
                 })
                 .catch(error => {
                     console.error("Error:", error);
-                    document.getElementById("status").innerText = "❌ 상태 확인 중 오류 발생";
+                    document.getElementById("status"+type).innerText = "❌ 상태 확인 중 오류 발생";
                 });
         }
 
