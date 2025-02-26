@@ -24,7 +24,7 @@ async def naver_batch_job():
 
     try:
         with app.app_context():
-            results = await naverNews.get_recent_news(["흥국화재"])  # <<<<< 원하는 은행,증권사 오타없이
+            results = await naverNews.get_recent_news(["신한은행","하나은행","우리은행","국민은행"])  # <<<<< 원하는 은행,증권사 오타없이
             task_time = datetime.datetime.now()
             
             if results :
