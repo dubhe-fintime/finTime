@@ -37,8 +37,8 @@ async def get_recent_news(targets: list):
         }
         # 웹페이지 요청
         response = requests.get(url, params=params,headers=header)
-        print(response.headers)
-        
+        print(response.request.headers)
+
         soup = BeautifulSoup(response.text, "html.parser")
         print(soup)
         container = soup.find("ul", class_="list_news")
