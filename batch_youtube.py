@@ -105,14 +105,14 @@ def run_youtube_batch_job():
     except Exception as e:
         print(f"유튜브 배치 작업 실행 중 오류 발생: {e}")
 
-# 매일 01:00에 실행
-#schedule.every().day.at("13:00").do(run_youtube_batch_job)
-delayTime = 1
-schedule.every(delayTime).minutes.do(run_youtube_batch_job)
+# 매일 02:00에 실행
+schedule.every().day.at("02:00").do(run_youtube_batch_job)
+# delayTime = 1
+# schedule.every(delayTime).minutes.do(run_youtube_batch_job)
 
-print(f"유튜브 배치 작업이 스케줄링되었습니다. (매일 {delayTime} 실행)")
+print(f"유튜브 배치 작업이 스케줄링되었습니다. (매일 02:00 실행)")
 
 # 무한 루프 실행 (배치 스케줄 유지)
 while True:
     schedule.run_pending()
-    time.sleep(1)  # 1초마다 체크
+    time.sleep(60)  # 1초마다 체크
