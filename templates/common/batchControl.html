@@ -168,17 +168,14 @@
                         document.getElementById("successCount").innerText = 0;
                         document.getElementById("failCount").innerText = 0;
                     }
-                    document.getElementById("totalCount").innerText = data[0].tot_cnt;
-                    document.getElementById("successCount").innerText = data[0].success_cnt;
-                    document.getElementById("failCount").innerText = data[0].fail_cnt;
-                    var runningTitle = "🔴대기중";
-                    if(data[0].tot_cnt < 37){
-                        runningTitle = "🟢진행중"
-                    }
-                    document.getElementById("running").innerText = runningTitle;
+                    
                     const tableBody = document.getElementById("batchResults");
                     tableBody.innerHTML = ""; // 기존 데이터 초기화
-                    data.forEach(item => {
+                    
+                    var tot_cnt = Number(data[0].tot_cnt); // B000000001 의 TOT_CNT를 초기 셋팅
+                    var success_cnt = Number(data[0].success_cnt); // B000000001 의 success_cnt 초기 셋팅
+                    var fail_cnt = Number(data[0].fail_cnt); // B000000001 의 fail_cnt 초기 셋팅
+                    data.map((item, index) => {
                         const row = document.createElement("tr");
                         row.innerHTML = `
                             <td>${item.row_num}</td>
@@ -194,7 +191,36 @@
                             row.addEventListener("click", () => showPopup(item.result_data));
                         }
                         tableBody.appendChild(row);
+
+                        if (item.batch_id !== "B000000001") {
+                            tot_cnt += Number(item.tot_cnt) || 0;
+                            success_cnt += Number(item.success_cnt) || 0;
+                            fail_cnt += Number(item.fail_cnt) || 0;
+                        }
+
                     });
+                    
+                    document.getElementById("totalCount").innerText = tot_cnt;
+                    document.getElementById("successCount").innerText = success_cnt;
+                    document.getElementById("failCount").innerText = fail_cnt;
+                    
+                    var runningTitle = "🔴대기중";
+                    if(tot_cnt < 41){
+                        runningTitle = "🟢진행중"
+                    }
+                    document.getElementById("running").innerText = runningTitle;
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        }
+
+          // 배치 상태 확인
+          function getYouTube() {
+            fetch("/getYouTube", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                   debugger;
                 })
                 .catch(error => {
                     console.error("Error:", error);
@@ -232,6 +258,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             checkBatchStatus();
             batchResultSearch();
+            //getYouTube();
             startAutoRefresh(refreshInterval); // 기본 1분으로 실행
         });
     </script>
