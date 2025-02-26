@@ -18,9 +18,9 @@ PID_FILE_NAVERNEWS = "batch_pid_naverNews.txt"  # 실행된 프로세스의 PID 
 
 # 프로세스 PID 확인
 def get_running_pid(type):
-    if type== "1":
+    if type == 1:
         pid_file = PID_FILE
-    elif type == "2":
+    elif type == 2:
         pid_file = PID_FILE_YOUTUBE
     else:
         pid_file = PID_FILE_NAVERNEWS
