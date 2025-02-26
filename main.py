@@ -1652,19 +1652,16 @@ def updateSetting():
 async def getYouTube():
     print("##############################################")
     youtube_key = config['SERVER']['youtube_key']
-    #channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
-    channels = getCommonCdFun("YOUTUBE_ID")
+    channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
+    #channels = getCommonCdFun("YOUTUBE_ID")
     #channels = ["신한은행"]
     print(channels)
     results = []
     for channel in channels:
-        print(channel["EX_FIELD1"])
-        if not isinstance(channel, dict) or "EX_FIELD1" not in channel:
-            print(f"잘못된 채널 데이터: {channel}")
-            continue
-
-        #result_id = await getChannelId(youtube_key, channel)  # 채널 ID 취득
-        data = await getChannelData(youtube_key, channel["EX_FIELD1"])  # 비동기 함수 실행
+        #print(channel["EX_FIELD1"])
+        result_id = await getChannelId(youtube_key, channel)  # 채널 ID 취득
+        #data = await getChannelData(youtube_key, channel["EX_FIELD1"])  # 비동기 함수 실행
+        data = await getChannelData(youtube_key, result_id)  # 비동기 함수 실행
         results.append(data)
     return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
 
