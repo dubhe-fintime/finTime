@@ -174,13 +174,13 @@ def selectQuery(qType, values):
                     DATE_FORMAT(ED_DATE, '%Y.%m.%d %H:%i:%s') AS ED_DATE, 
                     STATUS,
                     (SELECT COUNT(*) FROM BATCH_LOG WHERE SEQ = (
-                        SELECT SEQ FROM BATCH_LOG ORDER BY ST_DATE DESC LIMIT 1
+                        SELECT SEQ FROM BATCH_LOG WHERE BATCH_ID = 'B000000001' ORDER BY ST_DATE DESC LIMIT 1
                     )) AS TOTAL_COUNT,
                     (SELECT COUNT(*) FROM BATCH_LOG WHERE SEQ = (
-                        SELECT SEQ FROM BATCH_LOG ORDER BY ST_DATE DESC LIMIT 1
+                        SELECT SEQ FROM BATCH_LOG WHERE BATCH_ID = 'B000000001' ORDER BY ST_DATE DESC LIMIT 1
                     ) AND STATUS = 'SUCCESS') AS SUCCESS_COUNT,
                     (SELECT COUNT(*) FROM BATCH_LOG WHERE SEQ = (
-                        SELECT SEQ FROM BATCH_LOG ORDER BY ST_DATE DESC LIMIT 1
+                        SELECT SEQ FROM BATCH_LOG WHERE BATCH_ID = 'B000000001' ORDER BY ST_DATE DESC LIMIT 1
                     ) AND STATUS = 'FAIL') AS FAIL_COUNT,
                     RESULT_DATA,
                     ROW_NUMBER() OVER (ORDER BY TASK_ID ASC) AS RN

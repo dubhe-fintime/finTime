@@ -172,7 +172,7 @@
                     document.getElementById("successCount").innerText = data[0].success_cnt;
                     document.getElementById("failCount").innerText = data[0].fail_cnt;
                     var runningTitle = "🔴대기중";
-                    if(data[0].tot_cnt < 37){
+                    if(data[0].tot_cnt < 41){
                         runningTitle = "🟢진행중"
                     }
                     document.getElementById("running").innerText = runningTitle;
