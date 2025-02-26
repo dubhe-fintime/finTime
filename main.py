@@ -1380,8 +1380,8 @@ def batchControl():
 @app.route('/batchStart', methods=["POST"])
 def batchStart():
     datas = request.get_json()
-    print(datas.type)
-    result = start_batch(datas.type)
+    print(datas['type'])
+    result = start_batch(datas['type'])
     logger.info(str(result))
     return result
 
@@ -1389,8 +1389,8 @@ def batchStart():
 @app.route('/batchStop', methods=["POST"])
 def batchStop():
     datas = request.get_json()
-    print(datas.type)
-    result = stop_batch(datas.type)
+    print(datas['type'])
+    result = stop_batch(datas['type'])
     logger.info(str(result))
     return result
 
@@ -1398,8 +1398,8 @@ def batchStop():
 @app.route('/batchStatus', methods=["POST"])
 def batchStatus():
     datas = request.get_json()
-    print(datas.type)
-    result = check_batch_status(datas.type)
+    print(datas['type'])
+    result = check_batch_status(datas['type'])
     logger.info(str(result))
     return result
 
