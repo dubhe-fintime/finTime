@@ -172,17 +172,6 @@
                     const tableBody = document.getElementById("batchResults");
                     tableBody.innerHTML = ""; // 기존 데이터 초기화
                     
-                    debugger;
-                    // 'batch_nm': item[0],
-                    // 'task_nm': item[1],
-                    // 'st_date': item[2],
-                    // 'ed_date': item[3],
-                    // 'status': item[4],
-                    // 'tot_cnt': item[5],
-                    // 'success_cnt': item[6],
-                    // 'fail_cnt': item[7],
-                    // 'result_data': item[8],
-                    // 'row_num': item[9]
                     var tot_cnt = data[0].tot_cnt; // B000000001 의 TOT_CNT를 초기 셋팅
                     var success_cnt = data[0].success_cnt; // B000000001 의 success_cnt 초기 셋팅
                     var fail_cnt = data[0].fail_cnt; // B000000001 의 fail_cnt 초기 셋팅
@@ -203,11 +192,12 @@
                         }
                         tableBody.appendChild(row);
 
-                        if(item.batch_id != "B000000001"){
-                            tot_cnt = tot_cnt + item.tot_cnt;
-                            success_cnt = success_cnt + item.success_cnt;
-                            fail_cnt = fail_cnt + item.fail_cnt;
+                        if (item.batch_id !== "B000000001") {
+                            tot_cnt += Number(item.tot_cnt) || 0;
+                            success_cnt += Number(item.success_cnt) || 0;
+                            fail_cnt += Number(item.fail_cnt) || 0;
                         }
+
                     });
                     
                     document.getElementById("totalCount").innerText = tot_cnt;
