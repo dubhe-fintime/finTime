@@ -168,7 +168,7 @@
                         document.getElementById("successCount").innerText = 0;
                         document.getElementById("failCount").innerText = 0;
                     }
-                    document.getElementById("running").innerText = runningTitle;
+                    
                     const tableBody = document.getElementById("batchResults");
                     tableBody.innerHTML = ""; // 기존 데이터 초기화
                     
@@ -183,8 +183,10 @@
                     // 'fail_cnt': item[7],
                     // 'result_data': item[8],
                     // 'row_num': item[9]
+                    const tot_cnt = data[0].tot_cnt; // B000000001 의 TOT_CNT를 초기 셋팅
+                    const success_cnt = data[0].success_cnt; // B000000001 의 success_cnt 초기 셋팅
+                    const fail_cnt = data[0].fail_cnt; // B000000001 의 fail_cnt 초기 셋팅
                     data.map((item, index) => {
-                        console.log(`Index: ${index}, Total Count: ${JSON.stringify(item)}`);
                         const row = document.createElement("tr");
                         row.innerHTML = `
                             <td>${item.row_num}</td>
@@ -200,14 +202,23 @@
                             row.addEventListener("click", () => showPopup(item.result_data));
                         }
                         tableBody.appendChild(row);
+
+                        if(item.batch_id != "B000000001"){
+                            tot_cnt = tot_cnt + item.tot_cnt;
+                            success_cnt = success_cnt + item.success_cnt;
+                            fail_cnt = fail_cnt + item.fail_cnt;
+                        }
                     });
-                    document.getElementById("totalCount").innerText = data[0].tot_cnt;
-                    document.getElementById("successCount").innerText = data[0].success_cnt;
-                    document.getElementById("failCount").innerText = data[0].fail_cnt;
+                    
+                    document.getElementById("totalCount").innerText = tot_cnt;
+                    document.getElementById("successCount").innerText = success_cnt;
+                    document.getElementById("failCount").innerText = fail_cnt;
+                    
                     var runningTitle = "🔴대기중";
-                    if(data[0].tot_cnt < 41){
+                    if(tot_cnt < 41){
                         runningTitle = "🟢진행중"
                     }
+                    document.getElementById("running").innerText = runningTitle;
                 })
                 .catch(error => {
                     console.error("Error:", error);
