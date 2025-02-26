@@ -426,7 +426,7 @@ def selectQuery(qType, values):
         query = """
                 SELECT 
                     ROW_NUMBER() OVER (ORDER BY CD_ID ASC) AS RN,
-                    GP_NM, CD_ID, CD_NM , EXFIELD1, EXFIELD2 FROM COMMON_CD cc
+                    GP_NM, CD_ID, CD_NM , EX_FIELD1, EX_FIELD2 FROM COMMON_CD cc
                 JOIN COMMON_GP_CD cgc ON cgc.GP_ID = cc.GP_ID 
                     WHERE cc.GP_ID =%s;
                 """
