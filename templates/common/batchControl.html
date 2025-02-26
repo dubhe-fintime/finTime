@@ -96,21 +96,6 @@
                 </div>
             </div>
         </div>
-    
-        <h2>배치 실행 결과(<span id="running"></span>)</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>순번</th>
-                    <th>업체명</th>
-                    <th>성공 여부</th>
-                    <th>실행 시작 시간</th>
-                    <th>실행 종료 시간</th>
-                </tr>
-            </thead>
-            <tbody id="batchResults">
-            </tbody>
-        </table>
     </div>
     
 
@@ -179,118 +164,7 @@
                 });
         }
 
-        // 배치 상태 확인
-        function batchResultSearch() {
-            fetch("/batchResultSearch", { method: "POST" })
-                .then(response => response.json())
-                .then(data => {
-                    if(data.length === 0){
-                        document.getElementById("batchResults").innerHTML = "<tr><td colspan='5'>데이터가 없습니다.</td></tr>";
-                        document.getElementById("totalCount").innerText = 0;
-                        document.getElementById("successCount").innerText = 0;
-                        document.getElementById("failCount").innerText = 0;
-                    }
-                    
-                    const tableBody = document.getElementById("batchResults");
-                    tableBody.innerHTML = ""; // 기존 데이터 초기화
-                    
-                    var tot_cnt = Number(data[0].tot_cnt); // B000000001 의 TOT_CNT를 초기 셋팅
-                    var success_cnt = Number(data[0].success_cnt); // B000000001 의 success_cnt 초기 셋팅
-                    var fail_cnt = Number(data[0].fail_cnt); // B000000001 의 fail_cnt 초기 셋팅
-                    data.map((item, index) => {
-                        const row = document.createElement("tr");
-                        row.innerHTML = `
-                            <td>${item.row_num}</td>
-                            <td>${item.task_nm}</td>
-                            <td class="${item.status === 'SUCCESS' ? 'success' : 'fail'}">${item.status}</td>
-                            <td>${item.st_date}</td>
-                            <td>${item.ed_date}</td>
-                        `;
-
-                        // 실패한 경우 클릭 이벤트 추가
-                        if (item.status === 'FAIL') {
-                            row.style.cursor = "pointer"; // 마우스 커서 변경
-                            row.addEventListener("click", () => showPopup(item.result_data));
-                        }
-                        tableBody.appendChild(row);
-
-                        if (item.batch_id !== "B000000001") {
-                            tot_cnt += Number(item.tot_cnt) || 0;
-                            success_cnt += Number(item.success_cnt) || 0;
-                            fail_cnt += Number(item.fail_cnt) || 0;
-                        }
-
-                    });
-                    
-                    document.getElementById("totalCount").innerText = tot_cnt;
-                    document.getElementById("successCount").innerText = success_cnt;
-                    document.getElementById("failCount").innerText = fail_cnt;
-                    
-                    var runningTitle = "🔴대기중";
-                    if(tot_cnt < 41){
-                        runningTitle = "🟢진행중"
-                    }
-                    document.getElementById("running").innerText = runningTitle;
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                });
-        }
-
-          // 배치 상태 확인
-          function getYouTube() {
-            fetch("/getYouTube", { method: "POST" })
-                .then(response => response.json())
-                .then(data => {
-                   debugger;
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                });
-        }
-
-        // 팝업 열기
-        function showPopup(resultData) {
-            document.getElementById("popupText").innerText = resultData;
-            document.getElementById("popupLayer").style.display = "block";
-        }
-
-        // 팝업 닫기
-        function closePopup() {
-            document.getElementById("popupLayer").style.display = "none";
-        }
-        
-        let refreshInterval = 60000; // 기본 1분 (60000ms)
-        let intervalId = null; // setInterval ID 저장
-
-        // 주기적으로 배치 실행 결과 갱신하는 함수
-        function startAutoRefresh(interval) {
-            if (intervalId) clearInterval(intervalId); // 기존 인터벌 제거
-            intervalId = setInterval(batchResultSearch, interval);
-        }
-
-        // 사용자가 select box에서 갱신 주기를 변경할 때 실행
-        function updateRefreshRate() {
-            let selectedMinutes = document.getElementById("refreshRate").value;
-            refreshInterval = selectedMinutes * 60000; // 분 → 밀리초 변환
-            startAutoRefresh(refreshInterval);
-        }
-
-        // 페이지 로드 시 상태 확인
-        document.addEventListener("DOMContentLoaded", function() {
-            checkBatchStatus();
-            batchResultSearch();
-            //getYouTube();
-            startAutoRefresh(refreshInterval); // 기본 1분으로 실행
-        });
     </script>
 
-<div id="popupLayer" class="popup">
-    <div class="popup-content">
-        <span class="close-btn" onclick="closePopup()">&times;</span>
-        <h3>에러 상세 정보</h3>
-        <pre id="popupText"></pre>
-    </div>
-</div>
 </body>
 </html>
