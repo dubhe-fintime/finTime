@@ -224,6 +224,9 @@ def selectQuery(qType, values):
             SELECT 
                 (SELECT COR_NO FROM COR_MST WHERE COR_NM = %s LIMIT 1), %s, %s, %s, %s;
         """
+    
+    elif qType == "Q25": # 유튜브 정보 전체 삭제
+        query = "DELETE FROM YOUTUBE_CONTENTS "
 
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "

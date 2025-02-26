@@ -1633,8 +1633,8 @@ def updateSetting():
 @app.route('/getYouTube', methods=["POST"])
 async def getYouTube():
     youtube_key = config['SERVER']['youtube_key']
-    #channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
-    channels = ["신한은행"]
+    channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
+    #channels = ["신한은행"]
 
     results = []
     for channel in channels:
@@ -1644,10 +1644,9 @@ async def getYouTube():
     return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
 
 def set_batch_youtube(corNo, contentTitle, contentUrl, thumbnailUrl, priority):
-    print("★"*100)
     values = (corNo, contentTitle, contentUrl, thumbnailUrl, priority)
-    execute_mysql_query_insert("Q24",values) # BATCH LOG 등록
-    print("☆"*100)
+    execute_mysql_query_delete("Q25",values) # YOUTUBE BATCH 결과 전체 삭제
+    execute_mysql_query_insert("Q24",values) # YOUTUBE BATCH 결과 등록
 ################## YOUTUBE END #############################
 if __name__ == "__main__":
     while True:
