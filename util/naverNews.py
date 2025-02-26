@@ -23,11 +23,13 @@ async def get_recent_news(targets: list):
     pattern = r"(?<=[\uac00-\ud7af])\."
     client_id = "BXpwyrG2dsvqVniOAIBI"
     client_secret = "dc9cDMiTL3"
+    
 
     header = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
             "X-Naver-Client-Id":"BXpwyrG2dsvqVniOAIBI",
-            "X-Naver-Client-Secret":"dc9cDMiTL3"
+            "X-Naver-Client-Secret":"dc9cDMiTL3",
+            "Referer": "https://admin.fin-time.com"
     }
     # try:
     for target in targets:
