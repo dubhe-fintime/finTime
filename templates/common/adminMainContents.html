@@ -105,48 +105,6 @@
     
 
     <script>
-        // 배치 시작
-        function startBatch() {
-            fetch("/batchStart", { method: "POST" })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("status").innerText = `✅ ${data.message}`;
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    document.getElementById("status").innerText = "❌ 배치 실행 중 오류 발생";
-                });
-        }
-
-        // 배치 중지
-        function stopBatch() {
-            fetch("/batchStop", { method: "POST" })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("status").innerText = `✅ ${data.message}`;
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    document.getElementById("status").innerText = "❌ 배치 중지 중 오류 발생";
-                });
-        }
-
-        // 배치 상태 확인
-        function checkBatchStatus() {
-            fetch("/batchStatus", { method: "POST" })
-                .then(response => response.json())
-                .then(data => {
-                    let statusText = data.status === "running" 
-                        ? `🟢 실행 중 (PID: ${data.pid})` 
-                        : "🔴 중지됨";
-                    document.getElementById("status").innerText = statusText;
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    document.getElementById("status").innerText = "❌ 상태 확인 중 오류 발생";
-                });
-        }
-
         // 배치 상태 확인
         function batchResultSearch() {
             fetch("/batchResultSearch", { method: "POST" })
@@ -206,18 +164,6 @@
                 });
         }
 
-          // 배치 상태 확인
-          function getYouTube() {
-            fetch("/getYouTube", { method: "POST" })
-                .then(response => response.json())
-                .then(data => {
-                   debugger;
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                });
-        }
-
         // 팝업 열기
         function showPopup(resultData) {
             document.getElementById("popupText").innerText = resultData;
@@ -247,9 +193,6 @@
 
         // 페이지 로드 시 상태 확인
         document.addEventListener("DOMContentLoaded", function() {
-            checkBatchStatus();
-            batchResultSearch();
-            //getYouTube();
             startAutoRefresh(refreshInterval); // 기본 1분으로 실행
         });
     </script>
