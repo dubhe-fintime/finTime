@@ -59,7 +59,7 @@ async def naver_batch_job():
             log_file.write(error_message + "\n")
 
 # 배치 실행 함수
-def run_youtube_batch_job():
+def run_naver_batch_job():
     try:
         try:
             loop = asyncio.get_running_loop()
@@ -72,11 +72,10 @@ def run_youtube_batch_job():
         print(f"네이버뉴스 배치 작업 실행 중 오류 발생: {e}")
 
 # 매일 01:00에 실행
-#schedule.every().day.at("13:00").do(run_youtube_batch_job)
-delayTime = 1
-schedule.every(delayTime).minutes.do(run_youtube_batch_job)
+time = "03:00"
+schedule.every().day.at(time).do(run_naver_batch_job)
 
-print(f"네이버뉴스 배치 작업이 스케줄링되었습니다. (매일 {delayTime} 실행)")
+print(f"네이버뉴스 배치 작업이 스케줄링되었습니다. (매일 {time} 실행)")
 
 # 무한 루프 실행 (배치 스케줄 유지)
 while True:
