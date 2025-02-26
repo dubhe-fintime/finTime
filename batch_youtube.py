@@ -25,26 +25,40 @@ async def youtube_batch_job():
     try:
         with app.app_context():
             response = await getYouTube()  # 유튜브 데이터 가져오기
-            response_json = response.json  # JSON 데이터 추출
-            success = response_json.get("success", False)
-            results = response_json.get("results", [])
-            corNm = response_json.get("corNm", [])
-            #corNm = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
+            
+            if callable(response.json):  # JSON 데이터를 함수로 호출
+                response_json = response.json()  
+            else:
+                response_json = response.json  # 혹시 이미 JSON 객체일 경우
+
+            if isinstance(response_json, dict):  # JSON이 딕셔너리인지 확인
+                success = response_json.get("success", False)
+                results = response_json.get("results", [])
+                corNm = response_json.get("corNm", [])
+            else:
+                raise ValueError(f"예상치 못한 데이터 형식: {type(response_json)}")
+
             task_time = datetime.datetime.now()
             
             if success:
                 status = "SUCCESS"
                 cnt = 0  # 정상 처리된 데이터 개수
                 print(results)
+
+                if not isinstance(results, list):
+                    raise TypeError(f"results 데이터 형식 오류: {type(results)}")
+
                 for channel in results:
-                    # DB 저장 (각 비디오 정보)
+                    if not isinstance(channel, dict):
+                        raise TypeError(f"채널 데이터 형식 오류: {type(channel)}")
+
                     corNo = corNm[cnt // 5] if cnt // 5 < len(corNm) else "None"
                     set_batch_youtube(
                         corNo,
                         channel.get('title', ""),
                         channel.get('video_url', None),
                         channel.get('thumbnail', None),
-                        channel.get(cnt+1)
+                        channel.get('cnt', cnt+1)  # 기존 오류 수정
                     )
                     cnt += 1
             else:
@@ -89,4 +103,4 @@ print(f"유튜브 배치 작업이 스케줄링되었습니다. (매일 {delayTi
 # 무한 루프 실행 (배치 스케줄 유지)
 while True:
     schedule.run_pending()
-    time.sleep(1)  # 1분마다 체크
+    time.sleep(1)  # 1초마다 체크
