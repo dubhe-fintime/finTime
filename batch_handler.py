@@ -25,7 +25,6 @@ def get_running_pid(type):
     else:
         pid_file = PID_FILE_NAVERNEWS
     
-    print(pid_file)
     if os.path.exists(pid_file):
         with open(pid_file, "r") as f:
             pid = int(f.read().strip())
@@ -38,16 +37,13 @@ def get_running_pid(type):
 
 # 배치 스크립트 실행
 def start_batch(type):
-    print("#"*100)
-    print(type)
-    print("#"*100)
-    if type == "1":
+    if type == 1:
         script_file =BATCH_SCRIPT
         pid_file = PID_FILE
-    elif type == "2":
+    elif type == 2:
         script_file =BATCH_SCRIPT_YOUTUBE
         pid_file = PID_FILE_YOUTUBE
-    elif type == "3":
+    else:
         script_file =BATCH_SCRIPT_NAVERNEWS
         pid_file = PID_FILE_NAVERNEWS
 
@@ -70,14 +66,11 @@ def start_batch(type):
 
 # 배치 스크립트 중지
 def stop_batch(type):
-    print("#"*100)
-    print(type)
-    print("#"*100)
-    if type== "1":
+    if type == 1:
         pid_file = PID_FILE
-    elif type == "2":
+    elif type == 2:
         pid_file = PID_FILE_YOUTUBE
-    elif type == "3":
+    else:
         pid_file = PID_FILE_NAVERNEWS
     pid = get_running_pid(type)
     if not pid:
@@ -90,9 +83,6 @@ def stop_batch(type):
 
 # 배치 실행 상태 확인
 def check_batch_status(type):
-    print("#"*100)
-    print(type)
-    print("#"*100)
     pid = get_running_pid(type)
     if pid:
         return jsonify({"status": "running", "pid": pid}), 200
