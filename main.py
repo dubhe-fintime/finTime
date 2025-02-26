@@ -1653,6 +1653,7 @@ def updateSetting():
 async def getYouTube():
     youtube_key = config['SERVER']['youtube_key']
     #channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
+    print("="*10)
     channels = getCommonCdFun("YOUTUBE_ID")
     #channels = ["신한은행"]
     print(channels)
