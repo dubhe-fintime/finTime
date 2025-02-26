@@ -1,4 +1,5 @@
 import sys
+import time
 import os
 import re
 import requests
@@ -20,23 +21,24 @@ async def get_recent_news(targets: list):
     event_list = []
     url = "https://search.naver.com/search.naver"
     pattern = r"(?<=[\uac00-\ud7af])\."
+    client_id = "BXpwyrG2dsvqVniOAIBI"
+    client_secret = "dc9cDMiTL3"
+
+    header = {
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+            "X-Naver-Client-Id":"BXpwyrG2dsvqVniOAIBI",
+            "X-Naver-Client-Secret":"dc9cDMiTL3"
+    }
     # try:
     for target in targets:
-        client_id = "BXpwyrG2dsvqVniOAIBI"
-        client_secret = "dc9cDMiTL3"
-
-        header = {
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
-            "X-Naver-Client-Id":client_id,
-            "X-Naver-Client-Secret":client_secret
-        }
-
         params = {
             "where": "news",
             "query": target
         }
         # 웹페이지 요청
         response = requests.get(url, params=params,headers=header)
+        print(response.headers)
+        
         soup = BeautifulSoup(response.text, "html.parser")
         print(soup)
         container = soup.find("ul", class_="list_news")
