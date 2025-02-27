@@ -270,10 +270,9 @@ def selectQuery(qType, values):
         query += "    a.EVT_TITLE evt_title, "
         query += "    COALESCE(a.EVT_ID, '') evt_id," #EVT_ID 값과 EVT_MST.USE_YN에 따른 상태 값 설정
         query += "    CASE "
-        query += "        WHEN a.EVT_ID IS NULL OR a.EVT_ID = '' THEN 'NONE'"
         query += "        WHEN b.USE_YN = 'Y' THEN 'Y'"
         query += "        WHEN b.USE_YN = 'N' THEN 'N'"
-        query += "        ELSE NULL"
+        query += "        ELSE 'NONE'"
         query += "    END AS evt_status, " # 상태 컬럼 추가
         query += "    IFNULL(DATE_FORMAT(a.EVT_ST_DATE, '%Y-%m-%d'),'') evt_st_date, "
         query += "    IFNULL(DATE_FORMAT(a.EVT_ED_DATE, '%Y-%m-%d'),'') evt_ed_date, "
