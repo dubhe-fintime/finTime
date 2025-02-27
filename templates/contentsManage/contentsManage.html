@@ -203,7 +203,7 @@ function clickEvtSelOpt(id, option, name){
                           <input id="thumbUrlInput" class="input" placeholder="썸네일 이미지 URL을 입력 해 주세요"
                             onfocus="FocusInput('thumbUrlInput')" oninput="ChangeInput('thumbUrlInput')" onblur="BlurInput('thumbUrlInput')"
                             value="${thumbnail_url}" style="width:86%">
-                            <button class='btn primary sm'  onclick="openImgModal(this)" data-value="${thumbnail_url}">미리보기</button>
+                          <!--  <button class='btn primary sm'  onclick="openImgModal(this)" data-value="${thumbnail_url}">미리보기</button>-->
                           <span class="delete-btn" onclick="DeleteInput('thumbUrlInput')"></span>
                         </div>
                         <div class="input-wrap sm" id="thumbFileArea" style="${thumbFileSt}">
@@ -245,7 +245,7 @@ function clickEvtSelOpt(id, option, name){
                         <input id="listLinkInput" class="input" placeholder="이벤트 목록 URL을 입력 해 주세요" 
                           onfocus="FocusInput('listLinkInput')" oninput="ChangeInput('listLinkInput')" onblur="BlurInput('listLinkInput')"
                           value="${listLink}" style="width:90%;">
-                          <button class='btn primary sm'  onclick="openUrl(this)" data-value="${listLink}">POPUP</button>
+                          <!--<button class='btn primary sm'  onclick="openUrl(this)" data-value="${listLink}">POPUP</button>-->
                         <span class="delete-btn" onclick="DeleteInput('listLinkInput')"></span>
                       </div>
                     </fieldset>
@@ -256,7 +256,7 @@ function clickEvtSelOpt(id, option, name){
                         <input id="dtLinkInput" class="input" placeholder="이벤트 상세 URL을 입력 해 주세요" 
                           onfocus="FocusInput('dtLinkInput')" oninput="ChangeInput('dtLinkInput')" onblur="BlurInput('dtLinkInput')"
                           value="${dtLink}" style="width:90%;">
-                          <button class='btn primary sm'  onclick="openUrl(this)" data-value="${listLink}">POPUP</button>
+                 <!--         <button class='btn primary sm'  onclick="openUrl(this)" data-value="${listLink}">POPUP</button> -->
                         <span class="delete-btn" onclick="DeleteInput('dtLinkInput')"></span>
                       </div>
                     </fieldset>
