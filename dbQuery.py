@@ -379,6 +379,13 @@ def selectQuery(qType, values):
             WHERE
                 EVT_ID = %s
         """
+    
+    elif qType == "A7" : #EVT_MST 컨텐츠 삭제
+        query = """
+            DELETE FROM EVT_MST
+            WHERE 
+                EVT_ID = %s
+                """
 
     elif qType == "C1": # 로그인 기능
         query = """
