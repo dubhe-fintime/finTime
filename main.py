@@ -1232,8 +1232,8 @@ def getCommonCdApi():
     return jsonify(success, datas)
 
 # 공통 코드 조회 (함수 호출)
-def getCommonCdFun(gp_id):
-    results = execute_mysql_query_select("COMMON_CD", [gp_id])
+async def getCommonCdFun(gp_id):
+    results = await execute_mysql_query_select("COMMON_CD", [gp_id])
     if not results:
         return []
 
@@ -1709,7 +1709,7 @@ async def getYouTube():
     print("##############################################")
     youtube_key = config['SERVER']['youtube_key']
     channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
-    test = getCommonCdFun("YOUTUBE_ID")
+    test = await getCommonCdFun("YOUTUBE_ID")
     #channels = ["신한은행"]
     print(test)
     results = []
