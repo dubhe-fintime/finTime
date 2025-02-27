@@ -73,8 +73,8 @@ def run_naver_batch_job():
         print(f"네이버뉴스 배치 작업 실행 중 오류 발생: {e}")
 
 # 매일 03:00에 실행
-# schedule.every().day.at("03:00").do(run_naver_batch_job)
-schedule.every(1).minutes.do(run_naver_batch_job)
+schedule.every().day.at("03:00").do(run_naver_batch_job)
+# schedule.every(1).minutes.do(run_naver_batch_job)
 
 print(f"네이버뉴스 배치 작업이 스케줄링되었습니다. (매일 03:00 실행)")
 
