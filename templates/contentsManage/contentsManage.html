@@ -54,6 +54,7 @@
             <col width="160px" />
             <col width="160px" />
             <col width="80px" />
+            <col width="80px" />
           </colgroup>
           <thead class="thead type2">
             <tr>
@@ -64,6 +65,7 @@
               <th>이미지</th>
               <th>URL</th>
               <th>노출여부</th>
+              <th>삭제</th>
             </tr>
           </thead>
           <tbody id="dataContent" class="tbody"></tbody>
@@ -176,12 +178,13 @@ function clickEvtSelOpt(id, option, name){
                     <br>
                     <h3>이벤트기간</h3>
                     <fieldset>
-                      <div class="date-wrap align-center"  >
-                        <input type="date" id="startDay" value="${start_dt}">
+                      <div class="date-wrap  flex align-center"  >
+                        <div class="date-box"><input type="date" id="startDay" value="${start_dt}"></div>
                         <span class="unit" >~</span>
-                        <input type="date" id="endDay" value="${end_dt}">
+                        <div class="date-box"><input type="date" id="endDay" value="${end_dt}"></div>
                       </div>
                     </fieldset>
+                    <br>
                     <h3>썸네일</h3>
                     <fieldset>
                       <div class="input-wrap sm" style="display:flex">
@@ -199,8 +202,8 @@ function clickEvtSelOpt(id, option, name){
                         <div class="input-wrap sm" id="thumbUrlArea" style="${thumbUrlSt};margin-left: 0px;">
                           <input id="thumbUrlInput" class="input" placeholder="썸네일 이미지 URL을 입력 해 주세요"
                             onfocus="FocusInput('thumbUrlInput')" oninput="ChangeInput('thumbUrlInput')" onblur="BlurInput('thumbUrlInput')"
-                            value="${thumbnail_url}">
-                            
+                            value="${thumbnail_url}" style="width:86%">
+                          <!--  <button class='btn primary sm'  onclick="openImgModal(this)" data-value="${thumbnail_url}">미리보기</button>-->
                           <span class="delete-btn" onclick="DeleteInput('thumbUrlInput')"></span>
                         </div>
                         <div class="input-wrap sm" id="thumbFileArea" style="${thumbFileSt}">
@@ -241,7 +244,8 @@ function clickEvtSelOpt(id, option, name){
                       <div class="input-wrap sm" id="listLinkArea">
                         <input id="listLinkInput" class="input" placeholder="이벤트 목록 URL을 입력 해 주세요" 
                           onfocus="FocusInput('listLinkInput')" oninput="ChangeInput('listLinkInput')" onblur="BlurInput('listLinkInput')"
-                          value="${listLink}">
+                          value="${listLink}" style="width:90%;">
+                          <!--<button class='btn primary sm'  onclick="openUrl(this)" data-value="${listLink}">POPUP</button>-->
                         <span class="delete-btn" onclick="DeleteInput('listLinkInput')"></span>
                       </div>
                     </fieldset>
@@ -251,7 +255,8 @@ function clickEvtSelOpt(id, option, name){
                       <div class="input-wrap sm" id="dtLinkArea">
                         <input id="dtLinkInput" class="input" placeholder="이벤트 상세 URL을 입력 해 주세요" 
                           onfocus="FocusInput('dtLinkInput')" oninput="ChangeInput('dtLinkInput')" onblur="BlurInput('dtLinkInput')"
-                          value="${dtLink}">
+                          value="${dtLink}" style="width:90%;">
+                 <!--         <button class='btn primary sm'  onclick="openUrl(this)" data-value="${listLink}">POPUP</button> -->
                         <span class="delete-btn" onclick="DeleteInput('dtLinkInput')"></span>
                       </div>
                     </fieldset>
@@ -263,7 +268,7 @@ function clickEvtSelOpt(id, option, name){
                     </fieldset>
                 </form>  
                 `
-    OpenModal("이벤트 상세", "", true, true, `updateEventDetail()`, "확인", "취소", "", "lg", values)
+    OpenModal("이벤트 상세", "evtDetail", true, true, `updateEventDetail()`, "확인", "취소", "", "lg", values)
   }
 
 async function updateEventDetail(){
@@ -438,6 +443,7 @@ function fileUpload() {
                   values += listUrlCol
                   values +=`  </td>`
                   values += statusCol
+                  values += `<td><button id='dtBtn' class='btn primary sm' onclick="delEvt('${v['evt_id']}')" >삭제</button></td>`
                   values += `  </tr>`
                 });
                 $("#dataContent").append(values)
@@ -492,6 +498,34 @@ function fileUpload() {
                 {
                  $(button).text('비노출');
                 }
+             })
+             .catch(error => {
+               console.error("Error:", error);
+             });
+    }
+  }
+  function delEvt(evtId){
+    if(confirm('정말 삭제하시겠습니까?'))
+    {
+      
+      let target_data = JSON.stringify({
+                          "evt_id" :  evtId
+                        })
+
+      let formData = new FormData();
+   
+      formData.append("datas", target_data);
+       
+      fetch("/delEvent", {
+                 method: "POST",
+                 body: formData
+             })
+             .then(response => response.json())
+             .then(data => {
+              if(data.message='Data delete'){
+                alert('삭제되었습니다.')
+                selectList()
+              }
              })
              .catch(error => {
                console.error("Error:", error);

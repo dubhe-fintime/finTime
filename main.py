@@ -1620,6 +1620,29 @@ def updateEventDetail():
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
         return jsonify({"error": str(e)}), 500
+@app.route('/delEvent', methods=["POST"])
+def delEvent():
+
+    try:
+        # FormData에서 "datas" 키 가져오기
+        event_data = request.form.get("datas")
+
+        if not event_data:
+            return jsonify({"error": "No data received"}), 400
+
+        # JSON 문자열을 파이썬 딕셔너리로 변환
+        event_dict = json.loads(event_data)
+
+        values = [event_dict["evt_id"]]
+
+        execute_mysql_query_delete("A7",values) # 이벤트 노출여부 업데이트(EVT_MST)
+
+        return jsonify({"message": "Data delete", "data": event_dict})
+
+    except Exception as e:
+        logger.error("에러 발생: %s", str(e))
+        return jsonify({"error": str(e)}), 500
+
 ################## 관리자 END ############################
 @app.route('/getEventMst', methods=["POST"])
 def getEventMst():
