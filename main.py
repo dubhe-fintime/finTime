@@ -1233,7 +1233,7 @@ def getCommonCdApi():
 
 # 공통 코드 조회 (함수 호출)
 async def getCommonCdFun(gp_id):
-    results = await execute_mysql_query_select("COMMON_CD", [gp_id])
+    results = execute_mysql_query_select("COMMON_CD", [gp_id])
     print("aaaaaaaaaaaaaaaaaaaaaaaaaa")
     print(results)
     if not results:
