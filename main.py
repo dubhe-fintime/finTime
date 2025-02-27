@@ -1709,9 +1709,10 @@ async def getYouTube():
     print("##############################################")
     youtube_key = config['SERVER']['youtube_key']
     channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
-    #channels = getCommonCdFun("YOUTUBE_ID")
+    test = getCommonCdFun("YOUTUBE_ID")
     #channels = ["신한은행"]
-    print(channels)
+    print("&&&&&&&&&&&"*10)
+    print(test)
     results = []
     for channel in channels:
         #print(channel["EX_FIELD1"])
