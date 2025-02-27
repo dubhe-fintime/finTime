@@ -6,6 +6,7 @@ import os
 import random
 from main import set_batch_news, set_batch_log, del_batch_rst, app
 from main import naverNews
+from dbconn import execute_mysql_query_delete
 
 BATCH_ID = "B000000003"  # 유튜브 배치 ID
 BATCH_NM = "네이버 뉴스 최신 기사 수집"
@@ -30,7 +31,7 @@ async def naver_batch_job():
             if results :
                 status = "SUCCESS"
                 cnt = 0  # 정상 처리된 데이터 개수
-                # del_batch_rst(cnt)  # 기존 데이터 삭제
+                execute_mysql_query_delete("Q27","")
                 for data in results:
                     set_batch_news(
                         data.get('press_name', ""),
@@ -72,7 +73,8 @@ def run_naver_batch_job():
         print(f"네이버뉴스 배치 작업 실행 중 오류 발생: {e}")
 
 # 매일 03:00에 실행
-schedule.every().day.at("03:00").do(run_naver_batch_job)
+# schedule.every().day.at("03:00").do(run_naver_batch_job)
+schedule.every(1).minutes.do(run_naver_batch_job)
 
 print(f"네이버뉴스 배치 작업이 스케줄링되었습니다. (매일 03:00 실행)")
 
