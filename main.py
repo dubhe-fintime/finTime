@@ -816,7 +816,7 @@ async def test5():
 # 흥국생명
 @app.route('/test6', methods=["POST"])
 async def test6():
-    results = await heungkuklife.get457Data()
+    results = await heungkuklife.get453Data()
     status = 200
     for item in results:
         if 'ERROR' in item:
@@ -824,7 +824,7 @@ async def test6():
     
     data_to_return = {
         "status_code": status,  # 응답코드
-        "bank_cd": "457",
+        "bank_cd": "453",
         "fin_id": "T000000006", # TASK ID 지정
         "result": results     # 응답결과
     }
