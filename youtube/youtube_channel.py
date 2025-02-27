@@ -26,7 +26,7 @@ async def getChannelData(apiKey, channel_id):
         title = item["snippet"]["title"]
         published_at = item["snippet"]["publishedAt"]
         thumbnail = item["snippet"]["thumbnails"]["medium"]["url"]
-        video_url = f"https://www.youtube.com/watch?v={video_id}"
+        video_url = f"https://www.youtube.com/embed/{video_id}"
         
         event_list.append({
             "title": title,
