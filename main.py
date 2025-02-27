@@ -1549,7 +1549,6 @@ def evtDataList():
 
 @app.route('/insertEvent', methods=["POST"])
 def insertEvent():
-
     try:
         # FormData에서 "datas" 키 가져오기
         event_data_str = request.form.get("datas")  # str 타입 반환
@@ -1692,6 +1691,17 @@ def getNews():
 
     datas = []
     return_col_name = ["title","press_nm","press_img","content","link","cor_gp"]
+    return_result = [dict(zip(return_col_name, data)) for data in results]
+
+    return return_result
+
+#유튜브 API
+@app.route('/getYoutube', methods=["POST"])
+def getYoutube():
+    results = execute_mysql_query_select("Q28", [])
+
+    datas = []
+    return_col_name = ["cor_gp","content_title","content_url"]
     return_result = [dict(zip(return_col_name, data)) for data in results]
 
     return return_result
