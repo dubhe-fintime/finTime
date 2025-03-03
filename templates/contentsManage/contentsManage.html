@@ -10,7 +10,7 @@
   <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/common.js') }}"></script>
   <style>
-    
+
   </style>
 </head>
 
@@ -139,18 +139,25 @@ function clickEvtSelOpt(id, option, name){
     var thumbFileSt = ''
     var imgUrlSt = ''
     var imgFileSt = ''
-    if(thumbnail_url!='')
+    var thumbSel = 'URL'
+    var imgSel = 'URL'
+    if(thumbnail_url!='' || thumbnail_url.indexOf('/resources/')==0)
     {
       thumbUrlSt = 'display:block'
       thumbFileSt = 'display:none'
+      if(thumbnail_url.indexOf('/resources/')==0)
+      {
+        thumbSel = '파일'
+      }
     }
     else
     {
       thumbUrlSt = 'display:none'
       thumbFileSt = 'display:block'
     }
-    if(img_url!='')
+    if(img_url.indexOf('/resources/')==0)
     {
+      imgSel = '파일'
       imgUrlSt = 'display:block'
       imgFileSt = 'display:none'
     }
@@ -159,6 +166,11 @@ function clickEvtSelOpt(id, option, name){
       imgUrlSt = 'display:none'
       imgFileSt = 'display:block'
     }
+    // else
+    // {
+    //   imgUrlSt = 'display:none'
+    //   imgFileSt = 'display:block'
+    // }
     values = `    <form>
                     <h3>기관명</h3>
                     <fieldset>
@@ -189,7 +201,7 @@ function clickEvtSelOpt(id, option, name){
                     <fieldset>
                       <div class="input-wrap sm" style="display:flex">
                         <div class="select-box xs" >
-                          <strong class="label" onclick="ClickSelectLabel('thumbOpt')" id="thumbOpt" name="" >URL</strong>
+                          <strong class="label" onclick="ClickSelectLabel('thumbOpt')" id="thumbOpt" name="" >${thumbSel}</strong>
                           <ul class="options type">
                             <li class="option thumb" onclick="clickEvtSelOpt('thumbOpt','URL','url')">
                               URL
@@ -203,11 +215,12 @@ function clickEvtSelOpt(id, option, name){
                           <input id="thumbUrlInput" class="input" placeholder="썸네일 이미지 URL을 입력 해 주세요"
                             onfocus="FocusInput('thumbUrlInput')" oninput="ChangeInput('thumbUrlInput')" onblur="BlurInput('thumbUrlInput')"
                             value="${thumbnail_url}" style="width:86%">
-                          <!--  <button class='btn primary sm'  onclick="openImgModal(this)" data-value="${thumbnail_url}">미리보기</button>-->
+                          <span class='btn primary sm' onclick="openImgModal('','thumb','url')" data-value="${thumbnail_url}" >미리보기</span>
                           <span class="delete-btn" onclick="DeleteInput('thumbUrlInput')"></span>
                         </div>
                         <div class="input-wrap sm" id="thumbFileArea" style="${thumbFileSt}">
                           <input type="file" id="thumb-file-input" accept="image/*" >
+                          <span class='btn primary sm' onclick="openImgModal(this)" data-value="${thumbnail_url}">미리보기</span>
                         </div>
                       </div>
                     </fieldset>
@@ -216,7 +229,7 @@ function clickEvtSelOpt(id, option, name){
                     <fieldset>
                       <div class="input-wrap sm">
                         <div class="select-box xs" >
-                          <strong class="label" onclick="ClickSelectLabel('imgOpt')" id="imgOpt" name="" >URL</strong>
+                          <strong class="label" onclick="ClickSelectLabel('imgOpt')" id="imgOpt" name="" >${imgSel}</strong>
                           <ul class="options type">
                             <li class="option thumb" onclick="clickEvtSelOpt('imgOpt','URL','url')">
                               URL
@@ -229,8 +242,9 @@ function clickEvtSelOpt(id, option, name){
                         <div class="input-wrap sm" id="imgUrlArea" style="${imgUrlSt};margin-left: 0px;">
                           <input id="imgUrlInput" class="input" placeholder="이미지 URL을 입력 해 주세요" 
                             onfocus="FocusInput('imgUrlInput')" oninput="ChangeInput('imgUrlInput')" onblur="BlurInput('imgUrlInput')"
-                            value="${img_url}">
-                          <span class="delete-btn" onclick="DeleteInput('imgUrlInput')"></span>
+                            value="${img_url}" style="width:86%">
+                            <span class="delete-btn" onclick="DeleteInput('imgUrlInput')"></span>
+                            <span class='btn primary sm'  onclick="openImgModal('','img','url')" data-value="${img_url}">미리보기</span>
                           
                         </div>
                         <div class="input-wrap sm" id="imgFileArea" style="${imgFileSt}">
@@ -245,7 +259,7 @@ function clickEvtSelOpt(id, option, name){
                         <input id="listLinkInput" class="input" placeholder="이벤트 목록 URL을 입력 해 주세요" 
                           onfocus="FocusInput('listLinkInput')" oninput="ChangeInput('listLinkInput')" onblur="BlurInput('listLinkInput')"
                           value="${listLink}" style="width:90%;">
-                          <!--<button class='btn primary sm'  onclick="openUrl(this)" data-value="${listLink}">POPUP</button>-->
+                          <span class='btn primary sm'  onclick="openUrl(this)" data-value="${listLink}">POPUP</span>
                         <span class="delete-btn" onclick="DeleteInput('listLinkInput')"></span>
                       </div>
                     </fieldset>
@@ -256,7 +270,7 @@ function clickEvtSelOpt(id, option, name){
                         <input id="dtLinkInput" class="input" placeholder="이벤트 상세 URL을 입력 해 주세요" 
                           onfocus="FocusInput('dtLinkInput')" oninput="ChangeInput('dtLinkInput')" onblur="BlurInput('dtLinkInput')"
                           value="${dtLink}" style="width:90%;">
-                 <!--         <button class='btn primary sm'  onclick="openUrl(this)" data-value="${listLink}">POPUP</button> -->
+                          <span class='btn primary sm'  onclick="openUrl(this)" data-value="${listLink}">POPUP</span>
                         <span class="delete-btn" onclick="DeleteInput('dtLinkInput')"></span>
                       </div>
                     </fieldset>
@@ -443,7 +457,7 @@ function fileUpload() {
                   values += listUrlCol
                   values +=`  </td>`
                   values += statusCol
-                  values += `<td><button id='dtBtn' class='btn primary sm' onclick="delEvt('${v['evt_id']}')" >삭제</button></td>`
+                  values += `<td><button id='dtBtn' class='btn primary sm' onclick="delEvt('${v['evt_id']}','${v['evt_title']}','${v['cor_nm']}')" >삭제</button></td>`
                   values += `  </tr>`
                 });
                 $("#dataContent").append(values)
@@ -504,12 +518,14 @@ function fileUpload() {
              });
     }
   }
-  function delEvt(evtId){
+  function delEvt(evtId,title,corNo){
     if(confirm('정말 삭제하시겠습니까?'))
     {
       
       let target_data = JSON.stringify({
-                          "evt_id" :  evtId
+                          "evt_id" :  evtId,
+                          "evt_title" :  title,
+                          "cor_no" :  corNo,
                         })
 
       let formData = new FormData();
@@ -532,12 +548,30 @@ function fileUpload() {
              });
     }
   }
-  function openImgModal(button) {
+  function openImgModal(button,gubun,type) {
 
     var imgUrl = $(button).attr('data-value');
+    console.log(imgUrl)
     if(!imgUrl)
     {
-      imgUrl='/static/assets/images/dobot_running.gif'
+      if(gubun=='thumb'){
+        if(type =='url'){
+            imgUrl = $('#thumbUrlInput').val()
+        }
+        else
+        {
+
+        }
+      }
+      else if(gubun=='img')
+      {
+        if(type =='url'){
+          imgUrl = $('#imgUrlInput').val()
+        }
+      }
+      else{
+        imgUrl='/static/assets/images/dobot_running.gif'
+      }
     }
     var title = $(button).attr('data-title');
 

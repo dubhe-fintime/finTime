@@ -1635,7 +1635,10 @@ def delEvent():
         values = [event_dict["evt_id"]]
 
         execute_mysql_query_delete("A7",values) # 이벤트 노출여부 업데이트(EVT_MST)
-
+        
+        updValues = ['',event_dict["cor_no"],event_dict["evt_title"]]
+        execute_mysql_query_update("A3",updValues) # 이벤트 아이디 '' 로 업데이트(BATCH_RST)
+        
         return jsonify({"message": "Data delete", "data": event_dict})
 
     except Exception as e:
