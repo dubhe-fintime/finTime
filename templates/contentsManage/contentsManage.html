@@ -141,31 +141,25 @@ function clickEvtSelOpt(id, option, name){
     var imgFileSt = ''
     var thumbSel = 'URL'
     var imgSel = 'URL'
+    thumbUrlSt = 'display:block'
+    thumbFileSt = 'display:none'
     if(thumbnail_url!='' || thumbnail_url.indexOf('/resources/')==0)
     {
-      thumbUrlSt = 'display:block'
-      thumbFileSt = 'display:none'
       if(thumbnail_url.indexOf('/resources/')==0)
       {
         thumbSel = '파일'
       }
     }
-    else
+    imgUrlSt = 'display:block'
+    imgFileSt = 'display:none'
+    if(img_url!='' || img_url.indexOf('/resources/')==0)
     {
-      thumbUrlSt = 'display:none'
-      thumbFileSt = 'display:block'
+      if(img_url.indexOf('/resources/')==0)
+      {
+        imgSel = '파일'
+      }
     }
-    if(img_url.indexOf('/resources/')==0)
-    {
-      imgSel = '파일'
-      imgUrlSt = 'display:block'
-      imgFileSt = 'display:none'
-    }
-    else
-    {
-      imgUrlSt = 'display:none'
-      imgFileSt = 'display:block'
-    }
+
     // else
     // {
     //   imgUrlSt = 'display:none'
