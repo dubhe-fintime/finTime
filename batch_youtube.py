@@ -24,9 +24,7 @@ async def youtube_batch_job():
 
     try:
         with app.app_context():
-            print("*"*90)
             response = await getYouTube()  # 유튜브 데이터 가져오기
-            print("1"*90)
             if callable(response.json):
                 response_json = response.json()
             else:
@@ -57,7 +55,6 @@ async def youtube_batch_job():
             if success:
                 status = "SUCCESS"
                 cnt = 0  # 정상 처리된 데이터 개수
-                print(flat_results)
 
                 for channel in flat_results:
                     if not isinstance(channel, dict):
