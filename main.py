@@ -512,7 +512,7 @@ async def bank8():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
-# 부산은행행
+# 부산은행
 @app.route('/bank9', methods=["POST"])
 async def bank9():
     results = await bnkBank.get032Data()
