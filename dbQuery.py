@@ -137,7 +137,8 @@ def selectQuery(qType, values):
                     ) THEN 'N'
                     ELSE 'Y'
                 END = 'Y'
-            );
+            )
+            ORDER BY EM.COR_NO ASC, EM.C_DATE ASC;
         """
     
     elif qType == "Q14": # USER, EVENT 매핑 테이블 등록
