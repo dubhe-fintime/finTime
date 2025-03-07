@@ -3,10 +3,9 @@ import requests
 def getData(apiKey):
     from main import getCommonCdFun
     datas = getCommonCdFun("YOUTUBE_ID")
-    print(datas)
     results = []
     for data in datas:
-        results = getChannelData(apiKey, data["EX_FIELD1"])
+        results.extend( getChannelData(apiKey, data["EX_FIELD1"]))
     return results    
 
 
