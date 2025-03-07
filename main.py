@@ -1752,6 +1752,15 @@ async def getYouTube():
         results.append(data)
     return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
 
+# @app.route('/getYouTube', methods=["POST"])
+# def getYouTube():
+#     youtube_key = config['SERVER']['youtube_key']
+#     results = getData(youtube_key)  # 비동기 함수 실행
+#     print("#"*100)
+#     print(results)
+#     print("#"*100)
+#     return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
+
 # YOUTUBE BATCH 결과 등록
 def set_batch_youtube(corNo, contentTitle, contentUrl, thumbnailUrl, priority):
     values = (corNo, contentTitle, contentUrl, thumbnailUrl, priority)
