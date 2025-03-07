@@ -1563,7 +1563,19 @@ def insertEvent():
                 if not evtId :
                     return jsonify({"error": "evtId 생성 실패"}), 400
                 
-                values = [event_dict["cor_no"],event_dict["evt_title"],evtId,event_dict["evt_st_date"],event_dict["evt_ed_date"],event_dict["evt_thumbnail"],event_dict["evt_img"],event_dict["evt_noti"],event_dict["evt_list_link"],event_dict["evt_dt_link"]]
+                values = [
+                    event_dict["cor_no"],
+                    event_dict["evt_title"],
+                    evtId,
+                    None if event_dict["evt_st_date"] == "" else event_dict["evt_st_date"],
+                    None if event_dict["evt_ed_date"] == "" else event_dict["evt_ed_date"],
+                    event_dict["evt_thumbnail"],
+                    event_dict["evt_img"],
+                    event_dict["evt_noti"],
+                    event_dict["evt_list_link"],
+                    event_dict["evt_dt_link"]
+                ]
+
                 print(values)
                 execute_mysql_query_insert("A2",values) # 이벤트 데이터 등록(EVT_MST)
                 updValues = [evtId,event_dict["cor_no"],event_dict["evt_title"]]
