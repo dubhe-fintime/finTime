@@ -34,7 +34,7 @@ from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard, 
 from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock,shinhanStock,kiwoomStock,hanaStock,miraeAssetStock
 
 from youtube.youtube_channel_id import getChannelId
-from youtube.youtube_channel import getData
+from youtube.youtube_channel import getData, getChannelData
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
@@ -1739,26 +1739,27 @@ def updateSetting():
     return [success]
 
 ################## YOUTUBE START #############################
-# 금융사 유튜브 정보 가져오기
-# @app.route('/getYouTube', methods=["POST"])
-# async def getYouTube():
-#     youtube_key = config['SERVER']['youtube_key']
-#     channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
-#     test = getCommonCdFun("YOUTUBE_ID")
-#     results = []
-#     for channel in channels:
-#         result_id = await getChannelId(youtube_key, channel)  # 채널 ID 취득
-#         data = await getChannelData(youtube_key, result_id)  # 비동기 함수 실행
-#         results.append(data)
-#     return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
-
+#금융사 유튜브 정보 가져오기
 @app.route('/getYouTube', methods=["POST"])
-def getYouTube():
+async def getYouTube():
     youtube_key = config['SERVER']['youtube_key']
-    data = getData(youtube_key)  # 비동기 함수 실행
-    print("#"*100)
-    print(data)
-    print("#"*100)
+    channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
+    test = getCommonCdFun("YOUTUBE_ID")
+    results = []
+    for channel in channels:
+        result_id = await getChannelId(youtube_key, channel)  # 채널 ID 취득
+        data = await getChannelData(youtube_key, result_id)  # 비동기 함수 실행
+        results.append(data)
+    return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
+
+# @app.route('/getYouTube', methods=["POST"])
+# def getYouTube():
+#     youtube_key = config['SERVER']['youtube_key']
+#     results = getData(youtube_key)  # 비동기 함수 실행
+#     print("#"*100)
+#     print(results)
+#     print("#"*100)
+#     return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
 
 
 # YOUTUBE BATCH 결과 등록

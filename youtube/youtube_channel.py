@@ -1,43 +1,40 @@
-import requests
+import asyncio
+import aiohttp
+from main import getCommonCdFun
 
-def getData(apiKey):
-    from main import getCommonCdFun
-    datas = getCommonCdFun("YOUTUBE_ID")
-    results = []
-    for data in datas:
-        results.extend( getChannelData(apiKey, data["EX_FIELD1"]))
-    return results    
-
-
-def getChannelData(apiKey, channel_id):
+async def getChannelData(apiKey, channel_id):
     print(channel_id)
     event_list = []
-    API_KEY = apiKey
-    CHANNEL_ID = channel_id
     BASE_URL = "https://www.googleapis.com/youtube/v3/search"
 
-    # API 요청 파라미터 설정
     params = {
         "part": "snippet",
-        "channelId": CHANNEL_ID,
-        "maxResults": 5,  # 최대 5개 영상 가져오기
-        "order": "date",  # 최신순 정렬
-        "type": "video",  # 동영상만 검색
-        "key": API_KEY
+        "channelId": channel_id,
+        "maxResults": 5,
+        "order": "date",
+        "type": "video",
+        "key": apiKey
     }
 
-    # API 요청 보내기
-    response = requests.get(BASE_URL, params=params)
-    data = response.json()
-    
-    # 결과 출력
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(BASE_URL, params=params) as response:
+                response.raise_for_status()
+                data = await response.json()
+    except Exception as e:
+        print(f"API 요청 오류 (채널 ID: {channel_id}): {e}")
+        return []
+
     for item in data.get("items", []):
+        if "id" not in item or "videoId" not in item["id"]:
+            continue
+
         video_id = item["id"]["videoId"]
         title = item["snippet"]["title"]
         published_at = item["snippet"]["publishedAt"]
         thumbnail = item["snippet"]["thumbnails"]["medium"]["url"]
         video_url = f"https://www.youtube.com/embed/{video_id}"
-        
+
         event_list.append({
             "title": title,
             "video_id": video_id,
@@ -45,4 +42,20 @@ def getChannelData(apiKey, channel_id):
             "thumbnail": thumbnail,
             "video_url": video_url
         })
+
     return event_list
+
+def getData(apiKey):
+    datas = getCommonCdFun("YOUTUBE_ID")
+    results = []
+
+    async def fetch_all():
+        tasks = [getChannelData(apiKey, data["EX_FIELD1"]) for data in datas]
+        return await asyncio.gather(*tasks)
+
+    results_list = asyncio.run(fetch_all())
+
+    for result in results_list:
+        results.extend(result)
+
+    return results
