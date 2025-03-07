@@ -39,6 +39,7 @@ from youtube.youtube_channel import getChannelData
 from batch_handler import start_batch, stop_batch, check_batch_status
 
 from util import getHoliday
+from util import naverNews
 
 from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
 
@@ -1738,28 +1739,18 @@ def updateSetting():
     return [success]
 
 ################## YOUTUBE START #############################
-#금융사 유튜브 정보 가져오기
+# 금융사 유튜브 정보 가져오기
 @app.route('/getYouTube', methods=["POST"])
 async def getYouTube():
     youtube_key = config['SERVER']['youtube_key']
     channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
-    test = getCommonCdFun("YOUTUBE_ID")
+    #test = getCommonCdFun("YOUTUBE_ID")
     results = []
     for channel in channels:
         result_id = await getChannelId(youtube_key, channel)  # 채널 ID 취득
         data = await getChannelData(youtube_key, result_id)  # 비동기 함수 실행
         results.append(data)
     return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
-
-# @app.route('/getYouTube', methods=["POST"])
-# def getYouTube():
-#     youtube_key = config['SERVER']['youtube_key']
-#     results = getData(youtube_key)  # 비동기 함수 실행
-#     print("#"*100)
-#     print(results)
-#     print("#"*100)
-#     return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
-
 
 # YOUTUBE BATCH 결과 등록
 def set_batch_youtube(corNo, contentTitle, contentUrl, thumbnailUrl, priority):
