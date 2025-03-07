@@ -10,6 +10,7 @@ def getData(apiKey):
 
 
 def getChannelData(apiKey, channel_id):
+    print(channel_id)
     event_list = []
     API_KEY = apiKey
     CHANNEL_ID = channel_id
