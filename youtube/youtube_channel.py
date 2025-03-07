@@ -45,17 +45,17 @@ async def getChannelData(apiKey, channel_id):
 
     return event_list
 
-def getData(apiKey):
-    datas = getCommonCdFun("YOUTUBE_ID")
-    results = []
+# def getData(apiKey):
+#     datas = getCommonCdFun("YOUTUBE_ID")
+#     results = []
 
-    async def fetch_all():
-        tasks = [getChannelData(apiKey, data["EX_FIELD1"]) for data in datas]
-        return await asyncio.gather(*tasks)
+#     async def fetch_all():
+#         tasks = [getChannelData(apiKey, data["EX_FIELD1"]) for data in datas]
+#         return await asyncio.gather(*tasks)
 
-    results_list = asyncio.run(fetch_all())
+#     results_list = asyncio.run(fetch_all())
 
-    for result in results_list:
-        results.extend(result)
+#     for result in results_list:
+#         results.extend(result)
 
-    return results
+#     return results

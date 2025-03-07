@@ -34,12 +34,11 @@ from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard, 
 from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock,shinhanStock,kiwoomStock,hanaStock,miraeAssetStock
 
 from youtube.youtube_channel_id import getChannelId
-from youtube.youtube_channel import getData, getChannelData
+from youtube.youtube_channel import getChannelData
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
 from util import getHoliday
-from util import naverNews
 
 from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
 
