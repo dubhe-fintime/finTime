@@ -1,4 +1,10 @@
 import requests
+from main import getCommonCdFun
+
+def getData(apiKey):
+    datas = getCommonCdFun("YOUTUBE_ID")
+    print(datas)
+    #results = getChannelData(apiKey)
 
 async def getChannelData(apiKey, channel_id):
     event_list = []
