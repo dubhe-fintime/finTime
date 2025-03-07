@@ -1,7 +1,7 @@
 import requests
-from main import getCommonCdFun
 
 def getData(apiKey):
+    from main import getCommonCdFun
     datas = getCommonCdFun("YOUTUBE_ID")
     print(datas)
     #results = getChannelData(apiKey)
