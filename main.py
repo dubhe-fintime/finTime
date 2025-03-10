@@ -1792,8 +1792,22 @@ def del_batch_youtube(cnt):
 # 공모주 정보 가져오기기
 @app.route('/getPubOffStockData', methods=["POST"])
 async def getPubOffStockData():
-    results = await pubOffStock()
-    return jsonify({"success": True, "results": results})  # JSON 응답
+    try:
+        # pubOffStock() 호출
+        response = await pubOffStock()
+        
+        # Response 객체인 경우 .json()으로 데이터 추출
+        if hasattr(response, 'json'):
+            results = response.json()  # JSON 데이터를 추출
+        else:
+            results = response  # 이미 이터러블한 데이터일 경우 그대로 사용
+        
+        return jsonify({"success": True, "results": results})  # JSON 응답 반환
+
+    except Exception as e:
+        # 오류 처리
+        return jsonify({"success": False, "error": str(e)})
+
 
 # SET NAVERNEWS DATA
 def set_batch_pubOffStock(stock_nm,st_date,ed_date,con_pub_off_price,hope_pub_off_price,sub_com_rate, chief_deitor):
