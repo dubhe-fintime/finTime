@@ -4,6 +4,7 @@ import datetime
 import schedule
 import os
 import random
+import json
 from main import set_batch_pubOffStock, set_batch_log,  app
 from main import getPubOffStockData
 from dbconn import execute_mysql_query_delete
@@ -29,7 +30,7 @@ async def pubOffStock_batch_job():
             task_time = datetime.datetime.now()
             
             if results :
-                res = results.json()
+                res = json.loads(results) 
                 status = "SUCCESS"
                 cnt = 0  # 정상 처리된 데이터 개수
                 ############################################## 여기까지 했음
