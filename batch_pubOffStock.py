@@ -45,7 +45,7 @@ async def pubOffStock_batch_job():
                     set_batch_pubOffStock(
                         data.get('STOCK_NM', ""),
                         sub_st_date,
-                        sub_ed_date
+                        sub_ed_date,
                         data.get('CON_PUB_OFF_PRICE', ""),
                         data.get('HOPE_PUB_OFF_PRICE', ""),
                         data.get('SUB_COM_RATE', ""),
