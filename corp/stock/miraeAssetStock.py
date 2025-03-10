@@ -19,17 +19,16 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 }
 
-# 이벤트 리스트를 저장할 리스트
-event_list = []
-
-
 async def get238Data():
+    # 이벤트 리스트를 함수 내부에서 선언 (중복 방지)
+    event_list = []
+    seen_titles = set()  # 중복 확인을 위한 제목 저장
+
     # 페이지 탐색 시작
     page = 1
     list_domain = "https://securities.miraeasset.com/hki/hki7000/r05.do"  # 리스트 URL
     detail_domain = "https://securities.miraeasset.com/event/view/"  # 상세 이벤트 URL
 
-    global event_list
     while True:
         url = BASE_URL.format(page)
         
@@ -51,6 +50,12 @@ async def get238Data():
 
             for event in events:
                 title = event.select_one("dd.evTit").text.strip()  # 제목
+
+                # 중복된 제목이 이미 추가되었는지 확인
+                if title in seen_titles:
+                    continue  # 중복된 경우 추가하지 않음
+                seen_titles.add(title)  # 중복 방지를 위해 저장
+
                 date = event.select_one("dd.evDate").text.strip()  # 날짜
                 img_url = event.select_one("dt a img")["src"]  # 이미지 URL
 
@@ -84,12 +89,13 @@ async def get238Data():
             time.sleep(1)  # 서버 부하 방지를 위해 1초 대기
             
 
+
         except requests.exceptions.RequestException as e:
-            print(f"미래에셋증권권 요청 오류 발생: {e}")
+            print(f"미래에셋증권 요청 오류 발생: {e}")
             return [{"ERROR": str(e)}]
         except Exception as e:
-            print(f"미래에셋증권권 크롤링 오류 발생: {e}")
+            print(f"미래에셋증권 크롤링 오류 발생: {e}")
             return [{"ERROR": str(e)}]
     
-    print(f"미래에셋증권권 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
+    print(f"미래에셋증권 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
     return event_list
