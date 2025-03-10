@@ -52,7 +52,8 @@ def selectQuery(qType, values):
                 COALESCE(CM.THUMBNAIL_URL, '') AS THUMBNAIL_URL,
                 COALESCE(CM.USE_YN, '') AS USE_YN,
                 COALESCE(DATE_FORMAT(CM.C_DATE, '%Y-%m-%d'), '') AS C_DATE,
-                COALESCE(DATE_FORMAT(CM.U_DATE, '%Y-%m-%d'), '') AS U_DATE
+                COALESCE(DATE_FORMAT(CM.U_DATE, '%Y-%m-%d'), '') AS U_DATE,
+                COALESCE(CM.PRI_IMG, '') AS PRI_IMG
             FROM 
                 COR_MST AS CM
             JOIN 
@@ -101,7 +102,7 @@ def selectQuery(qType, values):
                     WHEN EXISTS (
                         SELECT 1 
                         FROM USER_EVT_OPT UEO 
-                        WHERE UEO.USER_ID = '1' AND FIND_IN_SET(EM.COR_NO, UEO.COR_NO) > 0
+                        WHERE UEO.USER_ID = %s AND FIND_IN_SET(EM.COR_NO, UEO.COR_NO) > 0
                     ) THEN 'N'
                     ELSE 'Y'
                 END AS GROUP_USE_YN,
@@ -109,7 +110,7 @@ def selectQuery(qType, values):
                     WHEN EXISTS (
                         SELECT 1 
                         FROM USER_EVT_OPT UEO 
-                        WHERE UEO.USER_ID = '1' AND FIND_IN_SET(EM.EVT_ID, UEO.EVT_ID) > 0
+                        WHERE UEO.USER_ID = %s AND FIND_IN_SET(EM.EVT_ID, UEO.EVT_ID) > 0
                     ) THEN 'N'
                     ELSE 'Y'
                 END AS EVT_USE_YN
@@ -123,7 +124,7 @@ def selectQuery(qType, values):
                     WHEN EXISTS (
                         SELECT 1 
                         FROM USER_EVT_OPT UEO 
-                        WHERE UEO.USER_ID = '1' AND FIND_IN_SET(EM.COR_NO, UEO.COR_NO) > 0
+                        WHERE UEO.USER_ID = %s AND FIND_IN_SET(EM.COR_NO, UEO.COR_NO) > 0
                     ) THEN 'N'
                     ELSE 'Y'
                 END = 'Y'
@@ -133,7 +134,7 @@ def selectQuery(qType, values):
                     WHEN EXISTS (
                         SELECT 1 
                         FROM USER_EVT_OPT UEO 
-                        WHERE UEO.USER_ID = '1' AND FIND_IN_SET(EM.EVT_ID, UEO.EVT_ID) > 0
+                        WHERE UEO.USER_ID = %s AND FIND_IN_SET(EM.EVT_ID, UEO.EVT_ID) > 0
                     ) THEN 'N'
                     ELSE 'Y'
                 END = 'Y'
@@ -484,7 +485,7 @@ def selectQuery(qType, values):
 
 
 
-    # print("###################################")
-    # print(query)
-    # print("###################################")
+    #print("###################################")
+    #print(query)
+    #print("###################################")
     return query

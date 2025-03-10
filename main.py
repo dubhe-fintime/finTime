@@ -1662,12 +1662,14 @@ def delEvent():
 ################## 관리자 END ############################
 @app.route('/getEventMst', methods=["POST"])
 def getEventMst():
-    #data = request.get_json()  # 전송된 JSON 데이터 받아오기
+    data = request.get_json()  # 전송된 JSON 데이터 받아오기
+    id = data.get("id")
+    print(id)
     #start = data.get("start")
     #end = data.get("end")
-    #values = [start, end]
-    #results = execute_mysql_query_select("Q13", values)
-    results = execute_mysql_query_select("Q13", [])
+    values = [id, id, id, id]
+    results = execute_mysql_query_select("Q13", values)
+    #results = execute_mysql_query_select("Q13", [])
 
     datas = []
     for item in results:
