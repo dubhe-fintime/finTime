@@ -4,7 +4,7 @@ import datetime
 import schedule
 import os
 import random
-from main import set_batch_news, set_batch_log, del_batch_rst, app
+from main import set_batch_pubOffStock, set_batch_log,  app
 from main import getPubOffStockData
 from dbconn import execute_mysql_query_delete
 
@@ -32,16 +32,17 @@ async def pubOffStock_batch_job():
                 status = "SUCCESS"
                 cnt = 0  # 정상 처리된 데이터 개수
                 ############################################## 여기까지 했음
-                #execute_mysql_query_delete("Q27","")
+                execute_mysql_query_delete("Q29","")
                 for data in results:
-                    # set_batch_news(
-                    #     data.get('press_name', ""),
-                    #     data.get('press_img', ""),
-                    #     data.get('article_title', ""),
-                    #     data.get('article_content', ""),
-                    #     data.get('URL', ""),
-                    #     data.get('search_term', "")
-                    # )
+                    set_batch_pubOffStock(
+                        data.get('STOCK_NM', ""),
+                        data.get('SUB_ST_DATE', ""),
+                        data.get('SUB_ED_DATE', ""),
+                        data.get('CON_PUB_OFF_PRICE', ""),
+                        data.get('HOPE_PUB_OFF_PRICE', ""),
+                        data.get('SUB_COM_RATE', ""),
+                        data.get('CHIEF_EDITOR', "")
+                    )
                     cnt += 1
             else:
                 status = "FAIL"

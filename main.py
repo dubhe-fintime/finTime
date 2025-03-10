@@ -41,7 +41,6 @@ from util.pubOffStock import pubOffStock
 from batch_handler import start_batch, stop_batch, check_batch_status
 
 from util import getHoliday
-from util import naverNews
 
 from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
 
@@ -1794,8 +1793,11 @@ def del_batch_youtube(cnt):
 @app.route('/getPubOffStockData', methods=["POST"])
 async def getPubOffStockData():
     results = await pubOffStock()
-    print(results)
     return jsonify({"success": True, "results": results})  # JSON 응답
+
+# SET NAVERNEWS DATA
+def set_batch_pubOffStock(stock_nm,st_date,ed_date,con_pub_off_price,hope_pub_off_price,sub_com_rate, chief_deitor):
+    execute_mysql_query_insert("Q30",(stock_nm,st_date,ed_date,con_pub_off_price,hope_pub_off_price,sub_com_rate, chief_deitor)) # BATCH LOG 등록
 
 if __name__ == "__main__":
     while True:

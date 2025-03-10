@@ -286,6 +286,20 @@ def selectQuery(qType, values):
     elif qType == "Q28": # 유튜브 조회
         query = "SELECT COR_NO,CONTENT_TITLE,CONTENT_URL FROM YOUTUBE_CONTENTS "
 
+    elif qType == "Q29": # 공모주 삭제
+        query = "DELETE FROM PUBLIC_OFFERING_STOCK "
+    
+    elif qType == "Q30": # 공모주 정보 등록
+        query = """
+            INSERT INTO PUBLIC_OFFERING_STOCK 
+                (STOCK_NM, SUB_ST_DATE, SUB_ED_DATE, CON_PUB_OFF_PRICE, HOPE_PUB_OFF_PRICE, SUB_COM_RATE, CHIEF_EDITOR) 
+            VALUES 
+                (%s, %s, %s, %s, %s, %s, %s);
+        """
+    
+    elif qType == "Q31": # 공모주 조회
+        query = "SELECT STOCK_NM, SUB_ST_DATE, SUB_ED_DATE, CON_PUB_OFF_PRICE, HOPE_PUB_OFF_PRICE, SUB_COM_RATE, CHIEF_EDITOR, C_DATE FROM PUBLIC_OFFERING_STOCK "
+
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
         query += "    a.COR_NO cor_no, "
