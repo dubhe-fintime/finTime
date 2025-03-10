@@ -1795,19 +1795,7 @@ async def getPubOffStockData():
     try:
         # pubOffStock() 호출
         response = await pubOffStock()  # Response 객체 반환
-
-        # 만약 Response 객체라면 .json()으로 데이터 추출
-        if hasattr(response, 'json'):
-            results = response.json()  # JSON 데이터를 추출
-        else:
-            results = response  # 이미 이터러블한 데이터일 경우 그대로 사용
-
-        # results가 이터러블한 리스트라면
-        if isinstance(results, list):
-            return jsonify({"success": True, "results": results})  # JSON 응답 반환
-        else:
-            return jsonify({"success": False, "error": "Results are not iterable."})
-
+        return response
     except Exception as e:
         # 오류 처리
         return jsonify({"success": False, "error": str(e)})
