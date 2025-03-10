@@ -36,10 +36,16 @@ async def pubOffStock_batch_job():
                 ############################################## 여기까지 했음
                 execute_mysql_query_delete("Q29","")
                 for data in res:
+                    sub_st_date = data.get('SUB_ST_DATE', "")
+                    if sub_st_date == '-':
+                        sub_st_date = None
+                    sub_ed_date = data.get('SUB_ED_DATE', "")
+                    if sub_ed_date == '-':
+                        sub_ed_date = None
                     set_batch_pubOffStock(
                         data.get('STOCK_NM', ""),
-                        data.get('SUB_ST_DATE', ""),
-                        data.get('SUB_ED_DATE', ""),
+                        sub_st_date,
+                        sub_ed_date
                         data.get('CON_PUB_OFF_PRICE', ""),
                         data.get('HOPE_PUB_OFF_PRICE', ""),
                         data.get('SUB_COM_RATE', ""),
