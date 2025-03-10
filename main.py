@@ -36,6 +36,8 @@ from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock
 from youtube.youtube_channel_id import getChannelId
 from youtube.youtube_channel import getChannelData
 
+from util.pubOffStock import pubOffStock
+
 from batch_handler import start_batch, stop_batch, check_batch_status
 
 from util import getHoliday
@@ -1784,6 +1786,14 @@ def del_batch_youtube(cnt):
         execute_mysql_query_delete('Q25', []) # YOUTUBE BATCH 데이터 전체 삭제
 
 ################## YOUTUBE END #############################
+
+# 공모주 정보 가져오기기
+@app.route('/getPubOffStockData', methods=["POST"])
+async def getPubOffStockData():
+    results = await pubOffStock()
+    print(results)
+    return jsonify({"success": True, "results": results})  # JSON 응답
+
 if __name__ == "__main__":
     while True:
         try:
