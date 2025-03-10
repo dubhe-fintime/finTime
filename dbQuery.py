@@ -75,12 +75,12 @@ def selectQuery(qType, values):
     
     elif qType == "Q11": # 금융사 정보 등록 / 수정
         query = "INSERT INTO COR_MST "
-        query += "( COR_NO, COR_NM, COR_GP, COR_NOTI, C_USER, IMG_URL, THUMBNAIL_URL ) "
+        query += "( COR_NO, COR_NM, COR_GP, COR_NOTI, C_USER, IMG_URL, THUMBNAIL_URL, PRI_IMG ) "
         query += " VALUES  "
-        query += " ( %s, %s, %s, %s, 'ADMIN', %s, %s ) "
+        query += " ( %s, %s, %s, %s, 'ADMIN', %s, %s, %s ) "
         query += " ON DUPLICATE KEY UPDATE "
         query += " COR_NM = %s, COR_GP = %s, COR_NOTI = %s, U_DATE = SYSDATE(), "
-        query += " U_USER = 'ADMIN', IMG_URL = %s, THUMBNAIL_URL = %s"
+        query += " U_USER = 'ADMIN', IMG_URL = %s, THUMBNAIL_URL = %s, PRI_IMG = %s"
 
     elif qType == "Q12": # 금융사 사용여부 변경
         query =  "UPDATE COR_MST SET  "
