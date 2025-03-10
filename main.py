@@ -1798,8 +1798,10 @@ async def getPubOffStockData():
         
         # Response 객체인 경우 .json()으로 데이터 추출
         if hasattr(response, 'json'):
+            print("1111111111111111")
             results = response.json()  # JSON 데이터를 추출
         else:
+            print("222222222222222")
             results = response  # 이미 이터러블한 데이터일 경우 그대로 사용
         
         return jsonify({"success": True, "results": results})  # JSON 응답 반환
