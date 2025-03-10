@@ -9,7 +9,41 @@
   <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+  <style>
+    .preview-img {
+        display: block;
+        width: 65%;
+    }
 
+    .hidden {
+        display: none;
+    }
+
+    #imgFileArea {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start; /* 왼쪽 정렬 */
+        gap: 10px; /* 요소 간 간격 */
+        width: 100%;
+        overflow: hidden;
+        border: 1px solid #ccc;
+    }
+
+    #img-file-input {
+        flex-shrink: 0; /* 크기가 줄어들지 않도록 고정 */
+    }
+
+    #preview {
+        max-width: 100%;
+        max-height: 80%;
+        object-fit: contain; /* 비율 유지하며 박스 안에 맞춤 */
+    }
+
+    #reupload-btn {
+        margin-left: auto; /* 버튼을 오른쪽 끝으로 이동 */
+    }
+
+</style>
 </head>
 
 <body>
@@ -83,6 +117,7 @@
               <th>기관설명</th>
               <th>대표이미지</th>
               <th>썸네일이미지</th>
+              <th>CI이미지</th>
               <th>최초등록일</th>
               <th>최종수정일</th>
               <th>사용여부</th>
@@ -106,6 +141,25 @@
   $(document).ready(function () {
     SearchGroupCode()
     fn_eventHandler()
+    $(document).on("change", "#img-file-input", function(event) {
+        let file = event.target.files[0];
+
+        if (file) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                $("#preview").attr("src", e.target.result).removeClass("hidden");
+                $("#img-file-input").addClass("hidden");
+                $("#reupload-btn").removeClass("hidden");
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    $(document).on("click", "#reupload-btn", function() {
+        $("#img-file-input").val("").removeClass("hidden");
+        $("#preview").addClass("hidden");
+        $("#reupload-btn").addClass("hidden");
+    });
   })
 
   function fn_eventHandler(){
@@ -180,6 +234,21 @@
     var cor_noti = tag ? $(tag).find("td").eq(3).text() : ""
     var img_url = tag ? $(tag).find("td").eq(4).text() : ""
     var thumbnail_url = tag ? $(tag).find("td").eq(5).text() : ""
+    var ciImg_url = tag ? $(tag).find("td").eq(6).find("img").attr("src") : "";
+
+    // ciImg_url 값이 있으면 이미지 미리보기 표시, 없으면 파일 업로드 입력 보이기
+    var ciImageSection = ciImg_url.trim()
+    ? `
+        <img id="preview" class="preview-img" src="${ciImg_url}" alt="이미지 미리보기">
+        <span class="btn primary sm" id="reupload-btn" >파일 새로 올리기</span>
+        <input type="file" id="img-file-input" accept="image/*" class="hidden">
+    `
+    : `
+        <input type="file" id="img-file-input" accept="image/*">
+        <img id="preview" class="preview-img hidden" alt="이미지 미리보기" src="${ciImg_url}">
+        <span class="btn primary sm hidden" id="reupload-btn">파일 새로 올리기</span>
+    `;
+    
     values = `
                     <h3>기관번호</h3>
                     <fieldset>
@@ -246,6 +315,11 @@
                                 value="${thumbnail_url}">
                             <span class="delete-btn" onclick="DeleteInput('thumbUrlInput')"></span>
                         </div>
+                    <h3>CI이미지</h3>
+                    <fieldset>
+                        <div class="input-wrap sm" id="imgFileArea">
+                            ${ciImageSection} <!-- ciImg_url 여부에 따라 미리보기/업로드 입력 분기 -->
+                        </div>
                     </fieldset>    `
     OpenModal(modal_title, `addGroup`, true, true, `addGroup(${flag})`, "확인", "취소", "", "md", values)
     
@@ -255,41 +329,53 @@
   }
 
   //추가|수정
-  function addGroup(flag=true) {
-    if (!checkRequired()) {
-      let values = `<p>필수 값이 누락 되었습니다. (기관번호, 기관명, 기관그룹)</p>`;
-        values += `<br>`;
-        OpenModal("필수값 체크", "required_modal", true, "", `CloseModal("required_modal")`, "확인", "", true, "md", values);
-      return
-    }
-
-    let target_data = {}
-    $("#addGroup input , #addGroup textarea").each(function() {
-        target_data[$(this).attr("id")] = $(this).val()
-    });
-    target_data["cor_gp"] = $("#addGroup strong").attr("name");
-
-    fetch("/insertFinance", {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(target_data)
-    })
-    .then(response => console.log(response))
-    .then(data => {
-        CloseModal();
-        if(flag){
-        let values = `<p>금융사 정보 수정이 완료되었습니다.</p>`;
-        values += `<br>`;
-        OpenModal("금융사 정보 수정", "", true, "", "location.reload()", "확인", "", true, "md", values);
-      } else {
-          let values = `<p>금융사 정보 추가가 완료되었습니다.</p>`;
+  async function addGroup(flag=true) {
+    const resultData = await fileUpload();
+    if(resultData.result || resultData)
+    {
+      if (!checkRequired()) {
+        let values = `<p>필수 값이 누락 되었습니다. (기관번호, 기관명, 기관그룹)</p>`;
           values += `<br>`;
-          OpenModal("금융사 정보 추가", "", true, "", "location.reload()", "확인", "", true, "md", values);
-        }
-    })
-    .catch(error => {
-        console.error("Error:", error);
-    });
+          OpenModal("필수값 체크", "required_modal", true, "", `CloseModal("required_modal")`, "확인", "", true, "md", values);
+        return
+      }
+  
+      let target_data = {}
+      $("#addGroup input , #addGroup textarea").each(function() {
+          target_data[$(this).attr("id")] = $(this).val()
+      });
+      target_data["cor_gp"] = $("#addGroup strong").attr("name");
+  
+      if(resultData.result)
+      {
+        target_data["pri_img"] = '/resources/'+resultData.filename
+      }
+      else
+      {
+        target_data["pri_img"] = $('#preview').attr('src')
+      }
+      fetch("/insertFinance", {
+          method: "POST",
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(target_data)
+      })
+      .then(response => console.log(response))
+      .then(data => {
+          CloseModal();
+          if(flag){
+          let values = `<p>금융사 정보 수정이 완료되었습니다.</p>`;
+          values += `<br>`;
+          OpenModal("금융사 정보 수정", "", true, "", "location.reload()", "확인", "", true, "md", values);
+        } else {
+            let values = `<p>금융사 정보 추가가 완료되었습니다.</p>`;
+            values += `<br>`;
+            OpenModal("금융사 정보 추가", "", true, "", "location.reload()", "확인", "", true, "md", values);
+          }
+      })
+      .catch(error => {
+          console.error("Error:", error);
+      });
+    }
   }
 
   // 조회
@@ -342,6 +428,7 @@
               <td>${v['COR_NOTI']}</td>
               <td>${v['IMG_URL']}</td>
               <td>${v['THUMBNAIL_URL']}</td>
+              <td style="display: flex; justify-content: center; align-items: center;"><img src="${v['PRI_IMG']}" style ="max-width:40px;max-height:40px;"/></td>
               <td>${v['C_DATE']}</td>
               <td>${v['U_DATE']}</td>`;
             if(v['USE_YN'] == "Y"){
@@ -354,7 +441,37 @@
       $("#dataContent").append(oHtml);
     }
 
+    function fileUpload() {
+      // 파일 입력 요소에서 파일 가져오기
+      const imgInput = document.getElementById('img-file-input');
+      const imgFile = imgInput.files[0];
+      // 파일이 없는 경우 처리
+      if (!imgFile) {
+          return true;
+      }
 
+      const formData = new FormData();
+      let corNo = $('#corNoInput').val();
+      let fileExtension = imgFile.name.split('.').pop().toLowerCase();
+      formData.append("file", imgFile, "ci_"+corNo+"."+fileExtension);
+
+      return fetch('/upload', {
+          method: "POST",
+          body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+          console.log("응답:", data);
+          data.result = true;
+          return data;
+      })
+      .catch(error => {
+          console.error("Error:", error);
+          alert("이미지 업로드 중 오류가 발생했습니다.");
+          data.result = false;
+          return data.result;
+      });
+  }
     //필수값 체크
     function checkRequired(){
       var isValid = true 
