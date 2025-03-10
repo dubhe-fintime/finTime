@@ -1682,7 +1682,8 @@ def getEventMst():
             'evt_thumbnail': item[5],
             'evt_list_link': item[6],
             'evt_dt_link': item[7],
-            'cor_color': item[8]
+            'cor_color': item[8],
+            'cor_group': item[9]
         }
         datas.append(data)
 

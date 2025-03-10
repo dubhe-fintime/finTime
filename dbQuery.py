@@ -98,6 +98,7 @@ def selectQuery(qType, values):
                 EM.EVT_LiST_LINK,
                 EM.EVT_DT_LINK,
                 CM.PRI_COLOR,
+                CM.COR_GP,
                 CASE 
                     WHEN EXISTS (
                         SELECT 1 
