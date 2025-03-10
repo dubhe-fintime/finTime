@@ -95,6 +95,17 @@
         
     </div>
 
+    <div class="container">
+        <h2>공모주 배치 컨트롤</h2>
+        <button onclick="startBatch(4)">🚀 배치 시작</button>
+        <button onclick="stopBatch(4)">🛑 배치 중지</button>
+        <button onclick="checkBatchStatus(4)">🔍 상태 확인</button>
+
+        <p id="status3">⏳ 배치 상태 확인 중...</p>
+
+        
+    </div>
+
     <script>
         // 배치 시작
         
@@ -164,6 +175,7 @@
             checkBatchStatus(1);
             checkBatchStatus(2);
             checkBatchStatus(3);
+            checkBatchStatus(4);
         });
 
     </script>
