@@ -9,6 +9,7 @@ BATCH_SCRIPTS = {
     1: ("batch_script.py", "batch_pid.txt"),
     2: ("batch_youtube.py", "batch_pid_youtube.txt"),
     3: ("batch_naverNews.py", "batch_pid_naverNews.txt"),
+    4: ("batch_pubOffStock.py", "batch_pid_pubOffStock.txt"),
 }
 
 # 프로세스 PID 확인 및 업데이트
