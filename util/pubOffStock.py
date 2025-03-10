@@ -1,3 +1,4 @@
+import ssl
 import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
@@ -22,8 +23,14 @@ async def pubOffStock():
     page = 1
     while True:
         url = base_url + str(page)
+        
+        # SSL context 설정
+        ssl_context = ssl.create_default_context()
+        ssl_context.set_ciphers('DEFAULT@SECLEVEL=1')  # 보안 레벨 낮추기
+
         async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers=headers) as response:
+            # ssl_context를 session에 전달
+            async with session.get(url, headers=headers, ssl=ssl_context) as response:
                 if response.status != 200:
                     break  # HTTP 오류 발생 시 종료
                 html = await response.text()
