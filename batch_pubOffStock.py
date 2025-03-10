@@ -29,11 +29,12 @@ async def pubOffStock_batch_job():
             task_time = datetime.datetime.now()
             
             if results :
+                res = results.json()
                 status = "SUCCESS"
                 cnt = 0  # 정상 처리된 데이터 개수
                 ############################################## 여기까지 했음
                 execute_mysql_query_delete("Q29","")
-                for data in results:
+                for data in res:
                     set_batch_pubOffStock(
                         data.get('STOCK_NM', ""),
                         data.get('SUB_ST_DATE', ""),
