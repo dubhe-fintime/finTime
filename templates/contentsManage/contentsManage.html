@@ -451,7 +451,7 @@ function fileUpload() {
                   values += listUrlCol
                   values +=`  </td>`
                   values += statusCol
-                  values += `<td><button id='dtBtn' class='btn primary sm' onclick="delEvt('${v['evt_id']}','${v['evt_title']}','${v['cor_nm']}')" >삭제</button></td>`
+                  values += `<td><button id='dtBtn' class='btn primary sm' data-json=`+encodingJSON+`  onclick="delEvt(this)" >삭제</button></td>`
                   values += `  </tr>`
                 });
                 $("#dataContent").append(values)
@@ -512,15 +512,17 @@ function fileUpload() {
              });
     }
   }
-  function delEvt(evtId,title,corNo){
+  function delEvt(button){
     if(confirm('정말 삭제하시겠습니까?'))
     {
-      
+      var decodeData = decodeURIComponent(button.getAttribute("data-json"));
+      let data = JSON.parse(decodeData )
+
       let target_data = JSON.stringify({
-                          "evt_id" :  evtId,
-                          "evt_title" :  title,
-                          "cor_no" :  corNo,
-                        })
+        "evt_id" :  data.evt_id,
+        "evt_title" :  data.evt_title,
+        "cor_no" :  data.cor_no
+      })
 
       let formData = new FormData();
    
