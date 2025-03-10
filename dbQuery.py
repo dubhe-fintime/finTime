@@ -52,7 +52,8 @@ def selectQuery(qType, values):
                 COALESCE(CM.THUMBNAIL_URL, '') AS THUMBNAIL_URL,
                 COALESCE(CM.USE_YN, '') AS USE_YN,
                 COALESCE(DATE_FORMAT(CM.C_DATE, '%Y-%m-%d'), '') AS C_DATE,
-                COALESCE(DATE_FORMAT(CM.U_DATE, '%Y-%m-%d'), '') AS U_DATE
+                COALESCE(DATE_FORMAT(CM.U_DATE, '%Y-%m-%d'), '') AS U_DATE,
+                COALESCE(CM.PRI_IMG, '') AS PRI_IMG
             FROM 
                 COR_MST AS CM
             JOIN 
