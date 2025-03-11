@@ -542,11 +542,9 @@ async def bank9():
 async def bank10():
     results = await jejuBank.get035Data()
     status = 200
-
     img_path = os.path.join(app.config['FILE_FOLDER'],"cor_thumb") 
-    if(os.path.isfile(img_path)):
-        print(img_path)
 
+    execute_mysql_query_delete("Q32",[])
     for index, item in enumerate(results):
         # 에러일 경우
         if 'ERROR' in item:
@@ -567,7 +565,6 @@ async def bank10():
             results[index]["thumbNail"] = total_path
 
             #DB 추가 (배치가 하루단위라 기존데이터 삭제후 INSERT)
-            execute_mysql_query_delete("Q32",[])
             values = (filename, f"jeju_thumb{index+1}.png", filename.split(".")[-1], img_path)
             execute_mysql_query_insert("Q4",values)
 
