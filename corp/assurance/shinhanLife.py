@@ -9,7 +9,7 @@ import requests
 # 이미지 : X | 내용 : X | 목록 URL : O | 상세 URL : O
 ##############################
 
-def get438Data():
+async def get438Data():
     event_list = []
     url = "https://www.shinhanlife.co.kr/hp/fav/selectListEvnt.pwkjson"
 
