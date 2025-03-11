@@ -1,5 +1,9 @@
 import re
 import requests
+import urllib3
+
+# 경고 무시
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 ##############################
 # 제목 : 제주은행
