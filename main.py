@@ -27,7 +27,7 @@ import configparser
 
 from check_session import check_session
 
-from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,kdbLife,samsungLife,hanhwaLife,miraeAssetLife
+from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,kdbLife,samsungLife,hanhwaLife,miraeAssetLife,shinhanLife
 from corp.assurance import samsungFire,heungkukFire,kbInsure,nhInsure
 from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBank,ibkBank,kakaoBank,bnkBank
 from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard, lotteCard
@@ -973,6 +973,27 @@ async def test13():
     data_to_return = {
         "status_code": status,  # 응답코드
         "bank_cd": "449",
+        "fin_id": "T000000013", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# NH손해보험
+@app.route('/test14', methods=["POST"])
+async def test14():
+    results = await shinhanLife.get438Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "438",
         "fin_id": "T000000013", # TASK ID 지정
         "result": results     # 응답결과
     }
