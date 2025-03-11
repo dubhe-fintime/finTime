@@ -20,6 +20,7 @@ from datetime import datetime
 import ipaddress
 
 import os
+import base64
 
 import json
 
@@ -29,7 +30,7 @@ from check_session import check_session
 
 from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,kdbLife,samsungLife,hanhwaLife,miraeAssetLife,shinhanLife
 from corp.assurance import samsungFire,heungkukFire,kbInsure,nhInsure
-from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBank,ibkBank,kakaoBank,bnkBank
+from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBank,ibkBank,kakaoBank,bnkBank,jejuBank
 from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard, lotteCard
 from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock,shinhanStock,kiwoomStock,hanaStock,miraeAssetStock
 
@@ -535,6 +536,54 @@ async def bank9():
     response = jsonify(data_to_return)
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
+
+# 제주은행
+@app.route('/bank10', methods=["POST"])
+async def bank10():
+    results = await jejuBank.get035Data()
+    status = 200
+
+    img_path = os.path.join(app.config['FILE_FOLDER'],"cor_thumb") 
+    if(os.path.isfile(img_path)):
+        print(img_path)
+
+    for index, item in enumerate(results):
+        # 에러일 경우
+        if 'ERROR' in item:
+            status = 500
+        else:
+            now = datetime.now().strftime("%Y%m%d_%H%M%S")
+            unique_id = uuid.uuid4().hex[:12]  
+            filename = f"{now}_{unique_id}.png" 
+            image_data = base64.b64decode(item["thumbNail"]) 
+            total_path = os.path.join(img_path, filename) #파일저장 경로
+            
+            # 이미지 저장
+            with open(total_path, "wb") as file:
+                file.write(image_data)
+                print(f">>>>>{filename} 저장 완료")
+                file.close()
+            
+            results[index]["thumbNail"] = total_path
+
+            #DB 추가 (배치가 하루단위라 기존데이터 삭제후 INSERT)
+            execute_mysql_query_delete("Q32",[])
+            values = (filename, f"jeju_thumb{index+1}.png", filename.split(".")[-1], img_path)
+            execute_mysql_query_insert("Q4",values)
+
+    # return을 for 루프 밖으로 이동
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "032",
+        "fin_id": "T000000040", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
 
 ################## 은행 END ###############################
 ################## 증권 START #############################

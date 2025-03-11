@@ -60,7 +60,7 @@ async def get438Data():
                 "title": event.get("evntTitlNm", ""),
                 "startDt": event.get("evntStrtDt", ""),
                 "endDt": event.get("evntEndDt", ""),
-                "thumbNail": f"https://www.shinhanlife.co.kr/{event.get("evntImagUrlAddr", "")}",
+                "thumbNail": f'https://www.shinhanlife.co.kr/{event.get("evntImagUrlAddr", "")}',
                 "listURL": "https://www.shinhanlife.co.kr/hp/cdhg0020.do",
                 "detailURL": f"https://www.shinhanlife.co.kr/hp/cdhg0030.do?dpEvntId={event.get('dpEvntId', '')}"
             })

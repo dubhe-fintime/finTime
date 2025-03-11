@@ -300,6 +300,9 @@ def selectQuery(qType, values):
     elif qType == "Q31": # 공모주 조회
         query = "SELECT STOCK_NM, SUB_ST_DATE, SUB_ED_DATE, CON_PUB_OFF_PRICE, HOPE_PUB_OFF_PRICE, SUB_COM_RATE, CHIEF_EDITOR, C_DATE FROM PUBLIC_OFFERING_STOCK "
 
+    elif qType == "Q32": # 제주은행API > FILE_MST 테이블 기존것 삭제
+        query = " DELETE FROM FILE_MST WHERE ORG_FILE_NM LIKE 'jeju_thumb%' "
+
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
         query += "    a.COR_NO cor_no, "
