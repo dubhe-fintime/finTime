@@ -1686,7 +1686,6 @@ def delEvent():
 def getEventMst():
     data = request.get_json()  # 전송된 JSON 데이터 받아오기
     id = data.get("id")
-    print(id)
     #start = data.get("start")
     #end = data.get("end")
     values = [id, id, id, id]
@@ -1706,6 +1705,30 @@ def getEventMst():
             'evt_dt_link': item[7],
             'cor_color': item[8],
             'cor_group': item[9]
+        }
+        datas.append(data)
+
+    return jsonify(datas)
+
+@app.route('/getIPOStock', methods=["POST"])
+def getIPOStock():
+    data = request.get_json()  # 전송된 JSON 데이터 받아오기
+    id = data.get("id")
+    #start = data.get("start")
+    #end = data.get("end")
+    results = execute_mysql_query_select("Q31", [])
+
+    datas = []
+    for item in results:
+        data = {
+            'stock_nm': item[0],
+            'sub_st_dt': item[1],
+            'sub_ed_date': item[2],
+            'con_pub_off_price': item[3],
+            'hope_pub_off_price': item[4],
+            'sub_com_rate': item[5],
+            'chief_editor': item[6],
+            'c_dt': item[7]
         }
         datas.append(data)
 
