@@ -544,7 +544,13 @@ async def bank10():
     status = 200
     img_path = os.path.join(app.config['FILE_FOLDER'],"cor_thumb") 
 
+    #폴더,DB 삭제부
     execute_mysql_query_delete("Q32",[])
+    for exist_file in os.listdir(img_path):
+        file_path = os.path.join(img_path, exist_file)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+
     for index, item in enumerate(results):
         # 에러일 경우
         if 'ERROR' in item:
