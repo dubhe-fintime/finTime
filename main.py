@@ -1779,7 +1779,8 @@ def getEventMst():
             'evt_list_link': item[6],
             'evt_dt_link': item[7],
             'cor_color': item[8],
-            'cor_group': item[9]
+            'cor_group': item[9],
+            'cor_pri_img_url': item[10]
         }
         datas.append(data)
 
@@ -1881,11 +1882,12 @@ def updateSetting():
 async def getYouTube():
     youtube_key = config['SERVER']['youtube_key']
     channels = ["신한은행", "우리은행", "국민은행", "하나은행", "NH농협은행"]
+    channel_ids = ["UC4E394G9WuS9y6SlBZslMsQ", "UCcQ9V6nEYVMSRWWOrvHQqLg", "UCHq8auIJ8ewo7iD2pqX22UA", "UCSHbm2TrspNZ_p_yd39kMNg", "UCmkkFJIalgnWovxFigYK2EA"]
     #test = getCommonCdFun("YOUTUBE_ID")
     results = []
-    for channel in channels:
-        result_id = await getChannelId(youtube_key, channel)  # 채널 ID 취득
-        data = await getChannelData(youtube_key, result_id)  # 비동기 함수 실행
+    for channel in channel_ids:
+        #result_id = await getChannelId(youtube_key, channel)  # 채널 ID 취득
+        data = await getChannelData(youtube_key, channel)  # 비동기 함수 실행
         results.append(data)
     return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
 
