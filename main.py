@@ -33,6 +33,8 @@ from corp.bank import hanaBank,citiBank,imBank,kbBank,scBank,shinhanBank,wooriBa
 from corp.card import kbCard,bcCard,hanaCard,samsungCard,shinhanCard,wooriCard, lotteCard
 from corp.stock import dashinStock,kbStock,yuantaStock,samsungStock,hankookStock,shinhanStock,kiwoomStock,hanaStock,miraeAssetStock
 
+from corp.capital import shinhanCapitial
+
 from youtube.youtube_channel_id import getChannelId
 from youtube.youtube_channel import getChannelData
 
@@ -1004,6 +1006,30 @@ async def test14():
     return response
 
 ################## 보험 END ###############################
+################## 캐피탈 START #############################
+
+# 신한캐피탈
+@app.route('/test15', methods=["POST"])
+async def test15():
+    results = await shinhanCapitial.get901Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "901",
+        "fin_id": "T000000040", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+################## 캐피탈 END ###############################
 ################## 관리자 업무 START ###############################
 
 # SET HOLIDAY DATA
