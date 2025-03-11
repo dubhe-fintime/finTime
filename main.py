@@ -577,7 +577,7 @@ async def bank10():
     # return을 for 루프 밖으로 이동
     data_to_return = {
         "status_code": status,  # 응답코드
-        "bank_cd": "032",
+        "bank_cd": "035",
         "fin_id": "T000000040", # TASK ID 지정
         "result": results     # 응답결과
     }
