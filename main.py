@@ -1682,7 +1682,6 @@ def insertEvent():
                 execute_mysql_query_insert("A2",values) # 이벤트 데이터 등록(EVT_MST)
                 updValues = [evtId,event_dict["cor_no"],event_dict["evt_title"]]
                 execute_mysql_query_update("A3",updValues) # 이벤트 아이디 업데이트(BATCH_RST)
-
         return jsonify({"message": "Data Insert", "data": event_dict})
 
     except Exception as e:
@@ -1690,6 +1689,7 @@ def insertEvent():
         return jsonify({"error": str(e)}), 500
 @app.route('/insertEvent2', methods=["POST"])
 def insertEvent2():
+    print(f"시작: {datetime.now().strftime('%Y%m%d_%H%M%S')}")
     try:
         # FormData에서 "datas" 키 가져오기
         event_data_str = request.form.get("datas")  # str 타입 반환
@@ -1727,7 +1727,7 @@ def insertEvent2():
         # 🔥 Bulk Insert 실행
         if bulk_values:
             execute_mysql_query_insert_update_bulk("A2", bulk_values,"A3", bulk_update_values)
-
+        print(f"끝: {datetime.now().strftime('%Y%m%d_%H%M%S')}")
         return jsonify({"message": "Bulk Data Inserted", "count": len(bulk_values)})
 
     except Exception as e:
