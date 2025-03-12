@@ -1389,7 +1389,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # 업로드 폴더 지정
 app.config['FILE_FOLDER'] = UPLOAD_FOLDER
 # 허용할 이미지 확장자
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'PNG', 'JPG', 'JPEG', 'GIF'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'PNG', 'JPG', 'JPEG', 'GIF', 'svg', 'SVG'}
 # 파일 크기 제한 (10MB)
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB
 
@@ -1489,7 +1489,30 @@ def multiUpload():
 
     except Exception as e:
         return jsonify({"error": f"파일 업로드 중 오류가 발생했습니다: {str(e)}"}), 500
+# ci 폴더 지정 업로드(FILE_MST INSERT 없음)
+@app.route('/ciUpload', methods=['POST'])
+def ci_upload_file():
+    try:
+        if 'file' not in request.files:
+            return jsonify({"error": "파일이 없습니다."}), 400
 
+        file = request.files['file']
+
+        if file.filename == '':
+            return jsonify({"error": "파일명이 비어 있습니다."}), 400
+
+        if file and allowed_file(file.filename):
+            file_path = os.path.join(app.config['FILE_FOLDER'],'ci', file.filename)
+            print(file_path)
+            file.save(file_path)  # 파일 저장
+            
+            return jsonify({"message": "파일 업로드 성공", "filename": file.filename, "original_name": file.filename}), 200
+        else:
+            return jsonify({"error": "허용되지 않은 파일 형식입니다."}), 400
+
+    except Exception as e:
+        # 예외 발생 시 에러 메시지 출력
+        return jsonify({"error": f"파일 업로드 중 오류가 발생했습니다: {str(e)}"}), 50
 # 파일 확장자 검증
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -1589,6 +1612,7 @@ def batchResultSearch():
 
 ################## 배치 관리 END ###############################
 ############## 관리자 START ############################
+# 배치데이터 조회(스크래핑관리 페이지 - BATCH_RST SELECT)
 @app.route('/batchDataList', methods=["POST"])
 def batchDataList():
 
@@ -1630,7 +1654,8 @@ def batchDataList():
     except Exception as e:
         print(f"Error: {e}")  # 에러 로그 출력
         return jsonify({"error": str(e)}), 500  # 500 Internal Server Error 응답
-    
+
+# 이벤트데이터 조회(컨텐츠관리 페이지 - EVT_MST SELECT)    
 @app.route('/evtDataList', methods=["POST"])
 def evtDataList():
 
@@ -1674,6 +1699,7 @@ def evtDataList():
         print(f"Error: {e}")  # 에러 로그 출력
         return jsonify({"error": str(e)}), 500  # 500 Internal Server Error 응답
 
+# 이벤트 등록(EVT_MST INSERT)
 @app.route('/insertEvent', methods=["POST"])
 def insertEvent():
     try:
@@ -1724,10 +1750,7 @@ def insertEvent():
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
         return jsonify({"error": str(e)}), 500
-
-
-    
-
+# 이벤트 노출여부 수정 (컨텐츠관리 EVT_MST )
 @app.route('/updateEventUseYn', methods=["POST"])
 def updateEventUseYn():
 
@@ -1750,6 +1773,7 @@ def updateEventUseYn():
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
         return jsonify({"error": str(e)}), 500
+#이벤트 수정 (컨텐츠 관리 EVT_MST UPDATE)
 @app.route('/updateEventDetail', methods=["POST"])
 def updateEventDetail():
 
@@ -1772,6 +1796,7 @@ def updateEventDetail():
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
         return jsonify({"error": str(e)}), 500
+# 이벤트 삭제 (컨텐츠 관리 EVT_MST DEL / BATCH_RST UPD)
 @app.route('/delEvent', methods=["POST"])
 def delEvent():
 
@@ -1787,7 +1812,7 @@ def delEvent():
 
         values = [event_dict["evt_id"]]
 
-        execute_mysql_query_delete("A7",values) # 이벤트 노출여부 업데이트(EVT_MST)
+        execute_mysql_query_delete("A7",values) # 이벤트삭제제
         
         updValues = ['',event_dict["cor_no"],event_dict["evt_title"]]
         execute_mysql_query_update("A3",updValues) # 이벤트 아이디 '' 로 업데이트(BATCH_RST)

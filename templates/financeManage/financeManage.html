@@ -348,7 +348,7 @@
   
       if(resultData.result)
       {
-        target_data["pri_img"] = '/resources/'+resultData.filename
+        target_data["pri_img"] = '/resources/ci/'+resultData.filename
       }
       else
       {
@@ -455,7 +455,7 @@
       let fileExtension = imgFile.name.split('.').pop().toLowerCase();
       formData.append("file", imgFile, "ci_"+corNo+"."+fileExtension);
 
-      return fetch('/upload', {
+      return fetch('/etcUpload', {
           method: "POST",
           body: formData
       })
