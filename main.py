@@ -1721,8 +1721,8 @@ def insertEvent2():
 
             event_dict = v
             #evtId = get_next_id('E')  # 개별 evtId 생성
-            evtId = get_next_ids('E')  # 개별 evtId 생성
-
+            evtId = get_next_ids('E', len(event_data))  # 개별 evtId 생성
+            print(evtId)
             if not evtId:
                 return jsonify({"error": "evtId 생성 실패"}), 400
 
