@@ -35,7 +35,10 @@ def selectQuery(qType, values):
         query = "SELECT SEQUENCE FROM UNIQUE_IDS WHERE LETTER = %s ORDER BY ID DESC LIMIT 1"
     elif qType == "Q8": # 고유 ID 등록
         query = "INSERT INTO UNIQUE_IDS (LETTER, SEQUENCE, IDENTIFIER) VALUES (%s, %s, %s)"
-    
+    elif qType == "Q8S": # 고유 ID 다건 등록
+        placeholders = ",".join(["(%s, %s, %s)"] * len(values))  # 다건 등록을 위한 플레이스홀더 생성
+        query = f"INSERT INTO UNIQUE_IDS (LETTER, SEQUENCE, IDENTIFIER) VALUES {placeholders}"
+
     
     elif qType == "QTEMP": # 임시 배치 테이블 조회
         query = "SELECT * FROM EVT_MST"

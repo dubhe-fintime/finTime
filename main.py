@@ -1152,6 +1152,23 @@ def save_id(letter, sequence, new_id):
     values = [letter, sequence, new_id]
     execute_mysql_query_insert("Q8",values) # BATCH 데이터 등록
 
+# 다건 ID 처리리
+def get_next_ids(letter, count):
+    
+    # 최신 시퀀스를 조회
+    last_sequence = execute_mysql_query_select("Q7", [letter])
+    last_sequence = last_sequence[0][0] if last_sequence else 0  # 최신 시퀀스 없으면 0
+
+    # 새로운 ID 목록 생성
+    new_sequences = list(range(last_sequence + 1, last_sequence + 1 + count))
+    new_ids = [f"{letter}{seq:09d}" for seq in new_sequences]
+
+    # 고유 ID들을 한 번에 저장
+    values = [(letter, seq, new_id) for seq, new_id in zip(new_sequences, new_ids)]
+    execute_mysql_query_insert("Q8S", values)  # Bulk Insert 실행
+
+    return new_ids
+
 
 # 에러코드 보는 곳
 @app.errorhandler(404)
@@ -1703,7 +1720,8 @@ def insertEvent2():
                 continue  # 빈 데이터는 건너뜀
 
             event_dict = v
-            evtId = get_next_id('E')  # 개별 evtId 생성
+            #evtId = get_next_id('E')  # 개별 evtId 생성
+            evtId = get_next_ids('E')  # 개별 evtId 생성
 
             if not evtId:
                 return jsonify({"error": "evtId 생성 실패"}), 400
