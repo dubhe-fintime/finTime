@@ -1738,7 +1738,7 @@ def insertEvent2():
 
             event_dict = v
             evtId = evtIds[idx]  # 생성된 evtId를 리스트에서 가져옴
-
+            print(evtId)
             # 각 이벤트 데이터에 대한 값 구성
             values = (
                 event_dict["cor_no"],
