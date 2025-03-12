@@ -1158,8 +1158,10 @@ def get_next_ids(letter, count):
 
     # 최신 시퀀스를 조회 (Q7 실행)
     last_sequence = execute_mysql_query_select("Q7", [letter])
+    
+    # 최신 시퀀스가 있으면 가져오고, 없으면 0으로 시작
     last_sequence = last_sequence[0][0] if last_sequence else 0  # 최신 시퀀스 없으면 0
-
+    
     # 새로운 ID 목록 생성
     new_sequences = list(range(last_sequence + 1, last_sequence + 1 + count))
     new_ids = [f"{letter}{seq:09d}" for seq in new_sequences]
@@ -1167,10 +1169,11 @@ def get_next_ids(letter, count):
     # 고유 ID들을 한 번에 저장할 값 생성
     values = [(letter, seq, new_id) for seq, new_id in zip(new_sequences, new_ids)]
 
-    # ✅ execute_mysql_query_insert()를 호출할 때 values를 올바르게 전달
+    # ✅ execute_mysql_query_insert2()를 호출할 때 values를 올바르게 전달 (다건 삽입 처리)
     execute_mysql_query_insert2("Q8", values)
 
     return new_ids  # 미리 생성한 ID 목록 반환
+
 
 
 
@@ -1709,6 +1712,7 @@ def insertEvent():
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
         return jsonify({"error": str(e)}), 500
+
 @app.route('/insertEvent2', methods=["POST"])
 def insertEvent2():
     print(f"시작: {datetime.now().strftime('%Y%m%d_%H%M%S')}")
@@ -1717,20 +1721,25 @@ def insertEvent2():
         event_data_str = request.form.get("datas")  # str 타입 반환
         event_data = json.loads(event_data_str)  # 문자열을 리스트로 변환
 
+        # Bulk Insert와 Bulk Update용 데이터 리스트
         bulk_values = []  # Bulk Insert용 데이터 리스트
         bulk_update_values = []  # Bulk Update용 데이터 리스트
 
-        for v in event_data:
+        # evtId 목록 생성 (이 부분 수정)
+        evtIds = get_next_ids('E', len(event_data))  # 여러 개의 evtId를 생성
+        
+        if len(evtIds) != len(event_data):
+            return jsonify({"error": "evtId 생성 실패, 데이터 수와 일치하지 않음"}), 400
+
+        # 각 이벤트 데이터 처리
+        for idx, v in enumerate(event_data):
             if v == "":
                 continue  # 빈 데이터는 건너뜀
 
             event_dict = v
-            #evtId = get_next_id('E')  # 개별 evtId 생성
-            evtId = get_next_ids('E', len(event_data))  # 개별 evtId 생성
-            print(evtId)
-            if not evtId:
-                return jsonify({"error": "evtId 생성 실패"}), 400
+            evtId = evtIds[idx]  # 생성된 evtId를 리스트에서 가져옴
 
+            # 각 이벤트 데이터에 대한 값 구성
             values = (
                 event_dict["cor_no"],
                 event_dict["evt_title"],
@@ -1749,13 +1758,16 @@ def insertEvent2():
 
         # 🔥 Bulk Insert 실행
         if bulk_values:
-            execute_mysql_query_insert_update_bulk("A2", bulk_values,"A3", bulk_update_values)
+            execute_mysql_query_insert_update_bulk("A2", bulk_values, "A3", bulk_update_values)
+        
         print(f"끝: {datetime.now().strftime('%Y%m%d_%H%M%S')}")
         return jsonify({"message": "Bulk Data Inserted", "count": len(bulk_values)})
 
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
         return jsonify({"error": str(e)}), 500
+
+
     
 
 @app.route('/updateEventUseYn', methods=["POST"])
