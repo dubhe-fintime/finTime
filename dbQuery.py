@@ -394,9 +394,11 @@ def selectQuery(qType, values):
         query += "    a.EVT_DT_LINK evt_dt_link, "
         query += "    a.USE_YN use_yn, "
         query += "    a.C_DATE c_date, "
-        query += "    a.E_DATE e_date "
+        query += "    a.E_DATE e_date, "
+        query += "    CASE WHEN r.EVT_ID IS NOT NULL THEN '' ELSE '확인필요' END AS BATCH_YN "
         query += "FROM EVT_MST a "
         query += "	LEFT JOIN COR_MST b ON a.COR_NO = b.COR_NO "
+        query += "  LEFT JOIN BATCH_RST r ON a.EVT_ID = r.EVT_ID "
 
         query += " WHERE 1=1"
         if len(values[0])>0 :
@@ -406,6 +408,7 @@ def selectQuery(qType, values):
         if len(values[2])>0 :
             query += f" AND a.USE_YN = '{values[2]}'"
         
+        query += " GROUP BY a.EVT_ID "
         query += " ORDER BY cor_nm, evt_st_date desc"
 
     elif qType == "A6": #EVT_MST 컨텐츠 업데이트
