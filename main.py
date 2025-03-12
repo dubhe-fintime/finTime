@@ -45,7 +45,7 @@ from batch_handler import start_batch, stop_batch, check_batch_status
 
 from util import getHoliday
 
-from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2
+from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2,execute_mysql_query_insert_update_bulk
 
 # 서버 경로 취득
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -1688,6 +1688,52 @@ def insertEvent():
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
         return jsonify({"error": str(e)}), 500
+@app.route('/insertEvent2', methods=["POST"])
+def insertEvent2():
+    try:
+        # FormData에서 "datas" 키 가져오기
+        event_data_str = request.form.get("datas")  # str 타입 반환
+        event_data = json.loads(event_data_str)  # 문자열을 리스트로 변환
+
+        bulk_values = []  # Bulk Insert용 데이터 리스트
+        bulk_update_values = []  # Bulk Update용 데이터 리스트
+
+        for v in event_data:
+            if v == "":
+                continue  # 빈 데이터는 건너뜀
+
+            event_dict = v
+            evtId = get_next_id('E')  # 개별 evtId 생성
+
+            if not evtId:
+                return jsonify({"error": "evtId 생성 실패"}), 400
+
+            values = (
+                event_dict["cor_no"],
+                event_dict["evt_title"],
+                evtId,
+                None if event_dict["evt_st_date"] == "" else event_dict["evt_st_date"],
+                None if event_dict["evt_ed_date"] == "" else event_dict["evt_ed_date"],
+                event_dict["evt_thumbnail"],
+                event_dict["evt_img"],
+                event_dict["evt_noti"],
+                event_dict["evt_list_link"],
+                event_dict["evt_dt_link"]
+            )
+
+            bulk_values.append(values)  # Bulk Insert 리스트에 추가
+            bulk_update_values.append((evtId, event_dict["cor_no"], event_dict["evt_title"]))  # Bulk Update용 리스트 추가
+
+        # 🔥 Bulk Insert 실행
+        if bulk_values:
+            execute_mysql_query_insert_update_bulk("A2", bulk_values,"A3", bulk_update_values)
+
+        return jsonify({"message": "Bulk Data Inserted", "count": len(bulk_values)})
+
+    except Exception as e:
+        logger.error("에러 발생: %s", str(e))
+        return jsonify({"error": str(e)}), 500
+    
 
 @app.route('/updateEventUseYn', methods=["POST"])
 def updateEventUseYn():

@@ -198,66 +198,64 @@
             });
   
   }
-  function insertEvent(multiFlag,button) {
-    if(confirm('적용하시겠습니까?'))
-    {
+  
+  async function insertEvent(multiFlag, button) {
+    if (!confirm('적용하시겠습니까?')) return;
 
-      let formData = new FormData();
-      let check_data = [];
-      
-      if(multiFlag){
-        $("label.checked.chi").each(function (index) {
-            let data = $(this).parent().closest("tr").find("td:last button").attr("data-json");
-            var decodeData = decodeURIComponent(data);
-            check_data.push(JSON.parse(decodeData));  // 문자열 → JSON 객체 변환
-        });
-        var cnt = check_data.length;
-        if(cnt==0)
-        {
-          alert('선택 된 이벤트가 없습니다')
-          return false;
+    let formData = new FormData();
+    let check_data = [];
+
+    if (multiFlag) {
+        let selectedLabels = $("label.checked.chi");
+        
+        if (selectedLabels.length === 0) {
+            alert('선택된 이벤트가 없습니다');
+            return;
         }
-        else
-        {
-          if(!confirm(cnt+'개의 이벤트를 적용하시겠습니까?')){
-            return false
-          }
+
+        if (!confirm(`${selectedLabels.length}개의 이벤트를 적용하시겠습니까?`)) {
+            return;
         }
-      }
-      else
-      {
-        var decodeData = decodeURIComponent(button.getAttribute("data-json"));
-        check_data.push(JSON.parse(decodeData));  // JSON 객체로 변환하여 저장
-      }
-      formData.append("datas", JSON.stringify(check_data));  // JSON 배열로 변환 후 전송
-  
-      fetch("/insertEvent", {
-                  method: "POST",
-                  body: formData
-              })
-              .then(response => response.json())
-              .then(data => {
-                if(multiFlag){
-                  $("label.checked").each(function () {
-                      let lastTd = $(this).closest("tr").find("td").last(); // 해당 label이 있는 행의 마지막 <td> 찾기
-                      lastTd.find("button").remove(); // 마지막 <td> 안의 버튼 삭제
-                      lastTd.text("노출"); // "노출" 텍스트 추가
-                      $(this).parent().empty();
-                  });
-                }
-                else
-                {
-                  let firstTd = $(button).closest("tr").find("td").first();
-                  firstTd.empty();
-                  $(button).parent().text('노출');
-                }
-              })
-              .catch(error => {
-                console.error("Error:", error);
-              });
+
+        check_data = selectedLabels.map(function () {
+            let tr = $(this).closest("tr");
+            let data = tr.find("td:last button").attr("data-json");
+            return JSON.parse(decodeURIComponent(data));
+        }).get(); // `.get()`을 사용하여 jQuery 객체를 배열로 변환
+
+    } else {
+        let data = button.getAttribute("data-json");
+        check_data.push(JSON.parse(decodeURIComponent(data)));
     }
-  }
-  
+
+    formData.append("datas", JSON.stringify(check_data));
+
+    try {
+        let response = await fetch("/insertEvent2", {
+            method: "POST",
+            body: formData
+        });
+
+        let data = await response.json();
+
+        if (multiFlag) {
+            $("label.checked").each(function () {
+                let tr = $(this).closest("tr");
+                let lastTd = tr.find("td").last();
+                lastTd.find("button").remove(); // 버튼 삭제
+                lastTd.text("노출"); // "노출" 텍스트 추가
+                $(this).parent().empty(); // 선택된 체크박스 제거
+            });
+        } else {
+            let tr = $(button).closest("tr");
+            tr.find("td").first().empty();
+            $(button).parent().text('노출');
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
   //검색 기능
   $("#searchBtn").click(function (e) {
     e.preventDefault();

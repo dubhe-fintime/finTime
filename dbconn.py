@@ -140,3 +140,34 @@ def execute_mysql_query_update2(queryId, values):
     finally:
         cursor.close()
         cnx.close()
+
+# Bulk Insert/update를 수행하는 MySQL Query 실행 함수
+# :param queryId: 실행할 쿼리 ID
+# :param values_list: 여러 개의 (튜플) 형태의 데이터 리스트
+def execute_mysql_query_insert_update_bulk(queryId, values_list, updQueryId, upd_values_list):
+
+    cnx = conn_mysql()
+    cursor = cnx.cursor()
+    cnx.autocommit = False  # 자동 커밋 비활성화
+    
+    try:
+        query = selectQuery(queryId, values_list[0])  # 첫 번째 값을 기준으로 쿼리 생성
+        # print(f"Executing bulk insert: {query} with {len(values_list)} rows")
+        
+        cursor.executemany(query, values_list)  # 🔥 Bulk Insert 적용
+
+        query_update = selectQuery(updQueryId, upd_values_list[0])
+        cursor.executemany(query_update, upd_values_list)
+
+        cnx.commit()
+        
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        if cnx:
+            cnx.rollback()
+        raise
+    finally:
+        if cursor:
+            cursor.close()
+        if cnx:
+            cnx.close()
