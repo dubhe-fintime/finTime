@@ -1158,8 +1158,10 @@ def get_next_ids(letter, count):
 
     # 최신 시퀀스를 조회 (Q7 실행)
     last_sequence = execute_mysql_query_select("Q7", [letter])
+    
+    # 최신 시퀀스가 있으면 가져오고, 없으면 0으로 시작
     last_sequence = last_sequence[0][0] if last_sequence else 0  # 최신 시퀀스 없으면 0
-
+    
     # 새로운 ID 목록 생성
     new_sequences = list(range(last_sequence + 1, last_sequence + 1 + count))
     new_ids = [f"{letter}{seq:09d}" for seq in new_sequences]
@@ -1167,10 +1169,11 @@ def get_next_ids(letter, count):
     # 고유 ID들을 한 번에 저장할 값 생성
     values = [(letter, seq, new_id) for seq, new_id in zip(new_sequences, new_ids)]
 
-    # ✅ execute_mysql_query_insert()를 호출할 때 values를 올바르게 전달
+    # ✅ execute_mysql_query_insert()를 호출할 때 values를 올바르게 전달 (다건 삽입 처리)
     execute_mysql_query_insert2("Q8", values)
 
     return new_ids  # 미리 생성한 ID 목록 반환
+
 
 
 
