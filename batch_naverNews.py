@@ -5,7 +5,7 @@ import schedule
 import os
 import random
 from main import set_batch_news, set_batch_log, del_batch_rst, app
-from main import naverNews
+from util import naverNews
 from dbconn import execute_mysql_query_delete
 
 BATCH_ID = "B000000003"  # 유튜브 배치 ID
