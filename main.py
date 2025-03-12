@@ -1166,11 +1166,7 @@ def get_next_ids(letter, count):
     # 고유 ID들을 한 번에 저장
     values = [(letter, seq, new_id) for seq, new_id in zip(new_sequences, new_ids)]
 
-    # ✅ execute_mysql_query_insert()가 `executemany()` 지원 여부 확인 후 알맞게 수정
-    placeholders = ",".join(["(%s, %s, %s)"] * len(values))  # 다건 등록을 위한 플레이스홀더 생성
-    query = f"INSERT INTO UNIQUE_IDS (LETTER, SEQUENCE, IDENTIFIER) VALUES {placeholders}"
-
-    execute_mysql_query_insert(query, [item for sublist in values for item in sublist])
+    execute_mysql_query_insert("Q8S", [item for sublist in values for item in sublist])
 
     return new_ids  # 미리 생성한 ID 목록 반환
 
