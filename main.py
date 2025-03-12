@@ -1680,46 +1680,6 @@ def insertEvent():
         # FormData에서 "datas" 키 가져오기
         event_data_str = request.form.get("datas")  # str 타입 반환
         event_data = json.loads(event_data_str)  # 문자열을 리스트로 변환
-        for v in event_data:
-            if v == "":
-                pass
-            else:
-                event_dict = v
-                evtId = get_next_id('E')
-
-                if not evtId :
-                    return jsonify({"error": "evtId 생성 실패"}), 400
-                
-                values = [
-                    event_dict["cor_no"],
-                    event_dict["evt_title"],
-                    evtId,
-                    None if event_dict["evt_st_date"] == "" else event_dict["evt_st_date"],
-                    None if event_dict["evt_ed_date"] == "" else event_dict["evt_ed_date"],
-                    event_dict["evt_thumbnail"],
-                    event_dict["evt_img"],
-                    event_dict["evt_noti"],
-                    event_dict["evt_list_link"],
-                    event_dict["evt_dt_link"]
-                ]
-
-                print(values)
-                execute_mysql_query_insert("A2",values) # 이벤트 데이터 등록(EVT_MST)
-                updValues = [evtId,event_dict["cor_no"],event_dict["evt_title"]]
-                execute_mysql_query_update("A3",updValues) # 이벤트 아이디 업데이트(BATCH_RST)
-        return jsonify({"message": "Data Insert", "data": event_dict})
-
-    except Exception as e:
-        logger.error("에러 발생: %s", str(e))
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/insertEvent2', methods=["POST"])
-def insertEvent2():
-    print(f"시작: {datetime.now().strftime('%Y%m%d_%H%M%S')}")
-    try:
-        # FormData에서 "datas" 키 가져오기
-        event_data_str = request.form.get("datas")  # str 타입 반환
-        event_data = json.loads(event_data_str)  # 문자열을 리스트로 변환
 
         # Bulk Insert와 Bulk Update용 데이터 리스트
         bulk_values = []  # Bulk Insert용 데이터 리스트
@@ -1738,7 +1698,6 @@ def insertEvent2():
 
             event_dict = v
             evtId = evtIds[idx]  # 생성된 evtId를 리스트에서 가져옴
-            print(evtId)
             # 각 이벤트 데이터에 대한 값 구성
             values = (
                 event_dict["cor_no"],
@@ -1760,7 +1719,6 @@ def insertEvent2():
         if bulk_values:
             execute_mysql_query_insert_update_bulk("A2", bulk_values, "A3", bulk_update_values)
         
-        print(f"끝: {datetime.now().strftime('%Y%m%d_%H%M%S')}")
         return jsonify({"message": "Bulk Data Inserted", "count": len(bulk_values)})
 
     except Exception as e:

@@ -231,7 +231,7 @@
     formData.append("datas", JSON.stringify(check_data));
 
     try {
-        let response = await fetch("/insertEvent2", {
+        let response = await fetch("/insertEvent", {
             method: "POST",
             body: formData
         });
