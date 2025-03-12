@@ -45,7 +45,7 @@ from batch_handler import start_batch, stop_batch, check_batch_status
 
 from util import getHoliday
 
-from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2,execute_mysql_query_insert_update_bulk
+from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2,execute_mysql_query_insert_update_bulk, execute_mysql_query_insert2
 
 # 서버 경로 취득
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -1168,7 +1168,7 @@ def get_next_ids(letter, count):
     values = [(letter, seq, new_id) for seq, new_id in zip(new_sequences, new_ids)]
 
     # ✅ execute_mysql_query_insert()를 호출할 때 values를 올바르게 전달
-    execute_mysql_query_insert("Q8", values)
+    execute_mysql_query_insert2("Q8", values)
 
     return new_ids  # 미리 생성한 ID 목록 반환
 

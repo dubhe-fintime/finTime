@@ -171,3 +171,27 @@ def execute_mysql_query_insert_update_bulk(queryId, values_list, updQueryId, upd
             cursor.close()
         if cnx:
             cnx.close()
+
+def execute_mysql_query_insert2(queryId, values):
+    cnx = conn_mysql()
+    cursor = cnx.cursor()
+    try:
+        query = selectQuery(queryId, values)
+
+        # ✅ values가 리스트의 리스트인지 확인 (bulk insert 지원)
+        if isinstance(values, list) and isinstance(values[0], tuple):
+            cursor.executemany(query, values)  # 🔥 다건 삽입 최적화
+        else:
+            cursor.execute(query, values)  # 단일 실행
+
+        cnx.commit()
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        if cnx:
+            cnx.rollback()
+        raise
+    finally:
+        if cursor:
+            cursor.close()
+        if cnx:
+            cnx.close()
