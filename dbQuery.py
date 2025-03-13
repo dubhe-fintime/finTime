@@ -230,7 +230,7 @@ def selectQuery(qType, values):
                 FROM BATCH_LOG b
                 JOIN LatestSEQ l ON b.SEQ = l.SEQ
                 LEFT JOIN AggregatedCounts a ON b.SEQ = a.SEQ
-                ORDER BY b.TASK_ID ASC
+                ORDER BY b.BATCH_ID, b.ED_DATE ASC
                 LIMIT 1000
                 """
 
