@@ -109,12 +109,15 @@
   })
 
   $("#multiApplyBtn").click(function () {
-    insertEvent(true,'')
+    let btn = $(this);
+    if (btn.prop("disabled")) return; 
+    btn.prop("disabled", true);
+
+    insertEvent(true,$(this))
   })
   
   // 전체 조회
   function selectList() {
-
     $("#dataContent").empty();
     let formData = new FormData();
         
@@ -200,6 +203,8 @@
   }
   
   async function insertEvent(multiFlag, button) {
+    button.disabled = true;
+    $(button).text('적용중');
     if (!confirm('적용하시겠습니까?')) return;
 
     let formData = new FormData();
@@ -246,6 +251,7 @@
                 lastTd.text("노출"); // "노출" 텍스트 추가
                 $(this).parent().empty(); // 선택된 체크박스 제거
             });
+            $(button).text('선택적용');
         } else {
             let tr = $(button).closest("tr");
             tr.find("td").first().empty();

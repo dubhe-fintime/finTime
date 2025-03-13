@@ -1689,7 +1689,9 @@ def evtDataList():
                 'evt_list_link': item[9],
                 'evt_dt_link': item[10],
                 'use_yn': item[11],
-                'c_date': item[12]
+                'c_date': item[12],
+                'e_date': item[13],
+                'batch_yn': item[14]
             }
             datas.append(data)
         
