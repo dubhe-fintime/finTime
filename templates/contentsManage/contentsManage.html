@@ -55,6 +55,7 @@
             <col width="160px" />
             <col width="80px" />
             <col width="80px" />
+            <col width="90px" />
           </colgroup>
           <thead class="thead type2">
             <tr>
@@ -66,6 +67,7 @@
               <th>URL</th>
               <th>노출여부</th>
               <th>삭제</th>
+              <th>비고</th>
             </tr>
           </thead>
           <tbody id="dataContent" class="tbody"></tbody>
@@ -452,6 +454,7 @@ function fileUpload() {
                   values +=`  </td>`
                   values += statusCol
                   values += `<td><button id='dtBtn' class='btn primary sm' data-json=`+encodingJSON+`  onclick="delEvt(this)" >삭제</button></td>`
+                  values += `<td>${v['batch_yn']}</td>`
                   values += `  </tr>`
                 });
                 $("#dataContent").append(values)

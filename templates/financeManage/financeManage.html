@@ -455,7 +455,7 @@
       let fileExtension = imgFile.name.split('.').pop().toLowerCase();
       formData.append("file", imgFile, "ci_"+corNo+"."+fileExtension);
 
-      return fetch('/etcUpload', {
+      return fetch('/ciUpload', {
           method: "POST",
           body: formData
       })
