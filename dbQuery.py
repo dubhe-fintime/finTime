@@ -433,6 +433,11 @@ def selectQuery(qType, values):
             WHERE 
                 EVT_ID = %s
                 """
+    
+    elif qType == "A8" : #그룹 조회
+        query = """
+                select GP_NO, GP_NM from COR_GP
+                """
 
     elif qType == "C1": # 로그인 기능
         query = """

@@ -57,21 +57,9 @@
         </div>
         <div class="select-box md" style="margin-left: 16px;">
           <strong class="label" onclick="ClickSelectLabel('corGp')" id="corGp" name="">전체</strong>
-          <ul class="options type">
+          <ul class="options type" id="gpList">
             <li class="option" onclick="ClickSelectOption('corGp','전체','')">
               전체
-            </li>
-            <li class="option" onclick="ClickSelectOption('corGp','은행','001')">
-              은행
-            </li>
-            <li class="option" onclick="ClickSelectOption('corGp','증권','002')">
-              증권
-            </li>
-            <li class="option" onclick="ClickSelectOption('corGp','카드','003')">
-              카드
-            </li>
-            <li class="option" onclick="ClickSelectOption('corGp','보험','004')">
-              보험
             </li>
           </ul>
         </div>
@@ -139,7 +127,8 @@
   let totalData
 
   $(document).ready(function () {
-    SearchGroupCode()
+    getFinanceList()
+    getGpList(true)
     fn_eventHandler()
     $(document).on("change", "#img-file-input", function(event) {
         let file = event.target.files[0];
@@ -183,7 +172,7 @@
       cor_gp : $('#corGp').attr('name'),
       use_yn : $('#useYn').attr('name')
     }
-    SearchGroupCode(search_data)
+    getFinanceList(search_data)
   })
 
   }
@@ -274,19 +263,7 @@
                     <fieldset>
                       <div class=" input-wrap select-box sm" style="width:100%">
                         <strong class="label" onclick="ClickSelectLabel('corGrpSel')" id="corGrpSel" name="" required>선택하세요</strong>
-                        <ul class="options type">
-                          <li class="option" onclick="ClickSelectOption('corGrpSel','은행','001')">
-                            은행
-                          </li>
-                          <li class="option" onclick="ClickSelectOption('corGrpSel','증권','002')">
-                            증권
-                          </li>
-                          <li class="option" onclick="ClickSelectOption('corGrpSel','카드','003')">
-                            카드
-                          </li>
-                          <li class="option" onclick="ClickSelectOption('corGrpSel','보험','004')">
-                            보험
-                          </li>
+                        <ul class="options type" id="selGpList">
                         </ul>
                       </div>
                     </fieldset>
@@ -322,7 +299,7 @@
                         </div>
                     </fieldset>    `
     OpenModal(modal_title, `addGroup`, true, true, `addGroup(${flag})`, "확인", "취소", "", "md", values)
-    
+    getGpList(false);
     if(tag){
       ClickSelectOption("corGrpSel",cor_name,cor_gp)
     }
@@ -379,7 +356,7 @@
   }
 
   // 조회
-  function SearchGroupCode(data={}) {
+  function getFinanceList(data={}) {
     $.ajax({
       url: "{{domain}}/financeManage",
       type: "POST",
@@ -441,7 +418,7 @@
       $("#dataContent").append(oHtml);
     }
 
-    function fileUpload() {
+  function fileUpload() {
       // 파일 입력 요소에서 파일 가져오기
       const imgInput = document.getElementById('img-file-input');
       const imgFile = imgInput.files[0];
@@ -472,17 +449,52 @@
           return data.result;
       });
   }
-    //필수값 체크
-    function checkRequired(){
-      var isValid = true 
-      
-      $("input[required]").each(function(){
-        if ($(this).val().trim() == ""){ isValid = false }
-      })
-      if ($("#corGrpSel").attr("name") == ""){ isValid = false }
-      return isValid
-    }
-
+  //필수값 체크
+  function checkRequired(){
+    var isValid = true 
+    
+    $("input[required]").each(function(){
+      if ($(this).val().trim() == ""){ isValid = false }
+    })
+    if ($("#corGrpSel").attr("name") == ""){ isValid = false }
+    return isValid
+  }
+  // 기관그룹 가져오기
+  function getGpList(flag){
+    let formData = new FormData();
+        
+    fetch("/getCorGpList", {
+              method: "POST",
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              data.forEach((v, i) => {
+                if(flag){
+                  gubun = 'corGp'
+                }
+                else
+                {
+                 gubun = 'corGrpSel' 
+                }
+                console.log(v.gp_no)
+                console.log(v.gp_nm)
+                let oHtml = `` ;
+                oHtml += ` <li class="option" onclick="ClickSelectOption('${gubun}','${v['gp_nm']}','${v['gp_no']}')">
+                          ${v['gp_nm']}
+                          </li>` 
+                if(flag){
+                  $('#gpList').append(oHtml)
+                }
+                else{
+                  $('#selGpList').append(oHtml)
+                }
+              });
+          })
+          .catch(error => {
+              console.error("Error:", error);
+          });
+  }
 </script>
 
 </html>

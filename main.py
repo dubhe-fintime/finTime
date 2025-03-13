@@ -1824,6 +1824,29 @@ def delEvent():
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
         return jsonify({"error": str(e)}), 500
+    
+# 그룹 조회(COR_GP SELECT)    
+@app.route('/getCorGpList', methods=["POST"])
+def getCorGpList():
+
+    values = []
+
+    try:
+        results = execute_mysql_query_rest("A8", values)
+
+        datas = []
+        for item in results:
+            data = {
+                'gp_no': item[0],
+                'gp_nm': item[1]
+            }
+            datas.append(data)
+        
+        return jsonify(datas)
+
+    except Exception as e:
+        print(f"Error: {e}")  # 에러 로그 출력
+        return jsonify({"error": str(e)}), 500  # 500 Internal Server Error 응답
 
 ################## 관리자 END ############################
 @app.route('/getEventMst', methods=["POST"])
