@@ -454,7 +454,7 @@ function fileUpload() {
                   values +=`  </td>`
                   values += statusCol
                   values += `<td><button id='dtBtn' class='btn primary sm' data-json=`+encodingJSON+`  onclick="delEvt(this)" >삭제</button></td>`
-                  values += `<td>${v['batch_yn']}</td>`
+                  values += `<td style="color:red;">${v['batch_yn']}</td>`
                   values += `  </tr>`
                 });
                 $("#dataContent").append(values)
