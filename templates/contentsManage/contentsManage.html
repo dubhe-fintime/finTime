@@ -41,6 +41,17 @@
             </li>
           </ul>
         </div>
+        <div class="select-box md" style="margin-left: 16px;">
+          <strong class="label" onclick="ClickSelectLabel('chkYn')" id="chkYn" name="" >전체</strong>
+          <ul class="options type">
+            <li class="option" onclick="ClickSelectOption('chkYn','전체','')">
+              전체
+            </li>
+            <li class="option" onclick="ClickSelectOption('chkYn','확인필요','Y')">
+              확인필요
+            </li>
+          </ul>
+        </div>
         <button id="searchBtn" class="btn primary md search-btn" onclick="javascript:selectList()">검색</button>
       </form>
       <div class="table-area">
@@ -391,11 +402,13 @@ function fileUpload() {
 
     let corNm = $('#searchInputCor').val()
     let corSub = $('#searchInputSub').val()
-    let option = $('#useYn').attr('name')
+    let useYn = $('#useYn').attr('name')
+    let chkYn = $('#chkYn').attr('name')
 
     formData.append("corNm",corNm)
     formData.append("corSub",corSub)
-    formData.append("useYn",option)
+    formData.append("useYn",useYn)
+    formData.append("chkYn",chkYn)
 
     fetch("/evtDataList", {
                 method: "POST",
@@ -410,6 +423,11 @@ function fileUpload() {
                   var imgCol = ''
                   var listUrlCol = ''
                   var encodingJSON = encodeURIComponent(JSON.stringify(v));
+                  var chkMsg = ''
+                  if(v['chk_yn']=='Y')
+                  {
+                    chkMsg = '확인필요'
+                  }
                   if(status =='Y')
                   {
                     // statusCol = `<td><button id='applyBtn' class='btn primary sm' data-json='${JSON.stringify(v)}'  onclick="updateEvent(this)">비노출</button></td>`
@@ -454,7 +472,7 @@ function fileUpload() {
                   values +=`  </td>`
                   values += statusCol
                   values += `<td><button id='dtBtn' class='btn primary sm' data-json=`+encodingJSON+`  onclick="delEvt(this)" >삭제</button></td>`
-                  values += `<td style="color:red;">${v['batch_yn']}</td>`
+                  values += `<td style="color:red;">${chkMsg}</td>`
                   values += `  </tr>`
                 });
                 $("#dataContent").append(values)

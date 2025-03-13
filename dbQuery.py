@@ -395,19 +395,22 @@ def selectQuery(qType, values):
         query += "    a.USE_YN use_yn, "
         query += "    a.C_DATE c_date, "
         query += "    a.E_DATE e_date, "
-        query += "    CASE WHEN r.EVT_ID IS NOT NULL THEN '' ELSE '확인필요' END AS BATCH_YN "
+        query += "    CASE WHEN r.EVT_ID IS NOT NULL THEN '' ELSE 'Y' END AS CHK_YN "
         query += "FROM EVT_MST a "
         query += "	LEFT JOIN COR_MST b ON a.COR_NO = b.COR_NO "
         query += "  LEFT JOIN BATCH_RST r ON a.EVT_ID = r.EVT_ID "
 
         query += " WHERE 1=1"
+
         if len(values[0])>0 :
             query += f" AND b.COR_NM LIKE '%{values[0]}%'"
         if len(values[1])>0 :
             query += f" AND a.EVT_TITLE LIKE '%{values[1]}%'"
         if len(values[2])>0 :
             query += f" AND a.USE_YN = '{values[2]}'"
-        
+        if len(values[3])>0 :
+            query += f" AND a.EVT_ID NOT IN (SELECT DISTINCT EVT_ID FROM BATCH_RST WHERE EVT_ID IS NOT NULL)"
+
         query += " GROUP BY a.EVT_ID "
         query += " ORDER BY cor_nm, evt_st_date desc"
 
@@ -513,7 +516,7 @@ def selectQuery(qType, values):
 
 
 
-    #print("###################################")
-    #print(query)
-    #print("###################################")
+    # print("###################################")
+    # print(query)
+    # print("###################################")
     return query

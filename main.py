@@ -1662,8 +1662,9 @@ def evtDataList():
     corNm = request.form.get('corNm', default='', type=str)
     corSub = request.form.get('corSub', default='', type=str)
     useYn = request.form.get('useYn', default='', type=str)
+    chkYn = request.form.get('chkYn', default='', type=str)
 
-    values = [corNm, corSub, useYn]
+    values = [corNm, corSub, useYn, chkYn]
 
     try:
         results = execute_mysql_query_rest("A5", values)
@@ -1691,7 +1692,7 @@ def evtDataList():
                 'use_yn': item[11],
                 'c_date': item[12],
                 'e_date': item[13],
-                'batch_yn': item[14]
+                'chk_yn': item[14]
             }
             datas.append(data)
         
