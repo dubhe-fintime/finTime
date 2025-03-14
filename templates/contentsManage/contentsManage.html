@@ -18,7 +18,7 @@
   <div class="container">
     <main class="main-area">
       <h2 class="title">컨텐츠 관리</h2>
-      <form class="search-form" >
+      <form class="search-form" style="display: flex; flex-wrap: wrap;" >
         <div class="input-wrap">
           <input id="searchInputCor" class="input" placeholder="기관명 입력 후 검색" />
           <span class="delete-btn"></span>
@@ -27,7 +27,7 @@
           <input id="searchInputSub" class="input" placeholder="이벤트 제목 입력 후 검색" />
           <span class="delete-btn"></span>
         </div>
-        <div class="select-box md" style="margin-left: 16px;">
+        <div class="select-box sm" style="margin-left: 16px;">
           <strong class="label" onclick="ClickSelectLabel('useYn')" id="useYn" name="" >전체</strong>
           <ul class="options type">
             <li class="option" onclick="ClickSelectOption('useYn','전체','')">
@@ -41,7 +41,7 @@
             </li>
           </ul>
         </div>
-        <div class="select-box md" style="margin-left: 16px;">
+        <div class="select-box sm" style="margin-left: 16px;">
           <strong class="label" onclick="ClickSelectLabel('chkYn')" id="chkYn" name="" >전체</strong>
           <ul class="options type">
             <li class="option" onclick="ClickSelectOption('chkYn','전체','')">
@@ -55,6 +55,9 @@
         <button id="searchBtn" class="btn primary md search-btn" onclick="javascript:selectList()">검색</button>
       </form>
       <div class="table-area">
+        <div class="flex justify-between align-end">
+          <strong class="count"></strong>
+        </div>
         <table class="table intent-table">
           <caption>컨텐츠 데이터 관리 테이블</caption>
           <colgroup>
@@ -476,6 +479,7 @@ function fileUpload() {
                   values += `  </tr>`
                 });
                 $("#dataContent").append(values)
+                $(".count").text(`Total : ${data.length}`);
                 
             })
             .catch(error => {

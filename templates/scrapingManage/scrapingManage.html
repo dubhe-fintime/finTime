@@ -194,6 +194,7 @@
                   values += `  </tr>`
                 });
                 $("#dataContent").append(values)
+                $(".count").text(`Total : ${data.length}`);
                 
             })
             .catch(error => {
