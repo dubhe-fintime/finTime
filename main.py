@@ -1947,6 +1947,17 @@ def updateSetting():
 
     return [success]
 
+#유튜브 API
+@app.route('/getYoutubeClient', methods=["POST"])
+def getYoutubeClient():
+    results = execute_mysql_query_select("Q28", [])
+
+    datas = []
+    return_col_name = ["cor_gp","content_title","content_url"]
+    return_result = [dict(zip(return_col_name, data)) for data in results]
+
+    return return_result
+
 ################## YOUTUBE START #############################
 # 금융사 유튜브 정보 가져오기
 @app.route('/getYouTube', methods=["POST"])
