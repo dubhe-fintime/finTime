@@ -166,5 +166,5 @@ print("배치 작업이 스케줄링되었습니다. (매일 01:00 실행)")
 
 # 무한 루프 실행 (배치 스케줄 유지)
 while True:
-    schedule.run_pending()
+    schedule.run_pending() 
     time.sleep(60)  # 1분마다 스케줄 체크
