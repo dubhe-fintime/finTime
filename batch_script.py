@@ -5,9 +5,10 @@ import schedule
 import os
 import random
 from main import set_batch_log, set_batch_rst, del_batch_rst, set_user_mapp, set_batch_holiday, app
-from main import test1, test2, test3, test4, test5, test6,test7,test8,test9,test10,test11,test12,test13,test14,test15
+from main import  life1,life2,life3,life4,life5,life6,life7,life8,life9,life10,life11,life12,life13
+from main import  capi1
 from main import card1,card2,card3,card4,card5,card6,card7
-from main import bank1,bank2,bank3,bank4,bank5,bank6,bank7,bank8,bank9,bank10
+from main import bank1,bank2,bank3,bank4,bank5,bank6,bank7,bank8,bank9,bank10,bank11
 from main import stock1,stock2,stock3,stock4,stock5,stock6,stock7,stock8,stock9
 from main import holidayAPI
 
@@ -33,21 +34,21 @@ async def my_batch_job():
 
         "api_holiday":holidayAPI(),
 
-        "hana_bank": test1(),
-        "abl_life": test2(),
-        "kyobo_life": test3(),
-        "dongnyang_life": test4(),
-        "hanhwa_life": test5(),
-        "heungkuk_life": test6(),
-        "kdb_life": test7(),
-        "samsung_life": test8(),
-        "samsung_fire": test9(),
-        "heungkuk_fire": test10(),
-        "kb_insurance": test11(),
-        "miraeasset_life": test12(),
-        "nh_insurance": test13(),
-        "shinhan_life": test14(),
-        "shinhan_capital": test15(),
+        "abl_life": life1(),
+        "kyobo_life": life2(),
+        "dongnyang_life": life3(),
+        "hanhwa_life": life4(),
+        "heungkuk_life": life5(),
+        "kdb_life": life6(),
+        "samsung_life": life7(),
+        "samsung_fire": life8(),
+        "heungkuk_fire": life9(),
+        "kb_insurance": life10(),
+        "miraeasset_life": life11(),
+        "nh_insurance": life12(),
+        "shinhan_life": life13(),
+        
+        "shinhan_capital": capi1(),
 
         "bc_card":card1(),
         "hana_card":card2(),
@@ -67,7 +68,7 @@ async def my_batch_job():
         "kakao_bank":bank8(),
         "bnk_bank":bank9(),
         "jeju_bank":bank10(),
-        
+        "hana_bank": bank11(),
 
         "dasin_stock":stock1(),
         "kb_stock":stock2(),

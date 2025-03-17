@@ -174,27 +174,6 @@ async def holidayAPI():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
-# 하나은행 배치 호출
-@app.route('/test1', methods=["POST"])
-async def test1():
-    results = await hanaBank.get081Data()
-    status = 200
-    for item in results:
-        if 'ERROR' in item:
-            status = 500
-    
-    data_to_return = {
-        "status_code": status,  # 응답코드
-        "bank_cd": "081",
-        "fin_id": "T000000001", # TASK ID 지정
-        "result": results     # 응답결과
-
-    }
-    
-    # Flask의 jsonify를 사용하여 응답 생성
-    response = jsonify(data_to_return)
-    response.status_code = data_to_return["status_code"]  # status_code 지정
-    return response
 
 ################## 카드사 START #############################
 
@@ -587,7 +566,27 @@ async def bank10():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
+# 하나은행 배치 호출
+@app.route('/bank11', methods=["POST"])
+async def bank11():
+    results = await hanaBank.get081Data()
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "bank_cd": "081",
+        "fin_id": "T000000001", # TASK ID 지정
+        "result": results     # 응답결과
 
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
 ################## 은행 END ###############################
 ################## 증권 START #############################
 
@@ -784,8 +783,8 @@ async def stock9():
 ################## 보험 START #############################
 
 # ABL생명
-@app.route('/test2', methods=["POST"])
-async def test2():
+@app.route('/life1', methods=["POST"])
+async def life1():
     results = await ablLife.get437Data()
     
     status = 200
@@ -806,8 +805,8 @@ async def test2():
     return response
 
 # 교보생명
-@app.route('/test3', methods=["POST"])
-async def test3():
+@app.route('/life2', methods=["POST"])
+async def life2():
     results = await kyoboLife.get433Data()
 
     status = 200
@@ -828,8 +827,8 @@ async def test3():
     return response
 
 # 동양생명
-@app.route('/test4', methods=["POST"])
-async def test4():
+@app.route('/life3', methods=["POST"])
+async def life3():
     results = await dongyangLife.get402Data()
     status = 200
     for item in results:
@@ -848,8 +847,8 @@ async def test4():
     return response
 
 # 한화생명
-@app.route('/test5', methods=["POST"])
-async def test5():
+@app.route('/life4', methods=["POST"])
+async def life4():
     results = await hanhwaLife.get432Data()
     status = 200
     for item in results:
@@ -869,8 +868,8 @@ async def test5():
     return response
 
 # 흥국생명
-@app.route('/test6', methods=["POST"])
-async def test6():
+@app.route('/life5', methods=["POST"])
+async def life5():
     results = await heungkuklife.get453Data()
     status = 200
     for item in results:
@@ -890,8 +889,8 @@ async def test6():
     return response
 
 # KDB생명
-@app.route('/test7', methods=["POST"])
-async def test7():
+@app.route('/life6', methods=["POST"])
+async def life6():
     results = await kdbLife.get458Data()
     status = 200
     for item in results:
@@ -911,8 +910,8 @@ async def test7():
     return response
 
 # 삼성생명
-@app.route('/test8', methods=["POST"])
-async def test8():
+@app.route('/life7', methods=["POST"])
+async def life7():
     results = await samsungLife.get452Data()
     status = 200
     for item in results:
@@ -932,8 +931,8 @@ async def test8():
     return response
 
 # 삼성화재
-@app.route('/test9', methods=["POST"])
-async def test9():
+@app.route('/life8', methods=["POST"])
+async def life8():
     results = await samsungFire.get441Data()
     status = 200
     for item in results:
@@ -953,8 +952,8 @@ async def test9():
     return response
 
 # 흥국화재
-@app.route('/test10', methods=["POST"])
-async def test10():
+@app.route('/life9', methods=["POST"])
+async def life9():
     results = await heungkukFire.get403Data()
     status = 200
     for item in results:
@@ -974,8 +973,8 @@ async def test10():
     return response
 
 # KB손해보험
-@app.route('/test11', methods=["POST"])
-async def test11():
+@app.route('/life10', methods=["POST"])
+async def life10():
     results = await kbInsure.get444Data()
     status = 200
     for item in results:
@@ -995,8 +994,8 @@ async def test11():
     return response
 
 # 미래에셋생명
-@app.route('/test12', methods=["POST"])
-async def test12():
+@app.route('/life11', methods=["POST"])
+async def life11():
     results = await miraeAssetLife.get431Data()
     status = 200
     for item in results:
@@ -1016,8 +1015,8 @@ async def test12():
     return response
 
 # NH손해보험
-@app.route('/test13', methods=["POST"])
-async def test13():
+@app.route('/life12', methods=["POST"])
+async def life12():
     results = await nhInsure.get449Data()
     status = 200
     for item in results:
@@ -1037,8 +1036,8 @@ async def test13():
     return response
 
 # NH손해보험
-@app.route('/test14', methods=["POST"])
-async def test14():
+@app.route('/life13', methods=["POST"])
+async def life13():
     results = await shinhanLife.get438Data()
     status = 200
     for item in results:
@@ -1061,8 +1060,8 @@ async def test14():
 ################## 캐피탈 START #############################
 
 # 신한캐피탈
-@app.route('/test15', methods=["POST"])
-async def test15():
+@app.route('/capi1', methods=["POST"])
+async def capi1():
     results = await shinhanCapitial.get901Data()
     status = 200
     for item in results:
@@ -1174,10 +1173,6 @@ def get_next_ids(letter, count):
 
     return new_ids  # 미리 생성한 ID 목록 반환
 
-
-
-
-
 # 에러코드 보는 곳
 @app.errorhandler(404)
 def page_not_found(e):
@@ -1188,7 +1183,6 @@ def page_not_found(e):
 @app.route("/")
 def adminLogin():
     return render_template("common/login.html", domain=domain, port=port)
-    #return render_template("page/test.html", domain=domain, port=port)
 
 # 관리자 로그인 화면 호출
 @app.route('/adminLogin', methods=["POST"])
@@ -1234,9 +1228,6 @@ def clientLogin_check():
     execute_mysql_query_update("C2", target)
     return [success]
 
-
-
-
 # 관리자 메인 화면 호출
 @app.route("/adminMain")
 def adminMain():
@@ -1281,11 +1272,11 @@ def logout():
     #     session.pop('username', None)
     return [success]
 # 관리자관련 수정 끝 KCR 250211
-# Admin main contents 노출 화면 (구글 표)
+
+# Admin main contents 노출 화면 (배치결과과)
 @app.route("/adminMainContents")
 def adminMainContents():
     return render_template("common/adminMainContents.html", domain=domain, port=port)
-
 
 # 금융사 정보 관리 조회
 @app.route("/financeManage", methods=['POST'])
@@ -1296,7 +1287,6 @@ def selectFinace():
     return_result = [dict(zip(return_col_name, data)) for data in results]
 
     return return_result
-
 
 # 금융사 정보 추가
 @app.route("/insertFinance", methods=['POST'])
@@ -1320,7 +1310,6 @@ def insertFinance():
 
     results = execute_mysql_query_insert("Q11", form)
     return [success]
-
 
 # 금융사 사용여부
 @app.route("/changeYnFinance", methods=['POST'])
@@ -1455,6 +1444,7 @@ def upload_file():
     except Exception as e:
         # 예외 발생 시 에러 메시지 출력
         return jsonify({"error": f"파일 업로드 중 오류가 발생했습니다: {str(e)}"}), 50
+
 # 파일 멀티 업로드
 @app.route('/multiUpload', methods=['POST'])
 def multiUpload():
@@ -1489,6 +1479,7 @@ def multiUpload():
 
     except Exception as e:
         return jsonify({"error": f"파일 업로드 중 오류가 발생했습니다: {str(e)}"}), 500
+
 # ci 폴더 지정 업로드(FILE_MST INSERT 없음)
 @app.route('/ciUpload', methods=['POST'])
 def ci_upload_file():
@@ -1753,10 +1744,10 @@ def insertEvent():
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
         return jsonify({"error": str(e)}), 500
+
 # 이벤트 노출여부 수정 (컨텐츠관리 EVT_MST )
 @app.route('/updateEventUseYn', methods=["POST"])
 def updateEventUseYn():
-
     try:
         # FormData에서 "datas" 키 가져오기
         event_data = request.form.get("datas")
@@ -1776,10 +1767,10 @@ def updateEventUseYn():
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
         return jsonify({"error": str(e)}), 500
+
 #이벤트 수정 (컨텐츠 관리 EVT_MST UPDATE)
 @app.route('/updateEventDetail', methods=["POST"])
 def updateEventDetail():
-
     try:
         # FormData에서 "datas" 키 가져오기
         event_data = request.form.get("datas")
@@ -1799,10 +1790,10 @@ def updateEventDetail():
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
         return jsonify({"error": str(e)}), 500
+    
 # 이벤트 삭제 (컨텐츠 관리 EVT_MST DEL / BATCH_RST UPD)
 @app.route('/delEvent', methods=["POST"])
 def delEvent():
-
     try:
         # FormData에서 "datas" 키 가져오기
         event_data = request.form.get("datas")
@@ -1829,7 +1820,6 @@ def delEvent():
 # 그룹 조회(COR_GP SELECT)    
 @app.route('/getCorGpList', methods=["POST"])
 def getCorGpList():
-
     values = []
 
     try:
@@ -1929,18 +1919,6 @@ def getNews():
 
     return return_result
 
-#유튜브 API
-@app.route('/getYoutube', methods=["POST"])
-def getYoutube():
-    results = execute_mysql_query_select("Q28", [])
-
-    datas = []
-    return_col_name = ["cor_gp","content_title","content_url"]
-    return_result = [dict(zip(return_col_name, data)) for data in results]
-
-    return return_result
-
-
 @app.route('/getSetting', methods=["POST"])
 def getSetting():
     data = request.get_json()  # 전송된 JSON 데이터 받아오기
@@ -1979,19 +1957,9 @@ async def getYouTube():
     #test = getCommonCdFun("YOUTUBE_ID")
     results = []
     for channel in channel_ids:
-        #result_id = await getChannelId(youtube_key, channel)  # 채널 ID 취득
         data = await getChannelData(youtube_key, channel)  # 비동기 함수 실행
         results.append(data)
     return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
-
-# @app.route('/getYouTube', methods=["POST"])
-# def getYouTube():
-#     youtube_key = config['SERVER']['youtube_key']
-#     results = getData(youtube_key)  # 비동기 함수 실행
-#     print("#"*100)
-#     print(results)
-#     print("#"*100)
-#     return jsonify({"success": True, "results": results, "corNm": channels})  # JSON 응답
 
 # YOUTUBE BATCH 결과 등록
 def set_batch_youtube(corNo, contentTitle, contentUrl, thumbnailUrl, priority):
