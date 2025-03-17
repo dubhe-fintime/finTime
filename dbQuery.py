@@ -226,7 +226,7 @@ def selectQuery(qType, values):
                     a.SUCCESS_COUNT,
                     a.FAIL_COUNT,
                     b.RESULT_DATA,
-                    ROW_NUMBER() OVER (ORDER BY b.TASK_ID ASC) AS RN
+                    ROW_NUMBER() OVER () AS RN
                 FROM BATCH_LOG b
                 JOIN LatestSEQ l ON b.SEQ = l.SEQ
                 LEFT JOIN AggregatedCounts a ON b.SEQ = a.SEQ
