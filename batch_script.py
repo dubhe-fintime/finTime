@@ -158,7 +158,7 @@ def run_batch_job():
     except Exception as e:
         print(f"배치 작업 실행 중 오류 발생: {e}")
 
-# 매일 1분마다 실행하도록 설정
+# 매일 1분마다 실행하도록 설정 
 #schedule.every(1).minutes.do(run_batch_job)
 schedule.every().day.at("01:00").do(run_batch_job)
 
