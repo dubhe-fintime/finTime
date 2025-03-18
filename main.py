@@ -42,6 +42,8 @@ from youtube.youtube_channel import getChannelData
 from util.pubOffStock import pubOffStock
 from util import getHoliday,indexlist
 
+from util.product import deposit, savings
+
 from batch_handler import start_batch, stop_batch, check_batch_status
 
 from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2,execute_mysql_query_insert_update_bulk, execute_mysql_query_insert2
@@ -1080,6 +1082,128 @@ async def capi1():
     return response
 
 ################## 캐피탈 END ###############################
+################## 예적금상품 START ###############################
+# 정기예금 단리
+@app.route('/depositProduct1', methods=["POST"])
+async def depositProduct1():
+    results = await deposit.getDepositData("Simple")
+
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 정기예금 복리
+@app.route('/depositProduct2', methods=["POST"])
+async def depositProduct2():
+    results = await deposit.getDepositData("Compound")
+
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 정액적립식 단리
+@app.route('/savingsProduct1', methods=["POST"])
+async def savingsProduct1():
+    results = await savings.getSavingsData("Simple1")
+
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 정액적립식 복리
+@app.route('/savingsProduct2', methods=["POST"])
+async def savingsProduct2():
+    results = await savings.getSavingsData("Compound1")
+
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 자유적립식 단리
+@app.route('/savingsProduct3', methods=["POST"])
+async def savingsProduct3():
+    results = await savings.getSavingsData("Simple2")
+
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 자유적립식 복리
+@app.route('/savingsProduct4', methods=["POST"])
+async def savingsProduct4():
+    results = await savings.getSavingsData("Compound2")
+
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+################## 예적금상품 END ###############################
 ################## 관리자 업무 START ###############################
 
 # SET HOLIDAY DATA
