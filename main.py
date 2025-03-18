@@ -40,10 +40,9 @@ from youtube.youtube_channel_id import getChannelId
 from youtube.youtube_channel import getChannelData
 
 from util.pubOffStock import pubOffStock
+from util import getHoliday,indexlist
 
 from batch_handler import start_batch, stop_batch, check_batch_status
-
-from util import getHoliday
 
 from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2,execute_mysql_query_insert_update_bulk, execute_mysql_query_insert2
 
@@ -1918,6 +1917,13 @@ def getNews():
     return_result = [dict(zip(return_col_name, data)) for data in results]
 
     return return_result
+
+#실시간 지수 API
+@app.route('/getIndexList', methods=["POST"])
+async def getIndexList():
+    data = await indexlist.get_index_list()
+    print(data)
+    return data
 
 @app.route('/getSetting', methods=["POST"])
 def getSetting():
