@@ -41,7 +41,7 @@ from youtube.youtube_channel import getChannelData
 
 from util.pubOffStock import pubOffStock
 
-from product.savings import savings
+from util.product import deposit, savings
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
@@ -1084,9 +1084,10 @@ async def capi1():
 
 ################## 캐피탈 END ###############################
 ################## 예적금상품 START ###############################
-@app.route('/savingProduct1', methods=["POST"])
-async def savingProduct1():
-    results = await savings.getTempData("Simple1") # 정액적립식 단리
+# 정기예금 단리
+@app.route('/depositProduct1', methods=["POST"])
+async def depositProduct1():
+    results = await deposit.getDepositData("Simple")
 
     status = 200
     for item in results:
@@ -1103,9 +1104,10 @@ async def savingProduct1():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
-@app.route('/savingProduct2', methods=["POST"])
-async def savingProduct2():
-    results = await savings.getTempData("Compound1") # 정액적립식 복리
+# 정기예금 복리
+@app.route('/depositProduct2', methods=["POST"])
+async def depositProduct2():
+    results = await deposit.getDepositData("Compound")
 
     status = 200
     for item in results:
@@ -1122,9 +1124,10 @@ async def savingProduct2():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
-@app.route('/savingProduct3', methods=["POST"])
-async def savingProduct3():
-    results = await savings.getTempData("Simple2") # 자유적립식 단리
+# 정액적립식 단리
+@app.route('/savingsProduct1', methods=["POST"])
+async def savingsProduct1():
+    results = await savings.getSavingsData("Simple1")
 
     status = 200
     for item in results:
@@ -1141,9 +1144,50 @@ async def savingProduct3():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
-@app.route('/savingProduct4', methods=["POST"])
-async def savingProduct4():
-    results = await savings.getTempData("Compound2") # 자유적립식 복리
+# 정액적립식 복리
+@app.route('/savingsProduct2', methods=["POST"])
+async def savingsProduct2():
+    results = await savings.getSavingsData("Compound1")
+
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 자유적립식 단리
+@app.route('/savingsProduct3', methods=["POST"])
+async def savingsProduct3():
+    results = await savings.getSavingsData("Simple2")
+
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 자유적립식 복리
+@app.route('/savingsProduct4', methods=["POST"])
+async def savingsProduct4():
+    results = await savings.getSavingsData("Compound2")
 
     status = 200
     for item in results:

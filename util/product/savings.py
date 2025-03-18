@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 # Method = POST
 ##############################
 
-async def getTempData(InterestType):
+async def getSavingsData(InterestType):
     ######### 기초 설정 Start #############
     # return 값 넣을 리스트
     product_list = []

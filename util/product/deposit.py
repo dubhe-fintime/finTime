@@ -2,34 +2,30 @@ import requests
 from bs4 import BeautifulSoup
 
 ##############################
-# 제목 : 은행연합회 적금 상품 조회
+# 제목 : 은행연합회 정기예금 상품 조회
 # 방식 : API
 # 수집 데이터
 ##############################
 
 ##############################
-# Service URL = "https://portal.kfb.or.kr/compare/receiving_neosave_search_result_new2.php"
+# Service URL = "https://portal.kfb.or.kr/compare/receiving_deposit_3_search_result_new2.php"
 # Method = POST
 ##############################
 
-async def getTempData(InterestType):
+async def getDepositData(InterestType):
     ######### 기초 설정 Start #############
     # return 값 넣을 리스트
     product_list = []
     # API URL
-    url =  "https://portal.kfb.or.kr/compare/receiving_neosave_search_result_new2.php"
+    url =  "https://portal.kfb.or.kr/compare/receiving_deposit_3_search_result_new2.php"
     ######### 기초 설정 END ##############
 
     strInterestType = ""
 
-    if InterestType == "Simple1":
-        strInterestType = "정액적립식 단리"
-    elif InterestType == "Simple2":
-        strInterestType = "자유적립식 단리"
-    elif InterestType == "Compound1":
-        strInterestType = "정액적립식 복리"
-    elif InterestType == "Compound2":
-        strInterestType = "자유적립식 복리"
+    if InterestType == "Simple":
+        strInterestType = "정기예금 단리"
+    elif InterestType == "Compound":
+        strInterestType = "정기예금 복리"
 
     try:
         headers = {"User-Agent": "Mozilla/5.0"}
@@ -66,7 +62,7 @@ async def getTempData(InterestType):
                 break
 
         if no_results:
-            print(f"적금 {strInterestType} 완료 | 결과 없음")
+            print(f"예금 {strInterestType} 완료 | 결과 없음")
             return product_list
         
         for product in products:
@@ -104,9 +100,9 @@ async def getTempData(InterestType):
                 "average_interest_rate": average_interest_rate
             })
 
-        print(f"적금 {strInterestType} 완료 | 상품 개수 : {len(product_list)}")
+        print(f"예금 {strInterestType} 완료 | 상품 개수 : {len(product_list)}")
         return product_list
 
     except Exception as e:
-        print(f"적금 {strInterestType} 오류 발생: {e}")
+        print(f"예금 {strInterestType} 오류 발생: {e}")
         return [{"ERROR": str(e)}]
