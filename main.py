@@ -41,6 +41,8 @@ from youtube.youtube_channel import getChannelData
 
 from util.pubOffStock import pubOffStock
 
+from product.savings import savings
+
 from batch_handler import start_batch, stop_batch, check_batch_status
 
 from util import getHoliday
@@ -1081,6 +1083,84 @@ async def capi1():
     return response
 
 ################## 캐피탈 END ###############################
+################## 예적금상품 START ###############################
+@app.route('/savingProduct1', methods=["POST"])
+async def savingProduct1():
+    results = await savings.getTempData("Simple1") # 정액적립식 단리
+
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+@app.route('/savingProduct2', methods=["POST"])
+async def savingProduct2():
+    results = await savings.getTempData("Compound1") # 정액적립식 복리
+
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+@app.route('/savingProduct3', methods=["POST"])
+async def savingProduct3():
+    results = await savings.getTempData("Simple2") # 자유적립식 단리
+
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+@app.route('/savingProduct4', methods=["POST"])
+async def savingProduct4():
+    results = await savings.getTempData("Compound2") # 자유적립식 복리
+
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+################## 예적금상품 END ###############################
 ################## 관리자 업무 START ###############################
 
 # SET HOLIDAY DATA
