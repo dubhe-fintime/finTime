@@ -21,11 +21,14 @@ async def getDepositData(InterestType):
     ######### 기초 설정 END ##############
 
     strInterestType = ""
+    intr_calc = ""
 
     if InterestType == "Simple":
         strInterestType = "정기예금 단리"
+        intr_calc = "INTR01"
     elif InterestType == "Compound":
         strInterestType = "정기예금 복리"
+        intr_calc = "INTR02"
 
     try:
         headers = {"User-Agent": "Mozilla/5.0"}
@@ -92,6 +95,9 @@ async def getDepositData(InterestType):
 
             # 결과를 product_list에 저장하고 싶다면, product_list에 append
             product_list.append({
+                "prod_type": "PROD01",
+                "saving_method": "SM01",
+                "intr_calc": intr_calc,
                 "bank_name": bank_name,
                 "product_name": product_name,
                 "product_link": product_link,

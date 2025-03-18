@@ -21,15 +21,25 @@ async def getSavingsData(InterestType):
     ######### 기초 설정 END ##############
 
     strInterestType = ""
+    saving_method = ""
+    intr_calc = ""
 
     if InterestType == "Simple1":
         strInterestType = "정액적립식 단리"
+        saving_method = "SM02"
+        intr_calc = "INTR01"
     elif InterestType == "Simple2":
         strInterestType = "자유적립식 단리"
+        saving_method = "SM03"
+        intr_calc = "INTR01"
     elif InterestType == "Compound1":
         strInterestType = "정액적립식 복리"
+        saving_method = "SM02"
+        intr_calc = "INTR02"
     elif InterestType == "Compound2":
         strInterestType = "자유적립식 복리"
+        saving_method = "SM03"
+        intr_calc = "INTR02"
 
     try:
         headers = {"User-Agent": "Mozilla/5.0"}
@@ -96,6 +106,9 @@ async def getSavingsData(InterestType):
 
             # 결과를 product_list에 저장하고 싶다면, product_list에 append
             product_list.append({
+                "prod_type": "PROD02",
+                "saving_method": saving_method,
+                "intr_calc": intr_calc,
                 "bank_name": bank_name,
                 "product_name": product_name,
                 "product_link": product_link,
