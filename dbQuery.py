@@ -510,11 +510,18 @@ def selectQuery(qType, values):
                     WHERE cc.GP_ID =%s;
                 """
         
-
-
-
-
-
+    elif qType == "F1" : 
+        query = """
+            INSERT INTO FINANCIAL_PRODUCTS 
+                ( COR_NO, PROD_NM, PROD_TYPE, SAVING_METHOD, INTR_CALC, PROD_DETAIL_LINK, BASE_INTR, MAX_INTR, LAST_AVG_INTR, C_DATE, E_DATE )
+                VALUES 
+                (%s, %s, %s, %s, %s, %s, %s, %s, %s, SYSDATE(), SYSDATE())
+            """
+    
+    elif qType == "F2" : 
+        query = """
+            DELETE FROM FINANCIAL_PRODUCTS
+            """
 
     # print("###################################")
     # print(query)

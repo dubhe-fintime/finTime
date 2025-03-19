@@ -1072,7 +1072,7 @@ async def capi1():
     data_to_return = {
         "status_code": status,  # 응답코드
         "bank_cd": "901",
-        "fin_id": "T000000040", # TASK ID 지정
+        "fin_id": "T000000041", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -1095,6 +1095,7 @@ async def depositProduct1():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "fin_id": "T000000042", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -1115,6 +1116,7 @@ async def depositProduct2():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "fin_id": "T000000043", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -1135,6 +1137,7 @@ async def savingsProduct1():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "fin_id": "T000000044", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -1155,6 +1158,7 @@ async def savingsProduct2():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "fin_id": "T000000045", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -1175,6 +1179,7 @@ async def savingsProduct3():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "fin_id": "T000000046", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -1195,6 +1200,7 @@ async def savingsProduct4():
     
     data_to_return = {
         "status_code": status,  # 응답코드
+        "fin_id": "T000000047", # TASK ID 지정
         "result": results     # 응답결과
     }
     
@@ -1202,6 +1208,59 @@ async def savingsProduct4():
     response = jsonify(data_to_return)
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
+
+# PRODUCT BATCH 데이터 삭제
+def del_product(cnt):
+    if cnt == 1:
+        execute_mysql_query_delete('F2', []) # 상품 데이터 전체 삭제
+
+@app.route('/setFinProd', methods=["POST"])
+def setFinProd(datas):
+    try:
+        # Bulk Insert와 Bulk Update용 데이터 리스트
+        bulk_values = []  # Bulk Insert용 데이터 리스트
+        
+        # 각 데이터 처리
+        for v in datas:
+            if v == "":
+                continue  # 빈 데이터는 건너뜀
+
+            prod_dict = v
+            # 각 데이터에 대한 값 구성
+            values = (
+                prod_dict["cor_no"],
+                prod_dict["product_name"],
+                prod_dict["prod_type"],
+                prod_dict["saving_method"],
+                prod_dict["intr_calc"],
+                prod_dict["product_link"],
+                prod_dict["basic_interest_rate"],
+                prod_dict["max_interest_rate"],
+                prod_dict["average_interest_rate"]
+            )
+            bulk_values.append(values)  # Bulk Insert 리스트에 추가
+
+        # 🔥 Bulk Insert 실행
+        if bulk_values:
+            execute_mysql_query_insert2("F1", bulk_values)
+        
+        return jsonify({"message": "Bulk Data Inserted", "count": len(bulk_values)})
+
+    except Exception as e:
+        logger.error("에러 발생: %s", str(e))
+        return jsonify({"error": str(e)}), 500
+
+# COR NO 정보 리턴
+def getCorNo():
+    
+    results = execute_mysql_query_select('Q9', [])  # DB에서 cor_no 가져오기
+
+    cor_no_mapping = {}
+    for item in results:
+        bank_name = item[3]  # cor_nm이 bank_name과 동일한 경우
+        cor_no_mapping[bank_name] = item[0]  # cor_no 매핑
+
+    return cor_no_mapping  # ✅ 일반 딕셔너리 반환 (jsonify 사용 X)
 
 ################## 예적금상품 END ###############################
 ################## 관리자 업무 START ###############################

@@ -112,3 +112,7 @@ async def getDepositData(InterestType):
     except Exception as e:
         print(f"예금 {strInterestType} 오류 발생: {e}")
         return [{"ERROR": str(e)}]
+    
+if __name__ == "__main__":
+    getDepositData('Simple')
+    getDepositData('Compound')
