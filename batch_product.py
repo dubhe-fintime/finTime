@@ -105,7 +105,7 @@ def run_product_batch_job():
         print(f"상품정보 배치 작업 실행 중 오류 발생: {e}")
 
 #매일 04:00에 실행
-schedule.every().day.at("13:07").do(product_batch_job)
+schedule.every().day.at("13:12").do(product_batch_job)
 
 
 print(f"상품정보 배치 작업이 스케줄링되었습니다. (매일 02:00 실행)")
@@ -114,6 +114,3 @@ print(f"상품정보 배치 작업이 스케줄링되었습니다. (매일 02:00
 while True:
     schedule.run_pending()
     time.sleep(60)  # 1초마다 체크
-
-if __name__ == "__main__":
-    run_product_batch_job()
