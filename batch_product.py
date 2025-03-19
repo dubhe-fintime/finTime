@@ -25,19 +25,19 @@ async def product_batch_job():
 # 실행할 작업 정의
     tasks = {
 
-        "depositProduct1":depositProduct1(),
-        "depositProduct2": depositProduct2(),
+        "depositProduct1": depositProduct1,
+        "depositProduct2": depositProduct2,
 
-        "savingsProduct1": savingsProduct1(),
-        "savingsProduct2": savingsProduct2(),
-        "savingsProduct3": savingsProduct3(),
-        "savingsProduct4": savingsProduct4(),
+        "savingsProduct1": savingsProduct1,
+        "savingsProduct2": savingsProduct2,
+        "savingsProduct3": savingsProduct3,
+        "savingsProduct4": savingsProduct4,
         
     }
     try:
         with app.app_context():
             # 비동기 작업 실행
-            task_futures = {name: asyncio.create_task(func) for name, func in tasks.items()}
+            task_futures = {name: asyncio.create_task(func()) for name, func in tasks.items()}
             responses = await asyncio.gather(*task_futures.values(), return_exceptions=True)
             cnt = 0  # 배치 결과 정상 처리 건수
 
@@ -104,11 +104,11 @@ def run_product_batch_job():
     except Exception as e:
         print(f"상품정보 배치 작업 실행 중 오류 발생: {e}")
 
-#매일 04:00에 실행
-schedule.every().day.at("13:25").do(run_product_batch_job)
+#매일 05:00에 실행
+schedule.every().day.at("13:43").do(run_product_batch_job)
 
 
-print(f"상품정보 배치 작업이 스케줄링되었습니다. (매일 02:00 실행)")
+print(f"상품정보 배치 작업이 스케줄링되었습니다. (매일 05:00 실행)")
 
 #무한 루프 실행 (배치 스케줄 유지)
 while True:
