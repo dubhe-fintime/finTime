@@ -119,9 +119,9 @@
                     const tableBody = document.getElementById("batchResults");
                     tableBody.innerHTML = ""; // 기존 데이터 초기화
                     
-                    var tot_cnt = Number(data[0].tot_cnt); // B000000001 의 TOT_CNT를 초기 셋팅
-                    var success_cnt = Number(data[0].success_cnt); // B000000001 의 success_cnt 초기 셋팅
-                    var fail_cnt = Number(data[0].fail_cnt); // B000000001 의 fail_cnt 초기 셋팅
+                    var tot_cnt = 0;
+                    var success_cnt = 0;
+                    var fail_cnt = 0;
                     data.map((item, index) => {
                         const row = document.createElement("tr");
                         row.innerHTML = `
@@ -140,11 +140,11 @@
                         }
                         tableBody.appendChild(row);
 
-                        if (item.batch_id !== "B000000001") {
+                        //if (item.batch_id !== "B000000001") {
                             tot_cnt += Number(item.tot_cnt) || 0;
                             success_cnt += Number(item.success_cnt) || 0;
                             fail_cnt += Number(item.fail_cnt) || 0;
-                        }
+                        //}
 
                     });
                     
@@ -153,7 +153,7 @@
                     document.getElementById("failCount").innerText = fail_cnt;
                     
                     var runningTitle = "🔴대기중";
-                    if(tot_cnt < 45){
+                    if(tot_cnt < 51){
                         runningTitle = "🟢진행중"
                     }
                     document.getElementById("running").innerText = runningTitle;

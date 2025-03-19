@@ -204,21 +204,22 @@ def selectQuery(qType, values):
                 ),
 
                 AggregatedCounts AS (
-                    -- SEQ별 TOTAL_COUNT, SUCCESS_COUNT, FAIL_COUNT 계산
+                    -- SEQ별 TASK_NM 단위로 TOTAL_COUNT, SUCCESS_COUNT, FAIL_COUNT 계산
                     SELECT 
                         SEQ,
+                        TASK_NM,  -- TASK_NM 별로 그룹화
                         COUNT(*) AS TOTAL_COUNT,
                         SUM(CASE WHEN STATUS = 'SUCCESS' THEN 1 ELSE 0 END) AS SUCCESS_COUNT,
                         SUM(CASE WHEN STATUS = 'FAIL' THEN 1 ELSE 0 END) AS FAIL_COUNT
                     FROM BATCH_LOG
                     WHERE SEQ IN (SELECT SEQ FROM LatestSEQ)
-                    GROUP BY SEQ
+                    GROUP BY SEQ, TASK_NM  -- TASK_NM 별로 집계
                 )
 
                 SELECT 
                     b.BATCH_ID,
                     b.BATCH_NM, 
-                    b.TASK_NM, 
+                    b.TASK_NM,  -- 개별 TASK_NM 출력
                     DATE_FORMAT(b.ST_DATE, '%Y.%m.%d %H:%i:%s') AS ST_DATE, 
                     DATE_FORMAT(b.ED_DATE, '%Y.%m.%d %H:%i:%s') AS ED_DATE, 
                     b.STATUS,
@@ -229,9 +230,10 @@ def selectQuery(qType, values):
                     ROW_NUMBER() OVER () AS RN
                 FROM BATCH_LOG b
                 JOIN LatestSEQ l ON b.SEQ = l.SEQ
-                LEFT JOIN AggregatedCounts a ON b.SEQ = a.SEQ
+                LEFT JOIN AggregatedCounts a ON b.SEQ = a.SEQ AND b.TASK_NM = a.TASK_NM  -- TASK_NM 기준으로 JOIN
                 ORDER BY b.BATCH_ID, b.ED_DATE ASC
                 LIMIT 1000
+
                 """
 
     elif qType == "Q20": # 배치 공휴일 등록 
