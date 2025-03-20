@@ -40,7 +40,7 @@ from youtube.youtube_channel_id import getChannelId
 from youtube.youtube_channel import getChannelData
 
 from util.pubOffStock import pubOffStock
-from util import getHoliday,indexlist
+from util import getHoliday,indexlist,indexlist_yahoo
 
 from util.product import deposit, savings
 
@@ -2104,7 +2104,11 @@ def getNews():
 #실시간 지수 API
 @app.route('/getIndexList', methods=["POST"])
 async def getIndexList():
-    data = await indexlist.get_index_list()
+    #TODO: 야후 or Naver 선택 가능(상업적 용도 체크해야댐)
+    #야후 
+    data = await indexlist_yahoo.get_index_list_Yahoo()
+    # 네이버
+    # data = await indexlist.get_index_list()
     print(data)
     return data
 
