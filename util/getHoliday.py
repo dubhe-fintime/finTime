@@ -7,7 +7,6 @@ import configparser
 environment = os.getenv('ENVIRONMENT', 'development')
 if environment == 'production':
     config_path = os.path.join(os.getcwd(), 'config.ini')
-    print(config_path)
 else:
     config_path = os.path.join(os.getcwd(), 'config_development.ini')
 config = configparser.ConfigParser()

@@ -2,7 +2,6 @@ from datetime import datetime
 import requests
 import pprint
 import yfinance as yf
-import pprint as pp
 
 ##############################
 # 제목 : 실시간 지수 
@@ -27,7 +26,6 @@ async def get_index_list_Yahoo():
 
     return_li = []
     for name, data in index_list:
-        print(data)
         start =  round(data['Open'].tolist()[0],2)
         end =  round(data['Close'].tolist()[0],2)
         up_down  = start - end

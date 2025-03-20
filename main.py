@@ -1632,7 +1632,6 @@ def upload_file():
 def multiUpload():
     try:
         files = request.files.getlist('file')
-        print(files)
         if not files or len(files) == 0:
             return jsonify({"error": "파일이 없습니다."}), 400
 
@@ -2109,7 +2108,6 @@ async def getIndexList():
     data = await indexlist_yahoo.get_index_list_Yahoo()
     # 네이버
     # data = await indexlist.get_index_list()
-    print(data)
     return data
 
 @app.route('/getSetting', methods=["POST"])
