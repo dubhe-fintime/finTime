@@ -2154,7 +2154,7 @@ def getYoutubeClient():
 @app.route('/getYouTube', methods=["POST"])
 async def getYouTube():
     youtube_key = config['SERVER']['youtube_key']
-    channels = ["신한은행", "우리은행", "KB국민은행", "하나은행", "NH농협은행"]
+    channels = ["088", "020", "004", "081", "011"]
     channel_ids = ["UC4E394G9WuS9y6SlBZslMsQ", "UCcQ9V6nEYVMSRWWOrvHQqLg", "UCHq8auIJ8ewo7iD2pqX22UA", "UCSHbm2TrspNZ_p_yd39kMNg", "UCmkkFJIalgnWovxFigYK2EA"]
     #test = getCommonCdFun("YOUTUBE_ID")
     results = []
