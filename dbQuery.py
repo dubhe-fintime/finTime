@@ -274,9 +274,8 @@ def selectQuery(qType, values):
         query = """
             INSERT INTO YOUTUBE_CONTENTS 
                 (COR_NO, CONTENT_TITLE, CONTENT_URL, THUMBNAIL_URL, PRIORITY) 
-            SELECT 
-                (SELECT COR_NO FROM COR_MST WHERE COR_NM = %s LIMIT 1), %s, %s, %s, %s;
-        """
+            VALUES(%s, %s, %s, %s, %s)
+            """
     
     elif qType == "Q25": # 유튜브 정보 전체 삭제
         query = "DELETE FROM YOUTUBE_CONTENTS "
