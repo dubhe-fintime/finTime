@@ -55,7 +55,8 @@ async def get041Data():
 
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-            "Cookie": "JSESSIONID=t6QPpV1W9bQf5FvDL7p3OjvaaLjSNyy0tnsv0QnqDCdWR18EvjseTFgr6bGh6nKJ.amV1c19kb21haW4vd2NwYzEx; TS01d6fea6=01bae404f5e7fb0f8de5c45f60ce75a346c6934a5bb44d05190e4b06f76ab5aff11bc0feea45c91efe283656e9f9969d0f38938a82; _xm_webid_1_=1638786099; TS01bba15d=01bae404f5e7fb0f8de5c45f60ce75a346c6934a5bb44d05190e4b06f76ab5aff11bc0feea45c91efe283656e9f9969d0f38938a82; PCID=12f439a1-af00-60f3-c51b-9823509b4210-1739173354155; lang=ko; bodyYn=Y; _ga=GA1.1.1694652932.1739173355; _gcl_au=1.1.1519562618.1739173355; _ga_LXPH18QLPW=GS1.1.1739173354.1.1.1739173615.60.0.0"
+            "Cookie": "JSESSIONID=t6QPpV1W9bQf5FvDL7p3OjvaaLjSNyy0tnsv0QnqDCdWR18EvjseTFgr6bGh6nKJ.amV1c19kb21haW4vd2NwYzEx; TS01d6fea6=01bae404f5e7fb0f8de5c45f60ce75a346c6934a5bb44d05190e4b06f76ab5aff11bc0feea45c91efe283656e9f9969d0f38938a82; _xm_webid_1_=1638786099; TS01bba15d=01bae404f5e7fb0f8de5c45f60ce75a346c6934a5bb44d05190e4b06f76ab5aff11bc0feea45c91efe283656e9f9969d0f38938a82; PCID=12f439a1-af00-60f3-c51b-9823509b4210-1739173354155; lang=ko; bodyYn=Y; _ga=GA1.1.1694652932.1739173355; _gcl_au=1.1.1519562618.1739173355; _ga_LXPH18QLPW=GS1.1.1739173354.1.1.1739173615.60.0.0",
+            'Referer': list_domain
         }
 
         data = {"bnf02PrgEvntVo":{"evntCtgrNo":"","searchKwrd":"","sortOrd":"orderNew","pageIndex":"1","pageSize":"15","evntItgCfcd":""}}
