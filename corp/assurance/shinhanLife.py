@@ -66,7 +66,6 @@ async def get438Data():
             })
         
         print(f"신한라이프 크롤링 완료 | 이벤트 개수 : {len(event_list)}")
-        print(event_list)
         return event_list
     
     except requests.exceptions.RequestException as e:
