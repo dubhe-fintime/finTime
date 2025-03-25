@@ -131,7 +131,6 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    debugger;
                     statusText = data.status === "started"
                     ? `🟢 실행 중 (PID: ${data.pid})`
                     : data.status === "already_running"
