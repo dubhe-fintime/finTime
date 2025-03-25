@@ -29,7 +29,7 @@ async def get_index_list_Yahoo():
         start =  round(data['Open'].tolist()[0],2)
         end =  round(data['Close'].tolist()[0],2)
         up_down  = start - end
-        change_rate = (up_down / start)*100   # 등락률 계산
+        change_rate = (up_down / start * 100) if start != 0 else 0
 
         return_li.append({
             "name":name,
