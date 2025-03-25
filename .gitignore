@@ -8,9 +8,6 @@ __pycache__/
 # 로그
 logs/
 
-# 기관별 이미지 파일
-corp/
-
 # 이미지 파일
 resources/
 
