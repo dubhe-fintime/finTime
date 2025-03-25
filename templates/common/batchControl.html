@@ -131,7 +131,12 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("status"+type).innerText = `✅ ${data.message}`;
+                    data.status === "started"
+                    ? `🟢 실행 중 (PID: ${data.pid})`
+                    : data.status === "already_running"
+                    ? `🟢 이미 실행 중 (PID: ${data.pid})`
+                    : "🔴 중지됨";
+                    document.getElementById("status"+type).innerText = statusText;
                 })
                 .catch(error => {
                     console.error("Error:", error);
@@ -151,7 +156,12 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("status"+type).innerText = `✅ ${data.message}`;
+                    data.status === "stopped"
+                    ? '🔴 중지됨'
+                    : data.status === "already_stopped"
+                    ? `🔴 이미 중지됨`
+                    : `🟢 실행 중 (PID: ${data.pid})`;
+                    document.getElementById("status"+type).innerText = statusText;
                 })
                 .catch(error => {
                     console.error("Error:", error);
