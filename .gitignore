@@ -15,7 +15,4 @@ resources/
 config_development.ini
 
 # 배치 재기동 설정 파일
-batch_pid.txt
-batch_pid_product.txt
-batch_pid_youtube.txt
-batch_pid_pubOffStock.txt
+batch_pid*.txt
