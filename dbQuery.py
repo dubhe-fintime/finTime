@@ -528,6 +528,19 @@ def selectQuery(qType, values):
         query = """
             DELETE FROM FINANCIAL_PRODUCTS
             """
+        
+    elif qType == "F3" : 
+        query = """
+            INSERT INTO FINANCIAL_LOAN_PRODUCTS 
+                ( COR_NO, PROD_NM, RESIDENCE_TYPE, INTR_METHOD, REPAY_METHOD, MIN_INTR, MAX_INTR, C_DATE, E_DATE )
+                VALUES 
+                (%s, %s, %s, %s, %s, %s, %s, SYSDATE(), SYSDATE())
+            """
+        
+    elif qType == "F4" : 
+        query = """
+            DELETE FROM FINANCIAL_LOAN_PRODUCTS
+            """
 
     # print("###################################")
     # print(query)

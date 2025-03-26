@@ -44,7 +44,7 @@ from util.pubOffStock import pubOffStock
 from util import getHoliday,indexlist,indexlist_yahoo
 from util import makeJwt
 
-from util.product import deposit, savings
+from util.product import deposit, savings, loan
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
@@ -1181,6 +1181,48 @@ async def savingsProduct4():
     response.status_code = data_to_return["status_code"]  # status_code 지정
     return response
 
+# 대출 상품 아파트
+@app.route('/loanProduct1', methods=["POST"])
+async def loanProduct1():
+    results = await loan.getLoanData("Interest1")
+
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "fin_id": "T000000048", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
+# 대출 상품 아파트외
+@app.route('/loanProduct2', methods=["POST"])
+async def loanProduct2():
+    results = await loan.getLoanData("Interest2")
+
+    status = 200
+    for item in results:
+        if 'ERROR' in item:
+            status = 500
+    
+    data_to_return = {
+        "status_code": status,  # 응답코드
+        "fin_id": "T000000049", # TASK ID 지정
+        "result": results     # 응답결과
+    }
+    
+    # Flask의 jsonify를 사용하여 응답 생성
+    response = jsonify(data_to_return)
+    response.status_code = data_to_return["status_code"]  # status_code 지정
+    return response
+
 # PRODUCT BATCH 데이터 삭제
 def del_product(cnt):
     if cnt == 1:
@@ -1221,6 +1263,46 @@ def setFinProd(datas):
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/setLoanFinProd', methods=["POST"])
+def setLoanFinProd(datas):
+    try:
+        # Bulk Insert와 Bulk Update용 데이터 리스트
+        bulk_values = []  # Bulk Insert용 데이터 리스트
+        
+        # 각 데이터 처리
+        for v in datas:
+            if v == "":
+                continue  # 빈 데이터는 건너뜀
+
+            prod_dict = v
+            # 각 데이터에 대한 값 구성
+            values = (
+                prod_dict["cor_no"],
+                prod_dict["product_name"],
+                prod_dict["residence_type"],
+                prod_dict["interest_method"],
+                prod_dict["repayment_method"],
+                prod_dict["min_interest_rate"],
+                prod_dict["max_interest_rate"]
+            )
+
+            bulk_values.append(values)  # Bulk Insert 리스트에 추가
+
+        # 🔥 Bulk Insert 실행
+        if bulk_values:
+            execute_mysql_query_insert2("F3", bulk_values)
+        
+        return jsonify({"message": "Bulk Data Inserted", "count": len(bulk_values)})
+
+    except Exception as e:
+        logger.error("대출 상품 에러 발생: %s", str(e))
+        return jsonify({"error": str(e)}), 500
+    
+# LOAN PRODUCT BATCH 데이터 삭제
+def del_loan_product(cnt):
+    if cnt == 1:
+        execute_mysql_query_delete('F4', []) # 상품 데이터 전체 삭제
 
 # COR NO 정보 리턴
 def getCorNo():
