@@ -117,6 +117,17 @@
         
     </div>
 
+    <div class="container">
+        <h2>대출 상품정보 배치 컨트롤(06:00)</h2>
+        <button onclick="startBatch(6)">🚀 배치 시작</button>
+        <button onclick="stopBatch(6)">🛑 배치 중지</button>
+        <button onclick="checkBatchStatus(6)">🔍 상태 확인</button>
+
+        <p id="status5">⏳ 배치 상태 확인 중...</p>
+
+        
+    </div>
+
     <script>
         // 배치 시작
         
@@ -198,6 +209,7 @@
             checkBatchStatus(3);
             checkBatchStatus(4);
             checkBatchStatus(5);
+            checkBatchStatus(6);
         });
 
     </script>
