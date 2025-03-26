@@ -1294,7 +1294,6 @@ def setLoanFinProd(datas):
 
     except Exception as e:
         logger.error("대출 상품 에러 발생: %s", str(e))
-        logger.error("대출 상품 에러 발생2: %s", datas)
         return jsonify({"error": str(e)}), 500
     
 # LOAN PRODUCT BATCH 데이터 삭제
