@@ -1287,7 +1287,7 @@ def setLoanFinProd(datas):
 
         # 🔥 Bulk Insert 실행
         if bulk_values:
-            execute_mysql_query_insert2("F1", bulk_values)
+            execute_mysql_query_insert2("F3", bulk_values)
         
         return jsonify({"message": "Bulk Data Inserted", "count": len(bulk_values)})
 
