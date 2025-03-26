@@ -1259,7 +1259,7 @@ def setFinProd(datas):
 
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
-        return jsonify({"error": str(e)}, {"message": "Bulk Data Inserted", "bulk_values": bulk_values}), 500
+        return jsonify({"error": str(e)}), 500
     
 @app.route('/setLoanFinProd', methods=["POST"])
 def setLoanFinProd(datas):
@@ -1294,7 +1294,7 @@ def setLoanFinProd(datas):
 
     except Exception as e:
         logger.error("대출 상품 에러 발생: %s", str(e))
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}, {"message": "Bulk Data Inserted", "bulk_values": bulk_values}), 500
     
 # LOAN PRODUCT BATCH 데이터 삭제
 def del_loan_product(cnt):
