@@ -67,6 +67,10 @@ async def product_batch_job():
                                 product["cor_no"] = cor_no  
                                 new_product_list.append(product)
 
+
+                            with open(log_file_path, "a", encoding="utf-8") as log_file:
+                                log_file.write("대출 상품 데이터 확인용\n" + new_product_list + "\n")
+
                             setLoanFinProd(new_product_list)
 
                     # 배치 로그 DB 저장
