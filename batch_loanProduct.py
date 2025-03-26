@@ -11,7 +11,7 @@ BATCH_ID = "B000000006"  # 대출 배치 ID
 BATCH_NM = "상품정보(대출) 수집"
 
 # 비동기 작업 함수
-async def product_batch_job():
+async def loan_product_batch_job():
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
     os.makedirs(log_dir, exist_ok=True)  # logs 폴더가 없으면 생성
 
@@ -87,7 +87,7 @@ async def product_batch_job():
             log_file.write(error_message + "\n")
 
 # 배치 실행 함수
-def run_product_batch_job():
+def run_loan_product_batch_job():
     try:
         try:
             loop = asyncio.get_running_loop()
@@ -95,15 +95,15 @@ def run_product_batch_job():
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
 
-        loop.run_until_complete(product_batch_job())  # 비동기 실행
+        loop.run_until_complete(loan_product_batch_job())  # 비동기 실행
 
         # set_user_mapp()  # 사용자 이벤트 매핑 정보 등록
     except Exception as e:
         print(f"대출 상품정보 배치 작업 실행 중 오류 발생: {e}")
 
 #매일 06:00에 실행
-#schedule.every().day.at("06:00").do(run_product_batch_job)
-schedule.every(1).minutes.do(run_product_batch_job)
+schedule.every().day.at("06:00").do(run_loan_product_batch_job)
+#schedule.every(1).minutes.do(run_loan_product_batch_job)
 
 print(f"대출 상품정보 배치 작업이 스케줄링되었습니다. (매일 06:00 실행)")
 
