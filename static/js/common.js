@@ -557,18 +557,13 @@ function moving(address) {
 
 
 // 세션 체크시
-function session_ok(domain, port) {
-  $.ajax({
-    url: `${domain}:${port}/sessionCheck`,
-    type: "GET",
-    dataType: "json",
-    success: (response) => {
-      if (!response[0]) {
-        top.location.href = '/';
-        return
-      }
-    }
-  })
+function session_check_page(response) {
+  if(typeof(response) == "number"){
+    values = `<p>세션 기간 만료로 로그인페이지로 이동합니다.</p>`
+    OpenModal("완료", "", true, "", `top.location.href="/"`, "확인", "", "", "sm", values)
+    return;
+  } 
 }
+
 
 //테스트용

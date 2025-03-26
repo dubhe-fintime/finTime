@@ -23,6 +23,7 @@ import os
 import base64
 
 import json
+import jwt
 
 import configparser
 
@@ -41,6 +42,7 @@ from youtube.youtube_channel import getChannelData
 
 from util.pubOffStock import pubOffStock
 from util import getHoliday,indexlist,indexlist_yahoo
+from util import makeJwt
 
 from util.product import deposit, savings
 
@@ -67,6 +69,7 @@ real_yn = config['SERVER']['real']
 server_host = config['SERVER']['server_host']
 success = config['CODE']['success']
 error = config['CODE']['error']
+session_fail = config['CODE']['session_fail']
 ssl_cert = config['SECURE']['ssl_cert']
 ssl_key = config['SECURE']['ssl_key']
 
@@ -118,8 +121,8 @@ app = Flask(__name__)
 CORS(app)
 app.secret_key = config['SERVER']['secret_key']  # 필수 값 (지정 필요)
 
-# 세션 관리를 위한 시간 설정(10분)
-app.permanent_session_lifetime = timedelta(minutes=10)
+# 세션 관리를 위한 시간 설정(5분)
+app.permanent_session_lifetime = timedelta(minutes=5)
 
 
 #CORS(app, resources={r"/*": {"origins": "http://allowed-origin.com"}})  # 모든 엔드포인트에 대해 CORS를 활성화
@@ -1338,34 +1341,22 @@ def adminLogin():
 # 관리자 로그인 화면 호출
 @app.route('/adminLogin', methods=["POST"])
 def adminLogin_check():
-    # 로그인 시 무조건 성공 리턴
-    return [success]
-    # 로그인 기능 없으므로 주석 시작 kcr 250211
-    # data = request.get_json()
-    # username = data['id']
-    # password = data['pw']
-    # values = [username, password]
-    # results = execute_mysql_query_select("Q1", )
-
-    # # 관리자 아이디로 등록이 되지 않았을 경우
-    # if len(results) < 1 or results[0][1] == 'N':  # N은 사용 여부
-    #     # message = "접근 거부: 사용 여부 및 아이디 확인바람"
-    #     message = "접근 거부: 사용 여부 및 아이디 확인바람"
-    #     return [error]
-    # else:
-
-    #     # 로그인시 세션 생성
-    #     session['username'] = username
-    #     session['usergroup'] = results[0][2]
-    #     session.permanent = True
-    #     logger.info(f'Connect || ID -- {username}')
-
-    #     temp_time = datetime.now()
-    #     formatted_datetime = temp_time.strftime("%Y-%m-%d %H:%M:%S")
-    #     session['start_time'] = formatted_datetime
-    #     # print(session['start_time'])
-    #     return [success]
-    # 로그인 기능 없으므로 주석 종료 kcr 250211
+    data = request.get_json()
+    username, password = data['id'], data['pw']
+    results = execute_mysql_query_select("QA1", [username, password])
+    print(results)
+    # 관리자 아이디로 등록이 되지 않았을 경우
+    if len(results) < 1 or results[0][1] == 'N':  
+        logger.error(f'Connect || ID -- {username}  || 접근 거부: 사용 여부 및 아이디 확인바람')
+        return [error]
+    else:
+        # 로그인시 세션 생성
+        session.permanent = True
+        session['username'] = username
+        session['token'] = makeJwt.create_jwt_token(username)
+        session['start_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        logger.info(f'Connect || ID -- {username} || ENTER_DATE -- {session.get("start_time")} || TOKEN -- {session.get("token")}')
+        return [success]
 
 @app.route('/clientLogin', methods=["POST"])
 def clientLogin_check():
@@ -1398,7 +1389,7 @@ def adminMain():
 # 관리자 금융사 관리 화면 호출
 @app.route("/financeManage")
 def financeManage():
-    return render_template("financeManage/financeManage.html", domain=domain, port=port)
+    return render_template("financeManage/financeManage.html", domain=domain, port=port,session=session)
 
 # 관리자 스크래핑 데이터 관리 화면 호출
 @app.route("/scrapingManage")
@@ -1433,48 +1424,69 @@ def adminMainContents():
 @app.route("/financeManage", methods=['POST'])
 def selectFinace():
     data = request.get_json()
-    results = execute_mysql_query_rest("Q9", data)
-    return_col_name = ["COR_NO","COR_GP","GP_NM","COR_NM","COR_NOTI","IMG_URL","THUMBNAIL_URL","USE_YN","C_DATE","U_DATE","PRI_IMG"]
-    return_result = [dict(zip(return_col_name, data)) for data in results]
+    token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+    flag = check_session(session,token)
 
-    return return_result
+    if not flag:
+        results = execute_mysql_query_rest("Q9", data)
+        return_col_name = ["COR_NO","COR_GP","GP_NM","COR_NM","COR_NOTI","IMG_URL","THUMBNAIL_URL","USE_YN","C_DATE","U_DATE","PRI_IMG"]
+        return_result = [dict(zip(return_col_name, data)) for data in results]
+        return return_result
+    elif (flag == session_fail):
+        return session_fail
+    else:
+        return [error]
+    
 
 # 금융사 정보 추가
 @app.route("/insertFinance", methods=['POST'])
 def insertFinance():
-    data = request.get_json()
-    form = (
-            data.get("corNoInput",""),
-            data.get("corNmInput"),
-            data.get("cor_gp"),
-            data.get("corNotiInput",""),
-            data.get("imgUrlInput",""),
-            data.get("thumbUrlInput",""),
-            data.get("pri_img",""),
-            data.get("corNmInput"),
-            data.get("cor_gp"),
-            data.get("corNotiInput",""),
-            data.get("imgUrlInput",""),
-            data.get("thumbUrlInput",""),
-            data.get("pri_img","")
-            )
+    token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+    flag = check_session(session,token)
+    if not flag:
+        data = request.get_json()
+        form = (
+                data.get("corNoInput",""),
+                data.get("corNmInput"),
+                data.get("cor_gp"),
+                data.get("corNotiInput",""),
+                data.get("imgUrlInput",""),
+                data.get("thumbUrlInput",""),
+                data.get("pri_img",""),
+                data.get("corNmInput"),
+                data.get("cor_gp"),
+                data.get("corNotiInput",""),
+                data.get("imgUrlInput",""),
+                data.get("thumbUrlInput",""),
+                data.get("pri_img","")
+                )
 
-    results = execute_mysql_query_insert("Q11", form)
-    return [success]
+        results = execute_mysql_query_insert("Q11", form)
+        return [success]
+    elif (flag == session_fail):
+        return session_fail
+    else:
+        return [error]
 
 # 금융사 사용여부
 @app.route("/changeYnFinance", methods=['POST'])
 def changeYnFinance():
-    try:
-        data = request.get_json()
-        form = (
-                data.get("change_yn"),
-                data.get("finance_no")
-                )
-        results = execute_mysql_query_insert("Q12", form)
-        return [success]
-    except:
-        return [error]
+    token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+    flag = check_session(session,token)
+    if not flag:
+        try:
+            data = request.get_json()
+            form = (
+                    data.get("change_yn"),
+                    data.get("finance_no")
+                    )
+            results = execute_mysql_query_insert("Q12", form)
+            return [success]
+        except:
+            return [error]
+    if (flag == session_fail):
+        return session_fail
+
 
 # 공통 코드 조회 (API 호출)
 @app.route('/getCommonCd', methods=["POST"])
@@ -1633,27 +1645,37 @@ def multiUpload():
 # ci 폴더 지정 업로드(FILE_MST INSERT 없음)
 @app.route('/ciUpload', methods=['POST'])
 def ci_upload_file():
-    try:
-        if 'file' not in request.files:
-            return jsonify({"error": "파일이 없습니다."}), 400
+    token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+    flag = check_session(session,token)
+    if not flag:
+        try:
+            if 'file' not in request.files:
+                return jsonify({"error": "파일이 없습니다."}), 400
 
-        file = request.files['file']
+            file = request.files['file']
 
-        if file.filename == '':
-            return jsonify({"error": "파일명이 비어 있습니다."}), 400
+            if file.filename == '':
+                return jsonify({"error": "파일명이 비어 있습니다."}), 400
 
-        if file and allowed_file(file.filename):
-            file_path = os.path.join(app.config['FILE_FOLDER'],'ci', file.filename)
-            print(file_path)
-            file.save(file_path)  # 파일 저장
-            
-            return jsonify({"message": "파일 업로드 성공", "filename": file.filename, "original_name": file.filename}), 200
-        else:
-            return jsonify({"error": "허용되지 않은 파일 형식입니다."}), 400
+            if file and allowed_file(file.filename):
+                file_path = os.path.join(app.config['FILE_FOLDER'],'ci', file.filename)
+                print(file_path)
+                file.save(file_path)  # 파일 저장
+                
+                return jsonify({"message": "파일 업로드 성공", "filename": file.filename, "original_name": file.filename}), 200
+            else:
+                return jsonify({"error": "허용되지 않은 파일 형식입니다."}), 400
 
-    except Exception as e:
-        # 예외 발생 시 에러 메시지 출력
-        return jsonify({"error": f"파일 업로드 중 오류가 발생했습니다: {str(e)}"}), 50
+        except Exception as e:
+            # 예외 발생 시 에러 메시지 출력
+            return jsonify({"error": f"파일 업로드 중 오류가 발생했습니다: {str(e)}"}), 50
+    
+    if flag == session_fail:
+        return session_fail
+    else:
+        return [error]
+    
+
 # 파일 확장자 검증
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -1970,24 +1992,22 @@ def delEvent():
 # 그룹 조회(COR_GP SELECT)    
 @app.route('/getCorGpList', methods=["POST"])
 def getCorGpList():
-    values = []
-
-    try:
-        results = execute_mysql_query_rest("A8", values)
-
-        datas = []
-        for item in results:
-            data = {
-                'gp_no': item[0],
-                'gp_nm': item[1]
-            }
-            datas.append(data)
-        
-        return jsonify(datas)
-
-    except Exception as e:
-        print(f"Error: {e}")  # 에러 로그 출력
-        return jsonify({"error": str(e)}), 500  # 500 Internal Server Error 응답
+    token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+    flag = check_session(session,token)
+    if not flag:
+        try:
+            results = execute_mysql_query_rest("A8", [])
+            datas = [{'gp_no': item[0], 'gp_nm': item[1]} for item in results]
+            return jsonify(datas)
+        except Exception as e:
+            print(f"Error: {e}")  # 에러 로그 출력
+            return jsonify({"error": str(e)}), 500  # 500 Internal Server Error 응답
+    
+    if flag == session_fail:
+        return session_fail
+    
+    else:
+        return [error]
 
 ################## 관리자 END ############################
 @app.route('/getEventMst', methods=["POST"])

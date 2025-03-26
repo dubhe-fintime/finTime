@@ -192,10 +192,13 @@
   function changeYN(yn_data){     
     fetch("/changeYnFinance", {
         method: "POST",
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization":`{{session.get("token")}}`
+        },
         body: JSON.stringify(yn_data)
     })
-    .then(response => console.log(response))
+    .then(response => session_check_page(response))
     .then(data => {
         CloseModal();
         let values = `<p>사용여부 변경이 완료되었습니다.</p>`;
@@ -333,10 +336,13 @@
       }
       fetch("/insertFinance", {
           method: "POST",
-          headers: {'Content-Type': 'application/json'},
+          headers: {
+            'Content-Type': 'application/json',
+            "Authorization":`{{session.get("token")}}` 
+          },
           body: JSON.stringify(target_data)
       })
-      .then(response => console.log(response))
+      .then(response => session_check_page(response))
       .then(data => {
           CloseModal();
           if(flag){
@@ -358,12 +364,16 @@
   // 조회
   function getFinanceList(data={}) {
     $.ajax({
-      url: "{{domain}}/financeManage",
+      url: "{{domain}}:{{port}}/financeManage",
       type: "POST",
       contentType: "application/json",
       dataType: "json",
       data: JSON.stringify(data),
+      headers: {
+        "Authorization":`{{session.get("token")}}`  
+      },
       success: function (response) {
+        session_check_page(response)
         totalData = []
 
         //초기화
@@ -434,7 +444,10 @@
 
       return fetch('/ciUpload', {
           method: "POST",
-          body: formData
+          body: formData,
+          headers: {
+          "Authorization":`{{session.get("token")}}`  
+          },
       })
       .then(response => response.json())
       .then(data => {
@@ -465,9 +478,13 @@
         
     fetch("/getCorGpList", {
               method: "POST",
-              body: formData
+              body: formData,
+              headers: {"Authorization":`{{session.get("token")}}`},
           })
-          .then(response => response.json())
+          .then(response => {
+            session_check_page(response);
+            return response.json()
+          })
           .then(data => {
               data.forEach((v, i) => {
                 if(flag){
@@ -475,7 +492,7 @@
                 }
                 else
                 {
-                 gubun = 'corGrpSel' 
+                gubun = 'corGrpSel' 
                 }
                 let oHtml = `` ;
                 oHtml += ` <li class="option" onclick="ClickSelectOption('${gubun}','${v['gp_nm']}','${v['gp_no']}')">

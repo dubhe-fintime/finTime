@@ -306,6 +306,11 @@ def selectQuery(qType, values):
     elif qType == "Q32": # 제주은행API > FILE_MST 테이블 기존것 삭제
         query = " DELETE FROM FILE_MST WHERE ORG_FILE_NM LIKE 'jeju_thumb%' "
 
+
+    elif qType == "QA1": # 관리자 로그인 조회
+        query = " SELECT USER_ID, USE_YN, NAME FROM ADMIN_USER WHERE USER_ID =%s AND PW =%s  "
+
+
     elif qType == "A1": # 배치 데이터 조회
         query  = "SELECT "
         query += "    a.COR_NO cor_no, "

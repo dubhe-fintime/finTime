@@ -174,14 +174,6 @@
 </body>
 <script>
 
-  // 로그인 실패 모달창
-  // var a_msg = "{{alert_message}}";
-  // if(a_msg){
-  //    $('.login-area').css('z-index',0)
-  //    values = `<p>${a_msg}</p>`
-  //     OpenModal('ID,PW 오류',"",true,"","","확인","","","sm",values)
-  // }
-
   //// SHA-256 해시 생성 함수
   function generateSHA256(input) {
     return CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);
@@ -196,15 +188,16 @@
       "pw": generateSHA256($("#pwd").val())
     }
 
+
     $.ajax({
-      url: "{{domain}}/adminLogin",
+      url: "{{domain}}:{{port}}/adminLogin",
       type: "POST",
       contentType: "application/json",
       dataType: "json",
       data: JSON.stringify(dataObject),
       success: function (response) {
         console.log(response)
-        if (response[0] == "11111") {
+        if (response[0] == "99999") {
           $('.login-area').css('z-index', 0)
           values = `<p>접근 거부: 사용 여부 및 아이디 확인바람</p>`
           OpenModal('ID,PW 오류', "", true, "", "", "확인", "", "", "sm", values)
