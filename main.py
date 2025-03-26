@@ -1293,7 +1293,8 @@ def setLoanFinProd(datas):
         return jsonify({"message": "Bulk Data Inserted", "count": len(bulk_values)})
 
     except Exception as e:
-        logger.error("에러 발생: %s", str(e))
+        logger.error("대출 상품 에러 발생: %s", str(e))
+        logger.error("대출 상품 에러 발생2: %s", datas)
         return jsonify({"error": str(e)}), 500
     
 # LOAN PRODUCT BATCH 데이터 삭제
