@@ -1259,7 +1259,7 @@ def setFinProd(datas):
 
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}, {"message": "Bulk Data Inserted", "bulk_values": bulk_values}), 500
     
 @app.route('/setLoanFinProd', methods=["POST"])
 def setLoanFinProd(datas):
