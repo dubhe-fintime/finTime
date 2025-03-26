@@ -1283,6 +1283,8 @@ def setLoanFinProd(datas):
                 prod_dict["min_interest_rate"],
                 prod_dict["max_interest_rate"],
             )
+
+            print(f"대출 values: {values}")
             bulk_values.append(values)  # Bulk Insert 리스트에 추가
 
         # 🔥 Bulk Insert 실행
