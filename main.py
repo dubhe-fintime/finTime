@@ -45,6 +45,7 @@ from util import getHoliday,indexlist,indexlist_yahoo
 from util import makeJwt
 
 from util.product import deposit, savings, loan
+from util.snsLogin import naverLogin, naverCallback
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
@@ -1451,6 +1452,14 @@ def clientLogin_check():
     target = [username, ""] if not results[0][2] else [username]
     execute_mysql_query_update("C2", target)
     return [success]
+
+@app.route("/naverLogin")
+def naverLoginRoute():
+    return naverLogin()
+
+@app.route("/naverCallback")
+def naverLoginCallbackRoute():
+    return naverCallback()
 
 # 관리자 메인 화면 호출
 @app.route("/adminMain")

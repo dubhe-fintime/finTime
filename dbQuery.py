@@ -563,6 +563,26 @@ def selectQuery(qType, values):
             VALUES
                 (%s, %s, %s, SYSDATE())
         """
+    
+    elif qType == "C6" : #SNS간편가입
+        query = """
+                INSERT INTO CLIENT_USER
+                    ( USER_ID, PASSWORD, NAME, COMPANY, PHONE_NO, ADDRESS1, ADDRESS2, USE_YN, 
+                    C_DATE, FIRST_LOGINT, RECENT_LOGIN, SNS_ID, SNS_TYPE)
+                VALUES
+                (%s,%s,%s,%s,%s,%s,%s,%s,SYSDATE(),SYSDATE(),SYSDATE(),%s,%s)
+                """   
+    elif qType == "C7" : #SNS 가입 확인
+        query = """
+                SELECT * FROM CLIENT_USER WHERE SNS_ID = %s  and SNS_TYPE = %s
+                """
+    elif qType == "C8" : # SNS 로그인 마지막로그인 시간 업데이트
+        query = """
+                UPDATE CLIENT_USER 
+                SET RECENT_LOGIN = SYSDATE()
+                WHERE
+                SNS_ID = %s AND SNS_TYPE = %s
+                """
 
     elif qType == "COMMON_CD":  # 공통 코드 조회
         query = """
