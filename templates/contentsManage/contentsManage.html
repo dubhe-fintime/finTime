@@ -91,17 +91,8 @@
   </div>
 </body>
 <script>
-  //세션
-  let session_check = "{{session}}";
-  if (session_check == 'None') {
-    top.location.href = '/';
-  }
 
-  $(document).ready(function () {
-    // session_ok("{{domain}}", "{{port}}");
-    selectList()
-
-  })
+  $(document).ready(function () {selectList()})
 
   $("#dataContent").on('dblclick', 'tr', function() {
       addModal(this)
@@ -337,10 +328,15 @@ async function updateEventDetail(){
 
     fetch("/updateEventDetail", {
               method: "POST",
+              headers: {"Authorization":`{{session.get("token")}}`},
               body: formData
           })
           .then(response => response.json())
           .then(data => {
+            if(typeof(data) == "number"){
+                  session_Fail_Modal();
+                  return
+            }
             CloseModal();
             alert('이벤트상세 변경이 완료 되었습니다.')
             selectList();  
@@ -381,10 +377,15 @@ function fileUpload() {
 
     return fetch('/multiUpload', {
         method: "POST",
+        headers: {"Authorization":`{{session.get("token")}}`},
         body: formData
     })
     .then(response => response.json())
     .then(data => {
+        if(typeof(data) == "number"){
+          session_Fail_Modal();
+          return
+        }
         console.log("응답:", data);
         data.result = true;
         return data;
@@ -415,10 +416,15 @@ function fileUpload() {
 
     fetch("/evtDataList", {
                 method: "POST",
+                headers: {"Authorization":`{{session.get("token")}}`},
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
+              if(typeof(data) == "number"){
+                  session_Fail_Modal();
+                  return
+                }
                 values = ``
                 data.forEach((v, i) => {
                   var status = v['use_yn'];
@@ -513,28 +519,32 @@ function fileUpload() {
       })
 
       let formData = new FormData();
-   
       formData.append("datas", target_data);
-       
+
       fetch("/updateEventUseYn", {
-                 method: "POST",
-                 body: formData
-             })
-             .then(response => response.json())
-             .then(data => {
-               alert('사용여부 변경이 완료되었습니다.');
-               if(data.use_yn=='Y')
-               {
-                 $(button).text('노출중');
+                method: "POST",
+                headers: {"Authorization":`{{session.get("token")}}`},
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+              if(typeof(data) == "number"){
+                  session_Fail_Modal();
+                  return
                 }
-                else
-                {
-                 $(button).text('비노출');
-                }
-             })
-             .catch(error => {
-               console.error("Error:", error);
-             });
+              alert('사용여부 변경이 완료되었습니다.');
+              if(data.use_yn=='Y')
+              {
+                $(button).text('노출중');
+              }
+              else
+              {
+                $(button).text('비노출');
+              }
+            })
+            .catch(error => {
+              console.error("Error:", error);
+            });
     }
   }
   function delEvt(button){
@@ -550,23 +560,27 @@ function fileUpload() {
       })
 
       let formData = new FormData();
-   
       formData.append("datas", target_data);
-       
+
       fetch("/delEvent", {
-                 method: "POST",
-                 body: formData
-             })
-             .then(response => response.json())
-             .then(data => {
-              if(data.message='Data delete'){
-                alert('삭제되었습니다.')
-                selectList()
+                method: "POST",
+                headers: {"Authorization":`{{session.get("token")}}`},
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+            if(typeof(data) == "number"){
+                  session_Fail_Modal();
+                  return
               }
-             })
-             .catch(error => {
-               console.error("Error:", error);
-             });
+            if(data.message='Data delete'){
+              alert('삭제되었습니다.')
+              selectList()
+            }
+            })
+            .catch(error => {
+              console.error("Error:", error);
+            });
     }
   }
   function openImgModal(button,gubun,type) {

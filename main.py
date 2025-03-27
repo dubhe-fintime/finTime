@@ -1940,6 +1940,8 @@ def batchDataList():
 # 이벤트데이터 조회(컨텐츠관리 페이지 - EVT_MST SELECT)    
 @app.route('/evtDataList', methods=["POST"])
 def evtDataList():
+    token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+    flag = check_session(session,token)
 
     corNm = request.form.get('corNm', default='', type=str)
     corSub = request.form.get('corSub', default='', type=str)
@@ -1948,41 +1950,23 @@ def evtDataList():
 
     values = [corNm, corSub, useYn, chkYn]
 
-    try:
-        results = execute_mysql_query_rest("A5", values)
+    if not flag:
+        try:
+            results = execute_mysql_query_rest("A5", values)
+            return_col_name = [
+                "cor_no","cor_nm","evt_title","evt_id","evt_st_date"
+                ,"evt_ed_date","evt_thumbnail","evt_img","evt_noti","evt_list_link","evt_dt_link","use_yn","c_date","e_date","chk_yn"
+                ]
+            return_result = [dict(zip(return_col_name, data)) for data in results]   
+            return jsonify(return_result)
 
-        # if not results:
-        #     return jsonify({"message": "No data found"}), 404  # 데이터가 없을 경우 404 응답
-
-        # print("DB Query Result:", results)  # 서버 로그 출력
-        # return jsonify(results)  # JSON 형식으로 응답
-    
-        datas = []
-        for item in results:
-            data = {
-                'cor_no': item[0],
-                'cor_nm': item[1],
-                'evt_title': item[2],
-                'evt_id': item[3],
-                'evt_st_date': item[4],
-                'evt_ed_date': item[5],
-                'evt_thumbnail': item[6],
-                'evt_img': item[7],
-                'evt_noti': item[8],
-                'evt_list_link': item[9],
-                'evt_dt_link': item[10],
-                'use_yn': item[11],
-                'c_date': item[12],
-                'e_date': item[13],
-                'chk_yn': item[14]
-            }
-            datas.append(data)
-        
-        return jsonify(datas)
-
-    except Exception as e:
-        print(f"Error: {e}")  # 에러 로그 출력
-        return jsonify({"error": str(e)}), 500  # 500 Internal Server Error 응답
+        except Exception as e:
+            print(f"Error: {e}")  # 에러 로그 출력
+            return jsonify({"error": str(e)}), 500  # 500 Internal Server Error 응답
+    elif (flag == session_fail):
+        return session_fail
+    else:
+        return [error]
 
 # 이벤트 등록(EVT_MST INSERT)
 @app.route('/insertEvent', methods=["POST"])
@@ -2065,18 +2049,23 @@ def updateEventDetail():
     try:
         # FormData에서 "datas" 키 가져오기
         event_data = request.form.get("datas")
-
         if not event_data:
             return jsonify({"error": "No data received"}), 400
+        
+        token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+        flag = check_session(session,token)        
+        if not flag:
+            # JSON 문자열을 파이썬 딕셔너리로 변환
+            event_dict = json.loads(event_data)
+            values = [event_dict["startDt"],event_dict["endDt"],event_dict["thumbUrl"],event_dict["imgUrl"],event_dict["evtNoti"],event_dict["evtListLink"],event_dict["evtDtLink"],event_dict["evtId"]]
+            execute_mysql_query_update("A6",values) # 이벤트 노출여부 업데이트(EVT_MST)
 
-        # JSON 문자열을 파이썬 딕셔너리로 변환
-        event_dict = json.loads(event_data)
-
-        values = [event_dict["startDt"],event_dict["endDt"],event_dict["thumbUrl"],event_dict["imgUrl"],event_dict["evtNoti"],event_dict["evtListLink"],event_dict["evtDtLink"],event_dict["evtId"]]
-
-        execute_mysql_query_update("A6",values) # 이벤트 노출여부 업데이트(EVT_MST)
-
-        return jsonify({"message": "Data UPDATE", "data": event_dict})
+            return jsonify({"message": "Data UPDATE", "data": event_dict})
+        
+        elif (flag == session_fail):
+            return session_fail
+        else:
+            return [error]
 
     except Exception as e:
         logger.error("에러 발생: %s", str(e))
