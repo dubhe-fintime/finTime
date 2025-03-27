@@ -1812,25 +1812,46 @@ def batchControl():
 @app.route('/batchStart', methods=["POST"])
 def batchStart():
     datas = request.get_json()
-    result = start_batch(datas['type'])
-    logger.info(str(result))
-    return result
+    token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+    flag = check_session(session,token)
+    if not flag:
+        result = start_batch(datas['type'])
+        logger.info(str(result))
+        return result
+    elif (flag == session_fail):
+        return session_fail
+    else:
+        return [error]
 
 # 배치 종료
 @app.route('/batchStop', methods=["POST"])
 def batchStop():
     datas = request.get_json()
-    result = stop_batch(datas['type'])
-    logger.info(str(result))
-    return result
+    token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+    flag = check_session(session,token)
+    if not flag:
+        result = stop_batch(datas['type'])
+        logger.info(str(result))
+        return result
+    elif (flag == session_fail):
+        return session_fail
+    else:
+        return [error]
 
 # 배치 상태 조회
 @app.route('/batchStatus', methods=["POST"])
 def batchStatus():
     datas = request.get_json()
-    result = check_batch_status(datas['type'])
-    logger.info(str(result))
-    return result
+    token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+    flag = check_session(session,token)
+    if not flag:
+        result = check_batch_status(datas['type'])
+        logger.info(str(result))
+        return result
+    elif (flag == session_fail):
+        return session_fail
+    else:
+        return [error]
 
 # 배치 결과 통계 조회    
 @app.route('/batchResultSearch', methods=["POST"])

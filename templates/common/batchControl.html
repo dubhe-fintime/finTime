@@ -136,12 +136,17 @@
             fetch("/batchStart", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"  // 요청 헤더에서 JSON 형식 지정
+                        "Content-Type": "application/json",
+                        "Authorization":`{{session.get("token")}}` 
                     },
                     body: JSON.stringify(requestData)  // JSON 형식으로 변환하여 body에 담아 전송
                 })
                 .then(response => response.json())
                 .then(data => {
+                    if(typeof(data) == "number"){
+                        session_Fail_Modal();
+                        return
+                    }
                     statusText = data.status === "started"
                     ? `🟢 실행 중 (PID: ${data.pid})`
                     : data.status === "already_running"
@@ -161,12 +166,17 @@
                 fetch("/batchStop", { 
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"  // 요청 헤더에서 JSON 형식 지정
+                        "Content-Type": "application/json",
+                        "Authorization":`{{session.get("token")}}`
                     },
                     body: JSON.stringify(requestData)  // JSON 형식으로 변환하여 body에 담아 전송
                 })
                 .then(response => response.json())
                 .then(data => {
+                    if(typeof(data) == "number"){
+                        session_Fail_Modal();
+                        return
+                    }
                     statusText = data.status === "stopped"
                     ? '🔴 중지됨'
                     : data.status === "already_stopped"
@@ -186,13 +196,17 @@
             fetch("/batchStatus", { 
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"  // 요청 헤더에서 JSON 형식 지정
+                        "Content-Type": "application/json",
+                        "Authorization":`{{session.get("token")}}` 
                     },
                     body: JSON.stringify(requestData)  // JSON 형식으로 변환하여 body에 담아 전송
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(typeof(data))
+                    if(typeof(data) == "number"){
+                        session_Fail_Modal();
+                        return
+                    }
                     let statusText = data.status === "running" 
                         ? `🟢 실행 중 (PID: ${data.pid})` 
                         : "🔴 중지됨";
