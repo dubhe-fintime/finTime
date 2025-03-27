@@ -583,6 +583,14 @@ def selectQuery(qType, values):
                 WHERE
                 SNS_ID = %s AND SNS_TYPE = %s
                 """
+        
+    elif qType == "C9" : # SNS 로그인 연동해제
+        query = """
+                UPDATE CLIENT_USER 
+                SET USE_YN = 'N'
+                WHERE
+                SNS_ID = %s AND SNS_TYPE = %s
+                """
 
     elif qType == "COMMON_CD":  # 공통 코드 조회
         query = """
