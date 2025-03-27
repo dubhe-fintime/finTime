@@ -187,7 +187,7 @@ def selectQuery(qType, values):
                     FROM (
                         SELECT BATCH_ID, SEQ, ROW_NUMBER() OVER (PARTITION BY BATCH_ID ORDER BY ST_DATE DESC) AS RN
                         FROM BATCH_LOG 
-                        WHERE BATCH_ID IN ('B000000002', 'B000000003', 'B000000004', 'B000000005')
+                        WHERE BATCH_ID IN ('B000000002', 'B000000003', 'B000000004', 'B000000005', 'B000000006')
                     ) AS t
                     WHERE RN = 1
 
