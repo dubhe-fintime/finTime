@@ -192,6 +192,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log(typeof(data))
                     let statusText = data.status === "running" 
                         ? `🟢 실행 중 (PID: ${data.pid})` 
                         : "🔴 중지됨";
