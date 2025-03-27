@@ -556,14 +556,12 @@ function moving(address) {
 }
 
 
-// 세션 체크시
-function session_check_page(response) {
-  if(typeof(response) == "number"){
+// 세션 만료 모달
+function session_Fail_Modal() {
     values = `<p>세션 기간 만료로 로그인페이지로 이동합니다.</p>`
     OpenModal("완료", "", true, "", `top.location.href="/"`, "확인", "", "", "sm", values)
-    return;
   } 
-}
+
 
 
 //테스트용

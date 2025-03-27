@@ -1426,7 +1426,7 @@ def adminLogin_check():
     data = request.get_json()
     username, password = data['id'], data['pw']
     results = execute_mysql_query_select("QA1", [username, password])
-    print(results)
+
     # 관리자 아이디로 등록이 되지 않았을 경우
     if len(results) < 1 or results[0][1] == 'N':  
         logger.error(f'Connect || ID -- {username}  || 접근 거부: 사용 여부 및 아이디 확인바람')
@@ -2239,7 +2239,7 @@ def set_batch_youtube(corNo, contentTitle, contentUrl, thumbnailUrl, priority):
     values = (corNo, contentTitle, contentUrl, thumbnailUrl, priority)
     execute_mysql_query_insert("Q24",values) # YOUTUBE BATCH 결과 등록
 
- # YOUTUBE BATCH 데이터 전체 삭제
+# YOUTUBE BATCH 데이터 전체 삭제
 def del_batch_youtube(cnt):
     if cnt == 0:
         execute_mysql_query_delete('Q25', []) # YOUTUBE BATCH 데이터 전체 삭제

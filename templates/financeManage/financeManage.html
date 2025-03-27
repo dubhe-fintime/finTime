@@ -198,8 +198,12 @@
         },
         body: JSON.stringify(yn_data)
     })
-    .then(response => session_check_page(response))
+    .then(response => response.json())
     .then(data => {
+        if(typeof(data) == "number"){
+          session_Fail_Modal();
+          return
+        }
         CloseModal();
         let values = `<p>사용여부 변경이 완료되었습니다.</p>`;
         values += `<br>`;
@@ -342,8 +346,13 @@
           },
           body: JSON.stringify(target_data)
       })
-      .then(response => session_check_page(response))
+      .then(response => response.json())
       .then(data => {
+        if(typeof(data) == "number"){
+          session_Fail_Modal();
+          return
+        }
+
           CloseModal();
           if(flag){
           let values = `<p>금융사 정보 수정이 완료되었습니다.</p>`;
@@ -373,7 +382,12 @@
         "Authorization":`{{session.get("token")}}`  
       },
       success: function (response) {
-        session_check_page(response)
+
+        if(typeof(response) == "number"){
+          session_Fail_Modal();
+          return
+        }
+
         totalData = []
 
         //초기화
@@ -451,7 +465,11 @@
       })
       .then(response => response.json())
       .then(data => {
-          console.log("응답:", data);
+        console.log("응답:", data);
+        if(typeof(data) == "number"){
+          session_Fail_Modal();
+          return
+        }
           data.result = true;
           return data;
       })
@@ -481,11 +499,12 @@
               body: formData,
               headers: {"Authorization":`{{session.get("token")}}`},
           })
-          .then(response => {
-            session_check_page(response);
-            return response.json()
-          })
+          .then(response => response.json())
           .then(data => {
+            if(typeof(data) == "number"){
+              session_Fail_Modal();
+              return
+            }
               data.forEach((v, i) => {
                 if(flag){
                   gubun = 'corGp'
