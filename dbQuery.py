@@ -306,6 +306,63 @@ def selectQuery(qType, values):
     elif qType == "Q32": # 제주은행API > FILE_MST 테이블 기존것 삭제
         query = " DELETE FROM FILE_MST WHERE ORG_FILE_NM LIKE 'jeju_thumb%' "
 
+    elif qType == "Q33": # 예적금 상품 조회
+        query = """
+            SELECT 
+                FP.COR_NO
+                , COALESCE(CM.COR_NM, '미등록기관') AS COR_NM
+                , FP.PROD_NM
+                , FP.PROD_TYPE
+                , FP.SAVING_METHOD
+                , FP.INTR_CALC
+                , FP.PROD_DETAIL_LINK
+                , FP.BASE_INTR
+                , FP.MAX_INTR
+                , FP.LAST_AVG_INTR
+                , FP.C_DATE
+                , FP.E_DATE
+            FROM FINANCIAL_PRODUCTS FP
+            LEFT JOIN COR_MST CM 
+                 ON FP.COR_NO = CM.COR_NO
+            """
+
+    elif qType == "Q34": # 예적금 상품 조회
+        query = """
+            SELECT 
+                FLP.COR_NO
+                , COALESCE(CM.COR_NM, '미등록기관') AS COR_NM
+                , FLP.PROD_NM
+                , FLP.RESIDENCE_TYPE
+                , FLP.INTR_METHOD
+                , FLP.REPAY_METHOD
+                , FLP.MIN_INTR
+                , FLP.MAX_INTR
+                , FLP.C_DATE
+                , FLP.E_DATE
+            FROM FINANCIAL_LOAN_PRODUCTS FLP
+            LEFT JOIN COR_MST CM 
+                 ON FLP.COR_NO = CM.COR_NO
+            """
+        
+    elif qType == "Q35": # 예적금 상품 평균 이율 조회
+        query = """
+            SELECT 
+                PROD_TYPE, 
+                AVG(BASE_INTR) AS AVG_BASE_INTR, 
+                AVG(MAX_INTR) AS AVG_MAX_INTR
+            FROM finTime.FINANCIAL_PRODUCTS
+            GROUP BY PROD_TYPE;
+            """
+        
+    elif qType == "Q36": # 대출 상품 평균 이율 조회
+        query = """
+            SELECT 
+                INTR_METHOD, 
+                AVG(MIN_INTR) AS AVG_MIN_INTR, 
+                AVG(MAX_INTR) AS AVG_MAX_INTR
+            FROM FINANCIAL_LOAN_PRODUCTS
+            GROUP BY INTR_METHOD;
+            """
 
     elif qType == "QA1": # 관리자 로그인 조회
         query = " SELECT USER_ID, USE_YN, NAME FROM ADMIN_USER WHERE USER_ID =%s AND PW =%s  "

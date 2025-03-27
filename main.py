@@ -2248,6 +2248,38 @@ def getYoutubeClient():
 
     return return_result
 
+# 예적금 상품 조회
+@app.route('/getFinancialProduct', methods=["POST"])
+def getFinancialProduct():
+    results = execute_mysql_query_select("Q33", [])
+    return_col_name = ["cor_no", "cor_nm", "prod_nm","prod_type","saving_method", "intr_calc", "prod_detail_link", "base_intr", "max_intr", "last_avg,intr", "c_date", "e_date"]
+    return_result = [dict(zip(return_col_name, data)) for data in results]
+    return return_result
+
+# 대출 상품 조회
+@app.route('/getFinancialLoanProduct', methods=["POST"])
+def getFinancialLoanProduct():    
+    results = execute_mysql_query_select("Q34", [])
+    return_col_name = ["cor_no", "cor_nm", "prod_nm","residence_type","intr_method", "repay_method", "min_intr", "max_intr", "c_date", "e_date"]
+    return_result = [dict(zip(return_col_name, data)) for data in results]
+    return return_result
+
+# 예적금 상품 평균 이율 조회
+@app.route('/getFinancialProductAvgIntr', methods=["POST"])
+def getFinancialProductAvgIntr():
+    results = execute_mysql_query_select("Q35", [])
+    return_col_name = ["prod_type", "avg_base_intr", "avg_max_intr"]
+    return_result = [dict(zip(return_col_name, data)) for data in results]
+    return return_result
+
+# 대출 상품 고정금리/변동금리 평균 조회
+@app.route('/getFinancialLoanProductAvgIntr', methods=["POST"])
+def getFinancialLoanProductAvgIntr():    
+    results = execute_mysql_query_select("Q36", [])
+    return_col_name = ["intr_method", "avg_min_intr", "avg_max_intr"]
+    return_result = [dict(zip(return_col_name, data)) for data in results]
+    return return_result
+
 ################## YOUTUBE START #############################
 # 금융사 유튜브 정보 가져오기
 @app.route('/getYouTube', methods=["POST"])
