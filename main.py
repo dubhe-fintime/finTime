@@ -1835,24 +1835,31 @@ def batchStatus():
 # 배치 결과 통계 조회    
 @app.route('/batchResultSearch', methods=["POST"])
 def batchResultSearch():
-    results = execute_mysql_query_select("Q19", [])
-    datas = []
-    for item in results:
-        data = {
-            'batch_id': item[0],
-            'batch_nm': item[1],
-            'task_nm': item[2],
-            'st_date': item[3],
-            'ed_date': item[4],
-            'status': item[5],
-            'tot_cnt': item[6],
-            'success_cnt': item[7],
-            'fail_cnt': item[8],
-            'result_data': item[9],
-            'row_num': item[10]
-        }
-        datas.append(data)
-    return jsonify(datas)
+    token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+    flag = check_session(session,token)
+    if not flag:
+        results = execute_mysql_query_select("Q19", [])
+        datas = []
+        for item in results:
+            data = {
+                'batch_id': item[0],
+                'batch_nm': item[1],
+                'task_nm': item[2],
+                'st_date': item[3],
+                'ed_date': item[4],
+                'status': item[5],
+                'tot_cnt': item[6],
+                'success_cnt': item[7],
+                'fail_cnt': item[8],
+                'result_data': item[9],
+                'row_num': item[10]
+            }
+            datas.append(data)
+        return jsonify(datas)
+    elif (flag == session_fail):
+        return session_fail
+    else:
+        return [error]
 
 
 ################## 배치 관리 END ###############################
