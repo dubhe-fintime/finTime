@@ -203,6 +203,8 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data)
+                    console.log(typeof(data))
                     if(typeof(data) == "number"){
                         session_Fail_Modal();
                         return
