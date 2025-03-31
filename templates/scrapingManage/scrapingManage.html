@@ -131,10 +131,15 @@
 
     fetch("/batchDataList", {
                 method: "POST",
+                headers: {"Authorization":`{{session.get("token")}}`},
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
+              if(typeof(data) == "number"){
+                session_Fail_Modal();
+                return
+              }
                 values = ``
                 data.forEach((v, i) => {
                   var status = v['evt_status'];
@@ -239,10 +244,16 @@
     try {
         let response = await fetch("/insertEvent", {
             method: "POST",
+            headers: {"Authorization":`{{session.get("token")}}`},
             body: formData
         });
 
         let data = await response.json();
+
+        if(typeof(data) == "number"){
+          session_Fail_Modal();
+          return
+        }
 
         if (multiFlag) {
             $("label.checked").each(function () {

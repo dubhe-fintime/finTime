@@ -1432,12 +1432,13 @@ def adminLogin_check():
     if len(results) < 1 or results[0][1] == 'N':  
         logger.error(f'Connect || ID -- {username}  || 접근 거부: 사용 여부 및 아이디 확인바람')
         return [error]
-    else:
+    else:   
         # 로그인시 세션 생성
         session.permanent = True
         session['username'] = username
         session['token'] = makeJwt.create_jwt_token(username)
         session['start_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        session['end_time'] = (datetime.strptime(session['start_time'], "%Y-%m-%d %H:%M:%S") + timedelta(minutes=60)).strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f'Connect || ID -- {username} || ENTER_DATE -- {session.get("start_time")} || TOKEN -- {session.get("token")}')
         return [success]
 
@@ -1898,44 +1899,51 @@ def batchResultSearch():
 @app.route('/batchDataList', methods=["POST"])
 def batchDataList():
 
+    token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+    flag = check_session(session,token)
+
     corNm = request.form.get('corNm', default='', type=str)
     corSub = request.form.get('corSub', default='', type=str)
     useYn = request.form.get('useYn', default='', type=str)
 
     values = [corNm, corSub, useYn]
+    if not flag:
+        try:
+            results = execute_mysql_query_rest("A1", values)
 
-    try:
-        results = execute_mysql_query_rest("A1", values)
+            # if not results:
+            #     return jsonify({"message": "No data found"}), 404  # 데이터가 없을 경우 404 응답
 
-        # if not results:
-        #     return jsonify({"message": "No data found"}), 404  # 데이터가 없을 경우 404 응답
-
-        # print("DB Query Result:", results)  # 서버 로그 출력
-        # return jsonify(results)  # JSON 형식으로 응답
-    
-        datas = []
-        for item in results:
-            data = {
-                'cor_no': item[0],
-                'cor_nm': item[1],
-                'evt_title': item[2],
-                'evt_id': item[3],
-                'evt_status': item[4],
-                'evt_st_date': item[5],
-                'evt_ed_date': item[6],
-                'evt_thumbnail': item[7],
-                'evt_img': item[8],
-                'evt_noti': item[9],
-                'evt_list_link': item[10],
-                'evt_dt_link': item[11],
-            }
-            datas.append(data)
+            # print("DB Query Result:", results)  # 서버 로그 출력
+            # return jsonify(results)  # JSON 형식으로 응답
         
-        return jsonify(datas)
+            datas = []
+            for item in results:
+                data = {
+                    'cor_no': item[0],
+                    'cor_nm': item[1],
+                    'evt_title': item[2],
+                    'evt_id': item[3],
+                    'evt_status': item[4],
+                    'evt_st_date': item[5],
+                    'evt_ed_date': item[6],
+                    'evt_thumbnail': item[7],
+                    'evt_img': item[8],
+                    'evt_noti': item[9],
+                    'evt_list_link': item[10],
+                    'evt_dt_link': item[11],
+                }
+                datas.append(data)
+            
+            return jsonify(datas)
 
-    except Exception as e:
-        print(f"Error: {e}")  # 에러 로그 출력
-        return jsonify({"error": str(e)}), 500  # 500 Internal Server Error 응답
+        except Exception as e:
+            print(f"Error: {e}")  # 에러 로그 출력
+            return jsonify({"error": str(e)}), 500  # 500 Internal Server Error 응답
+    elif (flag == session_fail):
+        return session_fail
+    else:
+        return [error]
 
 # 이벤트데이터 조회(컨텐츠관리 페이지 - EVT_MST SELECT)    
 @app.route('/evtDataList', methods=["POST"])
@@ -1971,55 +1979,61 @@ def evtDataList():
 # 이벤트 등록(EVT_MST INSERT)
 @app.route('/insertEvent', methods=["POST"])
 def insertEvent():
-    try:
-        # FormData에서 "datas" 키 가져오기
-        event_data_str = request.form.get("datas")  # str 타입 반환
-        event_data = json.loads(event_data_str)  # 문자열을 리스트로 변환
+    token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+    flag = check_session(session,token)
+    if not flag:
+        try:
+            # FormData에서 "datas" 키 가져오기
+            event_data_str = request.form.get("datas")  # str 타입 반환
+            event_data = json.loads(event_data_str)  # 문자열을 리스트로 변환
 
-        # Bulk Insert와 Bulk Update용 데이터 리스트
-        bulk_values = []  # Bulk Insert용 데이터 리스트
-        bulk_update_values = []  # Bulk Update용 데이터 리스트
+            # Bulk Insert와 Bulk Update용 데이터 리스트
+            bulk_values = []  # Bulk Insert용 데이터 리스트
+            bulk_update_values = []  # Bulk Update용 데이터 리스트
 
-        # evtId 목록 생성 (이 부분 수정)
-        evtIds = get_next_ids('E', len(event_data))  # 여러 개의 evtId를 생성
-        
-        if len(evtIds) != len(event_data):
-            return jsonify({"error": "evtId 생성 실패, 데이터 수와 일치하지 않음"}), 400
+            # evtId 목록 생성 (이 부분 수정)
+            evtIds = get_next_ids('E', len(event_data))  # 여러 개의 evtId를 생성
+            
+            if len(evtIds) != len(event_data):
+                return jsonify({"error": "evtId 생성 실패, 데이터 수와 일치하지 않음"}), 400
 
-        # 각 이벤트 데이터 처리
-        for idx, v in enumerate(event_data):
-            if v == "":
-                continue  # 빈 데이터는 건너뜀
+            # 각 이벤트 데이터 처리
+            for idx, v in enumerate(event_data):
+                if v == "":
+                    continue  # 빈 데이터는 건너뜀
 
-            event_dict = v
-            evtId = evtIds[idx]  # 생성된 evtId를 리스트에서 가져옴
-            # 각 이벤트 데이터에 대한 값 구성
-            values = (
-                event_dict["cor_no"],
-                event_dict["evt_title"],
-                evtId,
-                None if event_dict["evt_st_date"] == "" else event_dict["evt_st_date"],
-                None if event_dict["evt_ed_date"] == "" else event_dict["evt_ed_date"],
-                event_dict["evt_thumbnail"],
-                event_dict["evt_img"],
-                event_dict["evt_noti"],
-                event_dict["evt_list_link"],
-                event_dict["evt_dt_link"]
-            )
+                event_dict = v
+                evtId = evtIds[idx]  # 생성된 evtId를 리스트에서 가져옴
+                # 각 이벤트 데이터에 대한 값 구성
+                values = (
+                    event_dict["cor_no"],
+                    event_dict["evt_title"],
+                    evtId,
+                    None if event_dict["evt_st_date"] == "" else event_dict["evt_st_date"],
+                    None if event_dict["evt_ed_date"] == "" else event_dict["evt_ed_date"],
+                    event_dict["evt_thumbnail"],
+                    event_dict["evt_img"],
+                    event_dict["evt_noti"],
+                    event_dict["evt_list_link"],
+                    event_dict["evt_dt_link"]
+                )
 
-            bulk_values.append(values)  # Bulk Insert 리스트에 추가
-            bulk_update_values.append((evtId, event_dict["cor_no"], event_dict["evt_title"]))  # Bulk Update용 리스트 추가
+                bulk_values.append(values)  # Bulk Insert 리스트에 추가
+                bulk_update_values.append((evtId, event_dict["cor_no"], event_dict["evt_title"]))  # Bulk Update용 리스트 추가
 
-        # 🔥 Bulk Insert 실행
-        if bulk_values:
-            execute_mysql_query_insert_update_bulk("A2", bulk_values, "A3", bulk_update_values)
-        
-        return jsonify({"message": "Bulk Data Inserted", "count": len(bulk_values)})
+            # 🔥 Bulk Insert 실행
+            if bulk_values:
+                execute_mysql_query_insert_update_bulk("A2", bulk_values, "A3", bulk_update_values)
+            
+            return jsonify({"message": "Bulk Data Inserted", "count": len(bulk_values)})
 
-    except Exception as e:
-        logger.error("에러 발생: %s", str(e))
-        return jsonify({"error": str(e)}), 500
-
+        except Exception as e:
+            logger.error("에러 발생: %s", str(e))
+            return jsonify({"error": str(e)}), 500
+    elif (flag == session_fail):
+        return session_fail
+    else:
+        return [error]
 # 이벤트 노출여부 수정 (컨텐츠관리 EVT_MST )
 @app.route('/updateEventUseYn', methods=["POST"])
 def updateEventUseYn():
