@@ -1465,6 +1465,7 @@ def naverLoginCallbackRoute():
 # 관리자 메인 화면 호출
 @app.route("/adminMain")
 def adminMain():
+    print(session)
     if(session):
         return render_template("common/LNB.html", domain=domain, port=port)
     else:
