@@ -123,7 +123,7 @@ CORS(app)
 app.secret_key = config['SERVER']['secret_key']  # 필수 값 (지정 필요)
 
 # 세션 관리를 위한 시간 설정(5분)
-app.permanent_session_lifetime = timedelta(minutes=30)
+app.permanent_session_lifetime = timedelta(minutes=60)
 
 
 #CORS(app, resources={r"/*": {"origins": "http://allowed-origin.com"}})  # 모든 엔드포인트에 대해 CORS를 활성화

@@ -15,7 +15,7 @@ key = config['SERVER']['secret_key']
 
 
 def create_jwt_token(user_id):
-    expiration_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)  
+    expiration_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=60)  
     payload = {
         'user_id': user_id,
         'exp': expiration_time
