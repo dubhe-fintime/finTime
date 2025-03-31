@@ -509,14 +509,14 @@ def selectQuery(qType, values):
         query = """
                 SELECT  USER_ID,
                     NAME,
-                    COALESCE(FIRST_LOGINT,"") 
+                    COALESCE(FIRST_LOGIN,"") 
                     FROM CLIENT_USER WHERE USER_ID = %s AND PASSWORD = %s
                 """
     elif qType == "C2":  # 로그인 이력 업데이트
         query = "UPDATE CLIENT_USER SET RECENT_LOGIN = SYSDATE() "
         if len(values) == 2: 
             values.pop()
-            query += ", FIRST_LOGINT = SYSDATE() "
+            query += ", FIRST_LOGIN = SYSDATE() "
         query += " WHERE USER_ID =  %s "
 
     elif qType == "C3":  # 설정 > 캘린더 설정
@@ -568,7 +568,7 @@ def selectQuery(qType, values):
         query = """
                 INSERT INTO CLIENT_USER
                     ( USER_ID, PASSWORD, NAME, COMPANY, PHONE_NO, ADDRESS1, ADDRESS2, USE_YN, 
-                    C_DATE, FIRST_LOGINT, RECENT_LOGIN, SNS_ID, SNS_TYPE)
+                    C_DATE, FIRST_LOGIN, RECENT_LOGIN, SNS_ID, SNS_TYPE)
                 VALUES
                 (%s,%s,%s,%s,%s,%s,%s,%s,SYSDATE(),SYSDATE(),SYSDATE(),%s,%s)
                 """   
