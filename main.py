@@ -1465,7 +1465,10 @@ def naverLoginCallbackRoute():
 # 관리자 메인 화면 호출
 @app.route("/adminMain")
 def adminMain():
-    return render_template("common/LNB.html", domain=domain, port=port)
+    if(session):
+        return render_template("common/LNB.html", domain=domain, port=port)
+    else:
+        return render_template("common/login.html", domain=domain, port=port)
     # 로그인 기능 없으므로 주석 시작 kcr 250211
     # result = check_session(session)
     # if result == config['CODE']['session_fail']:
