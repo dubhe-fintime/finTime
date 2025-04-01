@@ -356,21 +356,25 @@ def selectQuery(qType, values):
         
     elif qType == "Q35": # 예적금 상품 평균 이율 조회
         query = """
-            SELECT 
-                PROD_TYPE, 
-                AVG(BASE_INTR) AS AVG_BASE_INTR, 
-                AVG(MAX_INTR) AS AVG_MAX_INTR
-            FROM finTime.FINANCIAL_PRODUCTS
+            SELECT
+                PT_CD.CD_NM AS PROD_TYPE, 
+                AVG(FP.BASE_INTR) AS AVG_BASE_INTR, 
+                AVG(FP.MAX_INTR) AS AVG_MAX_INTR
+            FROM finTime.FINANCIAL_PRODUCTS FP
+            LEFT JOIN COMMON_CD PT_CD 
+                ON FP.PROD_TYPE = PT_CD.CD_ID
             GROUP BY PROD_TYPE;
             """
         
     elif qType == "Q36": # 대출 상품 평균 이율 조회
         query = """
             SELECT 
-                INTR_METHOD, 
-                AVG(MIN_INTR) AS AVG_MIN_INTR, 
-                AVG(MAX_INTR) AS AVG_MAX_INTR
-            FROM FINANCIAL_LOAN_PRODUCTS
+                IM_CD.CD_NM AS INTR_METHOD,
+                AVG(FLP.MIN_INTR) AS AVG_MIN_INTR, 
+                AVG(FLP.MAX_INTR) AS AVG_MAX_INTR
+            FROM FINANCIAL_LOAN_PRODUCTS FLP
+            LEFT JOIN COMMON_CD IM_CD 
+                ON FLP.INTR_METHOD = IM_CD.CD_ID
             GROUP BY INTR_METHOD;
             """
 
