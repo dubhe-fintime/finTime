@@ -320,7 +320,6 @@ def selectQuery(qType, values):
                 , FP.MAX_INTR
                 , FP.LAST_AVG_INTR
                 , FP.C_DATE
-                , FP.E_DATE
             FROM FINANCIAL_PRODUCTS FP
             LEFT JOIN COR_MST CM 
                  ON FP.COR_NO = CM.COR_NO
@@ -338,7 +337,6 @@ def selectQuery(qType, values):
                 , FLP.MIN_INTR
                 , FLP.MAX_INTR
                 , FLP.C_DATE
-                , FLP.E_DATE
             FROM FINANCIAL_LOAN_PRODUCTS FLP
             LEFT JOIN COR_MST CM 
                  ON FLP.COR_NO = CM.COR_NO
