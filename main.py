@@ -2268,7 +2268,7 @@ def getYoutubeClient():
 @app.route('/getFinancialProduct', methods=["POST"])
 def getFinancialProduct():
     results = execute_mysql_query_select("Q33", [])
-    return_col_name = ["cor_no", "cor_nm", "prod_nm","prod_type","saving_method", "intr_calc", "prod_detail_link", "base_intr", "max_intr", "last_avg,intr", "c_date"]
+    return_col_name = ["cor_no", "cor_nm", "prod_nm","prod_type","saving_method", "intr_calc", "prod_detail_link", "base_intr", "max_intr", "last_avg_intr", "c_date"]
     return_result = [dict(zip(return_col_name, data)) for data in results]
     return return_result
 

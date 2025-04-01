@@ -309,37 +309,49 @@ def selectQuery(qType, values):
     elif qType == "Q33": # 예적금 상품 조회
         query = """
             SELECT 
-                FP.COR_NO
-                , COALESCE(CM.COR_NM, '미등록기관') AS COR_NM
-                , FP.PROD_NM
-                , FP.PROD_TYPE
-                , FP.SAVING_METHOD
-                , FP.INTR_CALC
-                , FP.PROD_DETAIL_LINK
-                , FP.BASE_INTR
-                , FP.MAX_INTR
-                , FP.LAST_AVG_INTR
-                , FP.C_DATE
+                FP.COR_NO,
+                COALESCE(CM.COR_NM, '미등록기관') AS COR_NM,
+                FP.PROD_NM,
+                PT_CD.CD_NM AS PROD_TYPE,
+                SM_CD.CD_NM AS SAVING_METHOD,
+                IC_CD.CD_NM AS INTR_CALC,
+                FP.PROD_DETAIL_LINK,
+                FP.BASE_INTR,
+                FP.MAX_INTR,
+                FP.LAST_AVG_INTR,
+                FP.C_DATE
             FROM FINANCIAL_PRODUCTS FP
             LEFT JOIN COR_MST CM 
-                 ON FP.COR_NO = CM.COR_NO
+                ON FP.COR_NO = CM.COR_NO
+            LEFT JOIN COMMON_CD PT_CD 
+                ON FP.PROD_TYPE = PT_CD.CD_ID
+            LEFT JOIN COMMON_CD SM_CD 
+                ON FP.SAVING_METHOD = SM_CD.CD_ID
+            LEFT JOIN COMMON_CD IC_CD 
+                ON FP.INTR_CALC = IC_CD.CD_ID;
             """
 
     elif qType == "Q34": # 예적금 상품 조회
         query = """
-            SELECT 
-                FLP.COR_NO
-                , COALESCE(CM.COR_NM, '미등록기관') AS COR_NM
-                , FLP.PROD_NM
-                , FLP.RESIDENCE_TYPE
-                , FLP.INTR_METHOD
-                , FLP.REPAY_METHOD
-                , FLP.MIN_INTR
-                , FLP.MAX_INTR
-                , FLP.C_DATE
+           SELECT 
+                FLP.COR_NO,
+                COALESCE(CM.COR_NM, '미등록기관') AS COR_NM,
+                FLP.PROD_NM,
+                RT_CD.CD_NM AS RESIDENCE_TYPE,
+                IM_CD.CD_NM AS INTR_METHOD,
+                RM_CD.CD_NM AS REPAY_METHOD,
+                FLP.MIN_INTR,
+                FLP.MAX_INTR,
+                FLP.C_DATE
             FROM FINANCIAL_LOAN_PRODUCTS FLP
             LEFT JOIN COR_MST CM 
-                 ON FLP.COR_NO = CM.COR_NO
+                ON FLP.COR_NO = CM.COR_NO
+            LEFT JOIN COMMON_CD RT_CD 
+                ON FLP.RESIDENCE_TYPE = RT_CD.CD_ID
+            LEFT JOIN COMMON_CD IM_CD 
+                ON FLP.INTR_METHOD = IM_CD.CD_ID
+            LEFT JOIN COMMON_CD RM_CD 
+                ON FLP.REPAY_METHOD = RM_CD.CD_ID;    
             """
         
     elif qType == "Q35": # 예적금 상품 평균 이율 조회
