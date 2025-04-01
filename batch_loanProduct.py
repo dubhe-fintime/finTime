@@ -98,8 +98,8 @@ def run_loan_product_batch_job():
         print(f"대출 상품정보 배치 작업 실행 중 오류 발생: {e}")
 
 #매일 06:00에 실행
-schedule.every().day.at("06:00").do(run_loan_product_batch_job)
-#schedule.every(1).minutes.do(run_loan_product_batch_job)
+#schedule.every().day.at("06:00").do(run_loan_product_batch_job)
+schedule.every(1).minutes.do(run_loan_product_batch_job)
 
 print(f"대출 상품정보 배치 작업이 스케줄링되었습니다. (매일 06:00 실행)")
 

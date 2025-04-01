@@ -604,9 +604,9 @@ def selectQuery(qType, values):
     elif qType == "F1" : 
         query = """
             INSERT INTO FINANCIAL_PRODUCTS 
-                ( COR_NO, PROD_NM, PROD_TYPE, SAVING_METHOD, INTR_CALC, PROD_DETAIL_LINK, BASE_INTR, MAX_INTR, LAST_AVG_INTR, C_DATE, E_DATE )
+                ( COR_NO, PROD_NM, PROD_TYPE, SAVING_METHOD, INTR_CALC, PROD_DETAIL_LINK, BASE_INTR, MAX_INTR, LAST_AVG_INTR, C_DATE )
                 VALUES 
-                (%s, %s, %s, %s, %s, %s, %s, %s, %s, SYSDATE(), SYSDATE())
+                (%s, %s, %s, %s, %s, %s, %s, %s, %s, SYSDATE())
             """
     
     elif qType == "F2" : 
@@ -617,9 +617,9 @@ def selectQuery(qType, values):
     elif qType == "F3" : 
         query = """
             INSERT INTO FINANCIAL_LOAN_PRODUCTS 
-                ( COR_NO, PROD_NM, RESIDENCE_TYPE, INTR_METHOD, REPAY_METHOD, MIN_INTR, MAX_INTR, C_DATE, E_DATE )
+                ( COR_NO, PROD_NM, RESIDENCE_TYPE, INTR_METHOD, REPAY_METHOD, MIN_INTR, MAX_INTR, C_DATE )
                 VALUES 
-                (%s, %s, %s, %s, %s, %s, %s, SYSDATE(), SYSDATE())
+                (%s, %s, %s, %s, %s, %s, %s, SYSDATE())
             """
         
     elif qType == "F4" : 
