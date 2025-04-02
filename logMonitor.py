@@ -5,6 +5,7 @@ import subprocess
 import os
 import configparser
 from datetime import datetime, timedelta
+from functools import partial
 
 # 설정 파일 읽기
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -28,7 +29,7 @@ log_process = None  # 로그 프로세스를 관리하는 변수
 
 
 # WebSocket에서 보낼 로그 파일
-def tail_log():
+def tail_log(file_path):
     global is_tail_running, log_process
     if is_tail_running:
         return  # 중복 실행 방지
@@ -87,7 +88,7 @@ def handle_disconnect():
 @socketio.on("request_logs")
 def send_logs():
     if not is_tail_running:
-        socketio.start_background_task(target=tail_log)
+        socketio.start_background_task(partial(tail_log, "test"))
 
 
 if __name__ == '__main__':
