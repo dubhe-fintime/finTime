@@ -4,7 +4,6 @@ from flask_cors import CORS
 import subprocess
 import os
 import configparser
-from datetime import datetime, timedelta
 
 # 설정 파일 읽기
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -19,41 +18,19 @@ ssl_key = config['SECURE']['ssl_key']
 
 app = Flask(__name__)
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*")  # 모든 origin 허용
 
-LOG_DIR = "/home/finTime/logs/"  # 로그 파일이 저장된 폴더
-is_tail_running = False  # 🟢 tail_log 실행 상태 변수
-
-def get_latest_log_file():
-    """ 오늘 날짜 로그 파일이 있으면 사용하고, 없으면 어제 로그 파일을 반환 """
-    today = datetime.now().strftime("%Y%m%d")
-    yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
-
-    today_log = os.path.join(LOG_DIR, f"batch_log_{today}.log")
-    yesterday_log = os.path.join(LOG_DIR, f"batch_log_{yesterday}.log")
-    print(today_log)
-    if os.path.exists(today_log):
-        return today_log
-    elif os.path.exists(yesterday_log):
-        return yesterday_log
-    else:
-        return None  # 로그 파일이 없으면 None 반환
+LOG_FILE_PATH = "/home/finTime/logs/batch_log_20250402.log"
+is_tail_running = False  # 🟢 tail_log 실행 상태를 저장하는 변수
 
 # WebSocket에서 보낼 로그 파일
 def tail_log():
     global is_tail_running
     if is_tail_running:
         return  # 🛑 이미 실행 중이면 중복 실행 방지
-
-    log_file = get_latest_log_file()
-    if not log_file:
-        print("❌ 로그 파일을 찾을 수 없습니다.")
-        return
-
     is_tail_running = True
-    print(f"📂 사용 중인 로그 파일: {log_file}")
-
-    with subprocess.Popen(['tail', '-F', log_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
+    
+    with subprocess.Popen(['tail', '-F', LOG_FILE_PATH], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
         for line in process.stdout:
             if line:
                 socketio.emit("log_update", line.strip())  # 실시간 로그 전송
