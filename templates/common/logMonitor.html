@@ -144,8 +144,17 @@
                 alert("파일을 선택해주세요!");
                 return;
             }
-            console.log(`📂 요청한 로그 파일: ${filePath}`);
-            socket.emit("request_logs", { file_path: filePath });  // 서버에 파일 경로 전달
+
+            console.log(`요청한 로그 파일: ${filePath}`);
+
+            // 기존 로그 삭제
+            logContainer.innerHTML = "";
+            logs = [];
+            searchResults = [];
+            currentIndex = -1;
+
+            // 서버에 파일 경로 전달
+            socket.emit("request_logs", { file_path: filePath });
         }
 
         // 🔹 WebSocket 연결 및 로그 수신
