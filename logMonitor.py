@@ -32,7 +32,7 @@ def tail_log():
         return  # 🛑 중복 실행 방지
 
     is_tail_running = True
-    log_process = subprocess.Popen(['tail', '-F', LOG_FILE_PATH], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    log_process = subprocess.Popen(['tail', '-f', LOG_FILE_PATH], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
     try:
         for line in log_process.stdout:
