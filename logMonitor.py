@@ -42,4 +42,4 @@ def send_logs():
         socketio.emit("log_update", line)
 
 if __name__ == '__main__':
-    socketio.run(app, host=server_host, port=port2)
+    socketio.run(app, host=server_host, port=port2, ssl_context=(ssl_cert, ssl_key), allow_unsafe_werkzeug=True)
