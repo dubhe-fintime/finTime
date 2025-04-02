@@ -1926,7 +1926,6 @@ LOG_DIR = "/home/finTime/logs"
 def get_log_files():
     try:
         files = [f for f in os.listdir(LOG_DIR) if f.endswith(".log")]
-        print(files)
         return jsonify(files)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
