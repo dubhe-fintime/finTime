@@ -53,11 +53,11 @@ def tail_log():
     is_tail_running = True
     print(f"📂 사용 중인 로그 파일: {log_file}")
 
-    with subprocess.Popen(['tail', '-f', log_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
+    with subprocess.Popen(['tail', '-F', log_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
         for line in process.stdout:
             if line:
                 socketio.emit("log_update", line.strip())  # 실시간 로그 전송
-            socketio.sleep(0.1)  # 비동기 루프 유지
+            #socketio.sleep(0.1)  # 비동기 루프 유지
 
 # WebSocket 이벤트 핸들러
 @socketio.on("connect")
