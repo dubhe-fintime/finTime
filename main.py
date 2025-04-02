@@ -1901,7 +1901,7 @@ def batchResultSearch():
 ################## 로그 관리 START ###############################
 # 로그관리 화면
 @app.route("/logMonitor")
-def batchControl():
+def logMonitor():
     return render_template("common/logMonitor.html", domain=domain, port=port)    
 ################## 로그 관리 END ###############################
 ############## 관리자 START ############################
