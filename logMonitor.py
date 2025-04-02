@@ -18,34 +18,55 @@ ssl_key = config['SECURE']['ssl_key']
 
 app = Flask(__name__)
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*")  # 모든 origin 허용
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 LOG_FILE_PATH = "/home/finTime/logs/batch_log_20250402.log"
-is_tail_running = False  # 🟢 tail_log 실행 상태를 저장하는 변수
+is_tail_running = False
+log_process = None  # 🟢 로그 프로세스를 관리하는 변수
+
 
 # WebSocket에서 보낼 로그 파일
 def tail_log():
-    global is_tail_running
+    global is_tail_running, log_process
     if is_tail_running:
-        return  # 🛑 이미 실행 중이면 중복 실행 방지
+        return  # 🛑 중복 실행 방지
+
     is_tail_running = True
-    
-    with subprocess.Popen(['tail', '-F', LOG_FILE_PATH], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
-        for line in process.stdout:
+    log_process = subprocess.Popen(['tail', '-F', LOG_FILE_PATH], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+    try:
+        for line in log_process.stdout:
             if line:
-                socketio.emit("log_update", line.strip())  # 실시간 로그 전송
-            socketio.sleep(0.1)  # 비동기 루프 유지
+                socketio.emit("log_update", line.strip())
+            socketio.sleep(0.1)
+    except Exception as e:
+        print(f"🚨 로그 스트리밍 오류 발생: {e}")
+    finally:
+        is_tail_running = False
+        log_process = None
+
 
 # WebSocket 이벤트 핸들러
 @socketio.on("connect")
 def handle_connect():
-    print("클라이언트 WebSocket 연결됨")
+    print("✅ 클라이언트 WebSocket 연결됨")
+
+
+@socketio.on("disconnect")
+def handle_disconnect():
+    global is_tail_running, log_process
+    print("🚪 클라이언트 WebSocket 연결 종료됨")
+    if log_process:
+        log_process.terminate()  # 🛑 tail 프로세스 종료
+        log_process = None
+    is_tail_running = False
+
 
 @socketio.on("request_logs")
 def send_logs():
-    global is_tail_running
-    if not is_tail_running:  # 🔥 실행 중이 아닐 때만 tail_log 실행
+    if not is_tail_running:
         socketio.start_background_task(target=tail_log)
+
 
 if __name__ == '__main__':
     socketio.run(app, host=server_host, port=port2, ssl_context=(ssl_cert, ssl_key), allow_unsafe_werkzeug=True)
