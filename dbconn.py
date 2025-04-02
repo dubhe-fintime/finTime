@@ -20,7 +20,7 @@ def conn_mysql():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     config_path = os.path.join(script_dir, 'config.ini')
     config = configparser.ConfigParser()
-    config.read(config_path)
+    config.read(config_path, encoding='utf-8')
 
     db_host = config['DATABASE']['host']
     db_user = config['DATABASE']['user']
