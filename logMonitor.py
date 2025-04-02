@@ -12,7 +12,7 @@ config = configparser.ConfigParser()
 config.read(config_path)
 
 server_host = config['SERVER']['server_host']
-port4 = int(config['SERVER']['port_4'])
+port2 = int(config['SERVER']['port_2'])
 ssl_cert = config['SECURE']['ssl_cert']
 ssl_key = config['SECURE']['ssl_key']
 
@@ -42,4 +42,4 @@ def send_logs():
         socketio.emit("log_update", line)
 
 if __name__ == '__main__':
-    socketio.run(app, host=server_host, port=port4, ssl_context=(ssl_cert, ssl_key), allow_unsafe_werkzeug=True)
+    socketio.run(app, host=server_host, port=port2, ssl_context=(ssl_cert, ssl_key), allow_unsafe_werkzeug=True)
