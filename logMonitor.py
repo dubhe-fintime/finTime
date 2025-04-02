@@ -30,25 +30,11 @@ log_process = None  # 로그 프로세스를 관리하는 변수
 
 # WebSocket에서 보낼 로그 파일
 def tail_log(file_path):
-    print("###############"+ file_path)
     global is_tail_running, log_process
     if is_tail_running:
         return  # 중복 실행 방지
-
+    LOG_FILE_PATH = file_path
     is_tail_running = True
-    today = datetime.now().strftime("%Y%m%d")
-    yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
-
-    today_log = os.path.join(LOG_DIR, f"batch_log_{today}.log")
-    yesterday_log = os.path.join(LOG_DIR, f"batch_log_{yesterday}.log")
-
-    if os.path.exists(today_log):
-        LOG_FILE_PATH = today_log
-    elif os.path.exists(yesterday_log):
-        LOG_FILE_PATH =  yesterday_log
-    else:
-        return None  # 로그 파일이 없으면 None 반환
-
     log_process = subprocess.Popen(
         ['tail', '-n', '100', '-F', LOG_FILE_PATH],  # 최신 100줄도 포함
         stdout=subprocess.PIPE,
@@ -87,9 +73,24 @@ def handle_disconnect():
 
 
 @socketio.on("request_logs")
-def send_logs():
+def send_logs(data):
+    file_path = data.get("file_path")  # 클라이언트에서 보낸 file_path 받기
+    if not file_path: # 화면에서 데이터가 안들어오면 default batch_log를 읽는다.
+        today = datetime.now().strftime("%Y%m%d")
+        yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
+
+        today_log = os.path.join(LOG_DIR, f"batch_log_{today}.log")
+        yesterday_log = os.path.join(LOG_DIR, f"batch_log_{yesterday}.log")
+
+        if os.path.exists(today_log):
+            file_path = today_log
+        elif os.path.exists(yesterday_log):
+            file_path =  yesterday_log
+        else:
+            return None  # 로그 파일이 없으면 None 반환
+    
     if not is_tail_running:
-        socketio.start_background_task(partial(tail_log, "test"))
+        socketio.start_background_task(partial(tail_log, file_path))
 
 
 if __name__ == '__main__':

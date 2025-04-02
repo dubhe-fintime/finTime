@@ -1,91 +1,14 @@
-<!DOCTYPE html>
-<html lang="ko">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>실시간 로그 모니터링</title>
-    
-    <!-- jQuery 및 Socket.IO -->
-    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
-
-    <!-- 스타일시트 -->
-    <link href="{{ url_for('static', filename='style/common.css') }}" rel="stylesheet" />
-    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
-
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-
-        h2 {
-            color: #333;
-        }
-
-        #search-container {
-            margin-bottom: 10px;
-        }
-
-        #search-input {
-            padding: 8px;
-            width: 200px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            padding: 8px 12px;
-            margin-left: 5px;
-            font-size: 14px;
-            border: none;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        #log-container {
-            width: 80%;
-            max-width: 100%;
-            height: 80%;
-            margin: 20px auto;
-            padding: 10px;
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            overflow-y: auto;
-            text-align: left;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .log-entry {
-            padding: 5px;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
-            font-family: monospace;
-            white-space: pre-wrap;
-        }
-
-        .highlight {
-            background-color: yellow;
-            font-weight: bold;
-        }
-    </style>
-</head>
-
 <body>
     <h2>실시간 로그 모니터링</h2>
+
+    <!-- 파일 선택 드롭다운 -->
+    <div id="file-select-container">
+        <label for="file-select">로그 파일 선택:</label>
+        <select id="file-select" onchange="updateFilePath()">
+            <option value="">파일 선택</option>
+        </select>
+        <button onclick="requestLogs()">로그 보기</button>
+    </div>
 
     <div id="search-container">
         <input type="text" id="search-input" placeholder="검색어 입력">
@@ -98,21 +21,57 @@
     <script>
         const logContainer = document.getElementById("log-container");
         const searchInput = document.getElementById("search-input");
+        const fileSelect = document.getElementById("file-select");
+        let filePath = "";  // 선택된 파일 경로 저장
         const socket = io.connect("{{domain}}:{{port2}}");
 
         let logs = [];
         let searchResults = [];
         let currentIndex = -1;
 
-        // WebSocket 연결 및 로그 요청
+        // 🔹 서버에서 로그 파일 목록 가져오기
+        function fetchLogFiles() {
+            fetch("/log_files")
+                .then(response => response.json())
+                .then(files => {
+                    fileSelect.innerHTML = '<option value="">파일 선택</option>';
+                    files.forEach(file => {
+                        let option = document.createElement("option");
+                        option.value = file;
+                        option.textContent = file;
+                        fileSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("파일 목록 불러오기 실패:", error));
+        }
+
+        // 🔹 선택된 파일을 filePath에 반영
+        function updateFilePath() {
+            const selectedFile = fileSelect.value;
+            if (selectedFile) {
+                filePath = `/home/finTime/logs/${selectedFile}`;  // 전체 경로 설정
+            }
+        }
+
+        // 🔹 WebSocket 연결 후 서버에 로그 요청
+        function requestLogs() {
+            if (!filePath) {
+                alert("파일을 선택해주세요!");
+                return;
+            }
+            console.log(`📂 요청한 로그 파일: ${filePath}`);
+            socket.emit("request_logs", { file_path: filePath });  // 서버에 파일 경로 전달
+        }
+
+        // 🔹 WebSocket 연결 및 로그 수신
         socket.on("connect", () => {
-            console.log("WebSocket 연결됨");
-            socket.emit("request_logs");  // 서버에 로그 요청
+            console.log("✅ WebSocket 연결됨");
+            fetchLogFiles();  // 페이지 로드 시 파일 목록 가져오기
         });
 
-        // 로그 수신 및 출력
+        // 🔹 서버에서 로그 수신하여 화면에 출력
         socket.on("log_update", (data) => {
-            requestAnimationFrame(() => {  // 렌더링 부하 감소
+            requestAnimationFrame(() => {
                 const logEntry = document.createElement("pre");
                 logEntry.textContent = data;
                 logEntry.classList.add("log-entry");
@@ -127,13 +86,9 @@
             if (!keyword) return;
 
             logs.forEach(log => log.classList.remove("highlight"));
-
             searchResults = logs.filter(log => log.textContent.toLowerCase().includes(keyword));
             currentIndex = 0;
-
-            if (searchResults.length > 0) {
-                moveToResult();
-            }
+            if (searchResults.length > 0) moveToResult();
         }
 
         function moveToResult() {
@@ -152,4 +107,3 @@
         }
     </script>
 </body>
-</html>
