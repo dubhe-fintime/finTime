@@ -2250,10 +2250,10 @@ def getNews():
 
 #실시간 지수 API
 @app.route('/getIndexList', methods=["POST"])
-async def getIndexList():
+def getIndexList():
     #TODO: 야후 or Naver 선택 가능(상업적 용도 체크해야댐)
     #야후 
-    data = await indexlist_yahoo.get_index_list_Yahoo()
+    data = indexlist_yahoo.get_index_list_Yahoo()
     # 네이버
     # data = await indexlist.get_index_list()
     return data

@@ -10,7 +10,7 @@ import yfinance as yf
 # 특징 : 국내 / 해외 포맷이 다름 
 ##############################
 
-async def get_index_list_Yahoo():
+def get_index_list_Yahoo():
     index_list = [
         ("KOSPI", yf.Ticker("^KS11").history(period="1d")),
         ("KOSDAQ", yf.Ticker("^KQ11").history(period="1d")),
