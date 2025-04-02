@@ -103,7 +103,7 @@
         let logs = [];
         let searchResults = [];
         let currentIndex = -1;
-        const MAX_LOGS = 100; // 화면에 표시할 최대 로그 수
+        const MAX_LOGS = 100; // 화면에 표시할 최대 로그 개수
     
         // WebSocket 연결 및 로그 요청
         socket.on("connect", () => {
@@ -111,22 +111,21 @@
             socket.emit("request_logs");  // 서버에 로그 요청
         });
     
-        // 로그 수신 및 화면에 추가
+        // 로그 수신 및 출력 (새 로그가 위로 추가됨)
         socket.on("log_update", (data) => {
             const logEntry = document.createElement("pre");
             logEntry.textContent = data;
             logEntry.classList.add("log-entry");
-            logContainer.appendChild(logEntry);
-            logs.push(logEntry);
+    
+            // 새로운 로그를 **위쪽**에 추가
+            logContainer.insertBefore(logEntry, logContainer.firstChild);
+            logs.unshift(logEntry);
     
             // 최대 개수를 초과하면 가장 오래된 로그 삭제
-            if (logContainer.childElementCount > MAX_LOGS) {
-                logContainer.removeChild(logContainer.firstChild);
-                logs.shift();
+            if (logs.length > MAX_LOGS) {
+                logContainer.removeChild(logContainer.lastChild);
+                logs.pop();
             }
-    
-            // 스크롤을 항상 최신 로그 위치로 이동
-            logContainer.scrollTop = logContainer.scrollHeight;
         });
     
         function searchLogs() {
@@ -158,5 +157,6 @@
             }
         }
     </script>
+    
 </body>
 </html>

@@ -2,7 +2,7 @@ import subprocess
 import os
 import configparser
 import time
-from flask import Flask, jsonify
+from flask import Flask
 from flask_socketio import SocketIO
 from flask_cors import CORS
 
@@ -26,13 +26,11 @@ LOG_FILE_PATH = "/home/finTime/logs/batch_log_20250402.log"
 # WebSocket에서 보낼 로그 파일
 def tail_log():
     """ 실시간 로그를 지속적으로 읽어오는 함수 """
-    process = subprocess.Popen(['tail', '-F', LOG_FILE_PATH], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    
-    while True:
-        line = process.stdout.readline()
-        if line:
-            socketio.emit("log_update", line.strip())  # 클라이언트에 실시간 전송
-        socketio.sleep(0.1)  # 비동기 루프 유지
+    with subprocess.Popen(['tail', '-F', LOG_FILE_PATH], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
+        for line in process.stdout:
+            if line:
+                socketio.emit("log_update", line.strip())  # 클라이언트에 실시간 전송
+            socketio.sleep(0.1)  # 비동기 루프 유지
 
 # WebSocket 이벤트 핸들러
 @socketio.on("connect")
