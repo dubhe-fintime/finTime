@@ -30,6 +30,7 @@ log_process = None  # 로그 프로세스를 관리하는 변수
 
 # WebSocket에서 보낼 로그 파일
 def tail_log(file_path):
+    print("###############"+ file_path)
     global is_tail_running, log_process
     if is_tail_running:
         return  # 중복 실행 방지
