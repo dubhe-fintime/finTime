@@ -87,6 +87,14 @@
 <body>
     <h2>실시간 로그 모니터링</h2>
 
+    <div id="file-select-container">
+        <label for="file-select">로그 파일 선택:</label>
+        <select id="file-select" onchange="updateFilePath()">
+            <option value="">파일 선택</option>
+        </select>
+        <button onclick="requestLogs()">로그 보기</button>
+    </div>
+    
     <div id="search-container">
         <input type="text" id="search-input" placeholder="검색어 입력">
         <button onclick="searchLogs()">검색</button>
@@ -98,21 +106,57 @@
     <script>
         const logContainer = document.getElementById("log-container");
         const searchInput = document.getElementById("search-input");
+        const fileSelect = document.getElementById("file-select");
+        let filePath = "";  // 선택된 파일 경로 저장
         const socket = io.connect("{{domain}}:{{port2}}");
 
         let logs = [];
         let searchResults = [];
         let currentIndex = -1;
 
-        // WebSocket 연결 및 로그 요청
+        // 🔹 서버에서 로그 파일 목록 가져오기
+        function fetchLogFiles() {
+            fetch("/log_files")
+                .then(response => response.json())
+                .then(files => {
+                    fileSelect.innerHTML = '<option value="">파일 선택</option>';
+                    files.forEach(file => {
+                        let option = document.createElement("option");
+                        option.value = file;
+                        option.textContent = file;
+                        fileSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("파일 목록 불러오기 실패:", error));
+        }
+
+        // 🔹 선택된 파일을 filePath에 반영
+        function updateFilePath() {
+            const selectedFile = fileSelect.value;
+            if (selectedFile) {
+                filePath = `/home/finTime/logs/${selectedFile}`;  // 전체 경로 설정
+            }
+        }
+
+        // 🔹 WebSocket 연결 후 서버에 로그 요청
+        function requestLogs() {
+            if (!filePath) {
+                alert("파일을 선택해주세요!");
+                return;
+            }
+            console.log(`📂 요청한 로그 파일: ${filePath}`);
+            socket.emit("request_logs", { file_path: filePath });  // 서버에 파일 경로 전달
+        }
+
+        // 🔹 WebSocket 연결 및 로그 수신
         socket.on("connect", () => {
-            console.log("WebSocket 연결됨");
-            socket.emit("request_logs", { file_path: filePath });  // 서버에 로그 요청
+            console.log("✅ WebSocket 연결됨");
+            fetchLogFiles();  // 페이지 로드 시 파일 목록 가져오기
         });
 
-        // 로그 수신 및 출력
+        // 🔹 서버에서 로그 수신하여 화면에 출력
         socket.on("log_update", (data) => {
-            requestAnimationFrame(() => {  // 렌더링 부하 감소
+            requestAnimationFrame(() => {
                 const logEntry = document.createElement("pre");
                 logEntry.textContent = data;
                 logEntry.classList.add("log-entry");
@@ -127,13 +171,9 @@
             if (!keyword) return;
 
             logs.forEach(log => log.classList.remove("highlight"));
-
             searchResults = logs.filter(log => log.textContent.toLowerCase().includes(keyword));
             currentIndex = 0;
-
-            if (searchResults.length > 0) {
-                moveToResult();
-            }
+            if (searchResults.length > 0) moveToResult();
         }
 
         function moveToResult() {
