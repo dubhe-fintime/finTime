@@ -45,7 +45,7 @@ def tail_log():
         for line in iter(log_process.stdout.readline, ''):  # ✅ `iter()`를 사용하여 즉시 읽기
             if line:
                 socketio.emit("log_update", line.strip())  # ✅ 실시간으로 클라이언트에게 로그 전송
-            socketio.sleep(0.1)
+            #socketio.sleep(0.1)
     except Exception as e:
         print(f"🚨 로그 스트리밍 오류 발생: {e}")
     finally:
