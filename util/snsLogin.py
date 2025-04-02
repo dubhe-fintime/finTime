@@ -29,10 +29,10 @@ config = configparser.ConfigParser()
 config.read(config_path, encoding="utf-8")
 
 success = config['CODE']['success']
+domain = config['SERVER']['domain']
 # 네이버 앱 등록 정보
 naver_client_id = config['NAVER']['client_id']
 naver_client_secret = config['NAVER']['client_secret']
-naver_redirect_uri = config['NAVER']['redirect_uri']
 naver_auth_host = config['NAVER']['auth_host']
 naver_api_host = config['NAVER']['api_host']
 # [KAKAO]
@@ -43,13 +43,14 @@ naver_api_host = config['NAVER']['api_host']
 def naverLogin():
     
     state = secrets.token_urlsafe(16)  # CSRF 방지용 임의값
-
+    naver_redirect_uri = domain+'/naverCallback'
     naver_auth_url = (
         f"{naver_auth_host}/authorize?"
         f"response_type=code&client_id={naver_client_id}"
         f"&redirect_uri={urllib.parse.quote(naver_redirect_uri)}"
         f"&state={state}"
     )
+    print(naver_auth_url)
     return redirect(naver_auth_url)
 
 def naverCallback():
