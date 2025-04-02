@@ -4,6 +4,7 @@ from flask_cors import CORS
 import subprocess
 import os
 import configparser
+from datetime import datetime, timedelta
 
 # 설정 파일 읽기
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -20,7 +21,8 @@ app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-LOG_FILE_PATH = "/home/finTime/logs/batch_log_20250402.log"
+#LOG_FILE_PATH = "/home/finTime/logs/batch_log_20250402.log"
+LOG_DIR = "/home/finTime/logs/"
 is_tail_running = False
 log_process = None  # 로그 프로세스를 관리하는 변수
 
@@ -32,6 +34,19 @@ def tail_log():
         return  # 중복 실행 방지
 
     is_tail_running = True
+    today = datetime.now().strftime("%Y%m%d")
+    yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
+
+    today_log = os.path.join(LOG_DIR, f"batch_log_{today}.log")
+    yesterday_log = os.path.join(LOG_DIR, f"batch_log_{yesterday}.log")
+
+    if os.path.exists(today_log):
+        LOG_FILE_PATH = today_log
+    elif os.path.exists(yesterday_log):
+        LOG_FILE_PATH =  yesterday_log
+    else:
+        return None  # 로그 파일이 없으면 None 반환
+
     log_process = subprocess.Popen(
         ['tail', '-n', '100', '-F', LOG_FILE_PATH],  # 최신 100줄도 포함
         stdout=subprocess.PIPE,
