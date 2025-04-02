@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,132 +7,106 @@
     
     <!-- jQuery 및 Socket.IO -->
     <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
-
-    <!-- 스타일시트 -->
+    
+    <!-- 스타일 -->
     <link href="{{ url_for('static', filename='style/common.css') }}" rel="stylesheet" />
-    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
-
+    
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
             text-align: center;
         }
-
         h2 {
             color: #333;
         }
-
-        #search-container {
-            margin-bottom: 10px;
-        }
-
-        #search-input {
+        select, button, input {
+            margin: 5px;
             padding: 8px;
-            width: 200px;
             font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
         }
-
-        button {
-            padding: 8px 12px;
-            margin-left: 5px;
-            font-size: 14px;
-            border: none;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
         #log-container {
             width: 80%;
             max-width: 900px;
             height: 400px;
             margin: 20px auto;
-            padding: 10px;
             background: white;
             border: 1px solid #ccc;
-            border-radius: 5px;
             overflow-y: auto;
             text-align: left;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            font-family: monospace;
         }
-
         .log-entry {
             padding: 5px;
             border-bottom: 1px solid #eee;
-            font-size: 14px;
-            font-family: monospace;
-            white-space: pre-wrap;
         }
-
         .highlight {
             background-color: yellow;
             font-weight: bold;
         }
     </style>
 </head>
-
 <body>
     <h2>실시간 로그 모니터링</h2>
-
-    <div id="search-container">
+    
+    <label for="log-files">로그 파일 선택:</label>
+    <select id="log-files"></select>
+    <button onclick="loadLogs()">조회</button>
+    
+    <div>
         <input type="text" id="search-input" placeholder="검색어 입력">
         <button onclick="searchLogs()">검색</button>
         <button onclick="nextResult()">다음</button>
     </div>
-
+    
     <div id="log-container"></div>
-
+    
     <script>
+        const socket = io.connect();
         const logContainer = document.getElementById("log-container");
         const searchInput = document.getElementById("search-input");
-        const socket = io.connect("https://admin.fin-time.com:8084");
-
+        const logFilesSelect = document.getElementById("log-files");
         let logs = [];
         let searchResults = [];
         let currentIndex = -1;
 
-        // WebSocket 연결 및 로그 요청
-        socket.on("connect", () => {
-            console.log("✅ WebSocket 연결됨");
-            socket.emit("request_logs");  // 서버에 로그 요청
-        });
-
-        // 로그 수신 및 출력
+        // 서버에서 로그 파일 목록 가져오기
+        fetch("/log_files")
+            .then(response => response.json())
+            .then(files => {
+                files.forEach(file => {
+                    let option = document.createElement("option");
+                    option.value = file;
+                    option.textContent = file;
+                    logFilesSelect.appendChild(option);
+                });
+            });
+        
+        function loadLogs() {
+            logContainer.innerHTML = "";
+            logs = [];
+            let selectedFile = logFilesSelect.value;
+            socket.emit("request_logs", { filename: selectedFile });
+        }
+        
         socket.on("log_update", (data) => {
             const logEntry = document.createElement("pre");
             logEntry.textContent = data;
             logEntry.classList.add("log-entry");
             logContainer.appendChild(logEntry);
             logs.push(logEntry);
-
-            // 스크롤을 항상 최신 로그 위치로 이동
             logContainer.scrollTop = logContainer.scrollHeight;
         });
-
+        
         function searchLogs() {
             const keyword = searchInput.value.trim().toLowerCase();
             if (!keyword) return;
-
             logs.forEach(log => log.classList.remove("highlight"));
-
             searchResults = logs.filter(log => log.textContent.toLowerCase().includes(keyword));
             currentIndex = 0;
-
-            if (searchResults.length > 0) {
-                moveToResult();
-            }
+            moveToResult();
         }
 
         function moveToResult() {
@@ -143,7 +116,7 @@
                 searchResults[currentIndex].scrollIntoView({ behavior: "smooth", block: "center" });
             }
         }
-
+        
         function nextResult() {
             if (searchResults.length > 0) {
                 currentIndex = (currentIndex + 1) % searchResults.length;
