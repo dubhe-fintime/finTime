@@ -1917,7 +1917,19 @@ def batchResultSearch():
 # 로그관리 화면
 @app.route("/logMonitor")
 def logMonitor():
-    return render_template("common/logMonitor.html", domain=domain, port=port)    
+    return render_template("common/logMonitor.html", domain=domain, port=port)
+
+# 로그 파일 목록 반환
+LOG_DIR = "/home/finTime/logs"
+@app.route("/log_files", methods=["GET"])
+def get_log_files():
+    try:
+        files = [f for f in os.listdir(LOG_DIR) if f.endswith(".log")]
+        print(files)
+        return jsonify(files)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+ 
 ################## 로그 관리 END ###############################
 ############## 관리자 START ############################
 # 배치데이터 조회(스크래핑관리 페이지 - BATCH_RST SELECT)
