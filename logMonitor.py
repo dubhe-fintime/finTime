@@ -31,7 +31,7 @@ def get_latest_log_file():
 
     today_log = os.path.join(LOG_DIR, f"batch_log_{today}.log")
     yesterday_log = os.path.join(LOG_DIR, f"batch_log_{yesterday}.log")
-
+    print(today_log)
     if os.path.exists(today_log):
         return today_log
     elif os.path.exists(yesterday_log):
