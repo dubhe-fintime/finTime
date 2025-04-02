@@ -20,7 +20,7 @@ app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")  # 모든 origin 허용
 
-LOG_FILE_PATH = "/home/finTime/logs/batch_log_20250402.log"
+LOG_FILE_PATH = "/home/finTime/logs/admin.log"
 
 # WebSocket에서 보낼 로그 파일
 def tail_log():
