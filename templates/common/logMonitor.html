@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실시간 로그 모니터링</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #log-container { width: 80%; height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; white-space: pre-wrap; }
+        .highlight { background-color: yellow; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>실시간 로그 모니터링</h2>
+    
+    <input type="text" id="search-input" placeholder="검색어 입력">
+    <button onclick="searchLogs()">검색</button>
+    <button onclick="nextResult()">다음</button>
+    
+    <div id="log-container"></div>
+
+    <script>
+        const logContainer = document.getElementById("log-container");
+        const searchInput = document.getElementById("search-input");
+        const socket = new WebSocket("ws://localhost:8084/logs");
+
+        let logs = [];
+        let searchResults = [];
+        let currentIndex = -1;
+
+        socket.onmessage = function(event) {
+            const logLine = document.createElement("div");
+            logLine.textContent = event.data;
+            logContainer.appendChild(logLine);
+            logs.push(logLine);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        };
+
+        function searchLogs() {
+            const keyword = searchInput.value.trim().toLowerCase();
+            if (!keyword) return;
+
+            // 기존 하이라이트 제거
+            logs.forEach(log => log.classList.remove("highlight"));
+
+            // 검색어 포함된 로그 찾기
+            searchResults = logs.filter(log => log.textContent.toLowerCase().includes(keyword));
+            currentIndex = 0;
+
+            if (searchResults.length > 0) {
+                moveToResult();
+            }
+        }
+
+        function moveToResult() {
+            if (searchResults.length > 0) {
+                searchResults.forEach(log => log.classList.remove("highlight"));
+                searchResults[currentIndex].classList.add("highlight");
+                searchResults[currentIndex].scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }
+
+        function nextResult() {
+            if (searchResults.length > 0) {
+                currentIndex = (currentIndex + 1) % searchResults.length;
+                moveToResult();
+            }
+        }
+    </script>
+</body>
+</html>
