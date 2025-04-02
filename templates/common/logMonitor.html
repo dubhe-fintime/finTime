@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실시간 로그 모니터링</title>
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
+
+    <link href="{{ url_for('static', filename='style/common.css') }}" rel="stylesheet" />
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+</head>
+<body>
+    <h2>실시간 로그 모니터링</h2>
+    
+    <input type="text" id="search-input" placeholder="검색어 입력">
+    <button onclick="searchLogs()">검색</button>
+    <button onclick="nextResult()">다음</button>
+    
+    <div id="log-container"></div>
+
+    <script>
+        const logContainer = document.getElementById("log-container");
+        const searchInput = document.getElementById("search-input");
+        var socket = io.connect('https://admin.fin-time.com:80845');
+        let logs = [];
+        let searchResults = [];
+        let currentIndex = -1;
+
+        // WebSocket 연결 및 로그 요청
+        socket.on("connect", () => {
+            console.log("WebSocket 연결됨");
+            socket.emit("request_logs");  // 서버에 로그 요청
+        });
+
+        socket.on('disconnect', function () {
+            connect = false;
+            console.log('소켓 연결이 끊어졌습니다.');
+            // 여기에 끊어졌을 때 해야할 작업을 추가할 수 있습니다.
+        });
+
+        // 로그 수신 및 출력
+        socket.on("log_update", (data) => {
+            const logLine = document.createElement("div");
+            logLine.textContent = data;
+            logContainer.appendChild(logLine);
+            logs.push(logLine);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        });
+
+        function searchLogs() {
+            const keyword = searchInput.value.trim().toLowerCase();
+            if (!keyword) return;
+
+            logs.forEach(log => log.classList.remove("highlight"));
+
+            searchResults = logs.filter(log => log.textContent.toLowerCase().includes(keyword));
+            currentIndex = 0;
+
+            if (searchResults.length > 0) {
+                moveToResult();
+            }
+        }
+
+        function moveToResult() {
+            if (searchResults.length > 0) {
+                searchResults.forEach(log => log.classList.remove("highlight"));
+                searchResults[currentIndex].classList.add("highlight");
+                searchResults[currentIndex].scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }
+
+        function nextResult() {
+            if (searchResults.length > 0) {
+                currentIndex = (currentIndex + 1) % searchResults.length;
+                moveToResult();
+            }
+        }
+    </script>
+</body>
+</html>

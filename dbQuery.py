@@ -309,58 +309,72 @@ def selectQuery(qType, values):
     elif qType == "Q33": # 예적금 상품 조회
         query = """
             SELECT 
-                FP.COR_NO
-                , COALESCE(CM.COR_NM, '미등록기관') AS COR_NM
-                , FP.PROD_NM
-                , FP.PROD_TYPE
-                , FP.SAVING_METHOD
-                , FP.INTR_CALC
-                , FP.PROD_DETAIL_LINK
-                , FP.BASE_INTR
-                , FP.MAX_INTR
-                , FP.LAST_AVG_INTR
-                , FP.C_DATE
-                , FP.E_DATE
+                FP.COR_NO,
+                COALESCE(CM.COR_NM, '미등록기관') AS COR_NM,
+                FP.PROD_NM,
+                PT_CD.CD_NM AS PROD_TYPE,
+                SM_CD.CD_NM AS SAVING_METHOD,
+                IC_CD.CD_NM AS INTR_CALC,
+                FP.PROD_DETAIL_LINK,
+                FP.BASE_INTR,
+                FP.MAX_INTR,
+                FP.LAST_AVG_INTR,
+                FP.C_DATE
             FROM FINANCIAL_PRODUCTS FP
             LEFT JOIN COR_MST CM 
-                 ON FP.COR_NO = CM.COR_NO
+                ON FP.COR_NO = CM.COR_NO
+            LEFT JOIN COMMON_CD PT_CD 
+                ON FP.PROD_TYPE = PT_CD.CD_ID
+            LEFT JOIN COMMON_CD SM_CD 
+                ON FP.SAVING_METHOD = SM_CD.CD_ID
+            LEFT JOIN COMMON_CD IC_CD 
+                ON FP.INTR_CALC = IC_CD.CD_ID;
             """
 
     elif qType == "Q34": # 예적금 상품 조회
         query = """
-            SELECT 
-                FLP.COR_NO
-                , COALESCE(CM.COR_NM, '미등록기관') AS COR_NM
-                , FLP.PROD_NM
-                , FLP.RESIDENCE_TYPE
-                , FLP.INTR_METHOD
-                , FLP.REPAY_METHOD
-                , FLP.MIN_INTR
-                , FLP.MAX_INTR
-                , FLP.C_DATE
-                , FLP.E_DATE
+           SELECT 
+                FLP.COR_NO,
+                COALESCE(CM.COR_NM, '미등록기관') AS COR_NM,
+                FLP.PROD_NM,
+                RT_CD.CD_NM AS RESIDENCE_TYPE,
+                IM_CD.CD_NM AS INTR_METHOD,
+                RM_CD.CD_NM AS REPAY_METHOD,
+                FLP.MIN_INTR,
+                FLP.MAX_INTR,
+                FLP.C_DATE
             FROM FINANCIAL_LOAN_PRODUCTS FLP
             LEFT JOIN COR_MST CM 
-                 ON FLP.COR_NO = CM.COR_NO
+                ON FLP.COR_NO = CM.COR_NO
+            LEFT JOIN COMMON_CD RT_CD 
+                ON FLP.RESIDENCE_TYPE = RT_CD.CD_ID
+            LEFT JOIN COMMON_CD IM_CD 
+                ON FLP.INTR_METHOD = IM_CD.CD_ID
+            LEFT JOIN COMMON_CD RM_CD 
+                ON FLP.REPAY_METHOD = RM_CD.CD_ID;    
             """
         
     elif qType == "Q35": # 예적금 상품 평균 이율 조회
         query = """
-            SELECT 
-                PROD_TYPE, 
-                AVG(BASE_INTR) AS AVG_BASE_INTR, 
-                AVG(MAX_INTR) AS AVG_MAX_INTR
-            FROM finTime.FINANCIAL_PRODUCTS
+            SELECT
+                PT_CD.CD_NM AS PROD_TYPE, 
+                AVG(FP.BASE_INTR) AS AVG_BASE_INTR, 
+                AVG(FP.MAX_INTR) AS AVG_MAX_INTR
+            FROM finTime.FINANCIAL_PRODUCTS FP
+            LEFT JOIN COMMON_CD PT_CD 
+                ON FP.PROD_TYPE = PT_CD.CD_ID
             GROUP BY PROD_TYPE;
             """
         
     elif qType == "Q36": # 대출 상품 평균 이율 조회
         query = """
             SELECT 
-                INTR_METHOD, 
-                AVG(MIN_INTR) AS AVG_MIN_INTR, 
-                AVG(MAX_INTR) AS AVG_MAX_INTR
-            FROM FINANCIAL_LOAN_PRODUCTS
+                IM_CD.CD_NM AS INTR_METHOD,
+                AVG(FLP.MIN_INTR) AS AVG_MIN_INTR, 
+                AVG(FLP.MAX_INTR) AS AVG_MAX_INTR
+            FROM FINANCIAL_LOAN_PRODUCTS FLP
+            LEFT JOIN COMMON_CD IM_CD 
+                ON FLP.INTR_METHOD = IM_CD.CD_ID
             GROUP BY INTR_METHOD;
             """
 
@@ -630,9 +644,9 @@ def selectQuery(qType, values):
     elif qType == "F1" : 
         query = """
             INSERT INTO FINANCIAL_PRODUCTS 
-                ( COR_NO, PROD_NM, PROD_TYPE, SAVING_METHOD, INTR_CALC, PROD_DETAIL_LINK, BASE_INTR, MAX_INTR, LAST_AVG_INTR, C_DATE, E_DATE )
+                ( COR_NO, PROD_NM, PROD_TYPE, SAVING_METHOD, INTR_CALC, PROD_DETAIL_LINK, BASE_INTR, MAX_INTR, LAST_AVG_INTR, C_DATE )
                 VALUES 
-                (%s, %s, %s, %s, %s, %s, %s, %s, %s, SYSDATE(), SYSDATE())
+                (%s, %s, %s, %s, %s, %s, %s, %s, %s, SYSDATE())
             """
     
     elif qType == "F2" : 
@@ -643,9 +657,9 @@ def selectQuery(qType, values):
     elif qType == "F3" : 
         query = """
             INSERT INTO FINANCIAL_LOAN_PRODUCTS 
-                ( COR_NO, PROD_NM, RESIDENCE_TYPE, INTR_METHOD, REPAY_METHOD, MIN_INTR, MAX_INTR, C_DATE, E_DATE )
+                ( COR_NO, PROD_NM, RESIDENCE_TYPE, INTR_METHOD, REPAY_METHOD, MIN_INTR, MAX_INTR, C_DATE )
                 VALUES 
-                (%s, %s, %s, %s, %s, %s, %s, SYSDATE(), SYSDATE())
+                (%s, %s, %s, %s, %s, %s, %s, SYSDATE())
             """
         
     elif qType == "F4" : 
