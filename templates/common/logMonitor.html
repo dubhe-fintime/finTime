@@ -106,13 +106,13 @@
 
         // WebSocket 연결 및 로그 요청
         socket.on("connect", () => {
-            console.log("✅ WebSocket 연결됨");
+            console.log("WebSocket 연결됨");
             socket.emit("request_logs");  // 서버에 로그 요청
         });
 
         // 로그 수신 및 출력
         socket.on("log_update", (data) => {
-            requestAnimationFrame(() => {  // ✅ 렌더링 부하 감소
+            requestAnimationFrame(() => {  // 렌더링 부하 감소
                 const logEntry = document.createElement("pre");
                 logEntry.textContent = data;
                 logEntry.classList.add("log-entry");

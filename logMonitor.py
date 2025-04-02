@@ -22,32 +22,32 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 LOG_FILE_PATH = "/home/finTime/logs/batch_log_20250402.log"
 is_tail_running = False
-log_process = None  # 🟢 로그 프로세스를 관리하는 변수
+log_process = None  # 로그 프로세스를 관리하는 변수
 
 
 # WebSocket에서 보낼 로그 파일
 def tail_log():
     global is_tail_running, log_process
     if is_tail_running:
-        return  # 🛑 중복 실행 방지
+        return  # 중복 실행 방지
 
     is_tail_running = True
     log_process = subprocess.Popen(
-        ['tail', '-n', '100', '-F', LOG_FILE_PATH],  # ✅ 최신 100줄도 포함
+        ['tail', '-n', '100', '-F', LOG_FILE_PATH],  # 최신 100줄도 포함
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        bufsize=0,  # ✅ 한 줄씩 버퍼링
-        universal_newlines=True,  # ✅ 개행 문자 자동 변환
+        bufsize=0,  # 한 줄씩 버퍼링
+        universal_newlines=True,  # 개행 문자 자동 변환
         text=True
     )
 
     try:
         for line in iter(log_process.stdout.readline, ''):
-            print(f"📤 서버 전송 로그: {line.strip()}", flush=True)  # ✅ 즉시 출력
+            #print(f"서버 전송 로그: {line.strip()}", flush=True)  # 즉시 출력
             socketio.emit("log_update", line.strip())
             #socketio.sleep(0.1)
     except Exception as e:
-        print(f"🚨 로그 스트리밍 오류 발생: {e}")
+        print(f"로그 스트리밍 오류 발생: {e}")
     finally:
         is_tail_running = False
         log_process = None
@@ -56,7 +56,7 @@ def tail_log():
 # WebSocket 이벤트 핸들러
 @socketio.on("connect")
 def handle_connect():
-    print("✅ 클라이언트 WebSocket 연결됨")
+    print("클라이언트 WebSocket 연결됨")
 
 
 @socketio.on("disconnect")
@@ -64,7 +64,7 @@ def handle_disconnect():
     global is_tail_running, log_process
     print("🚪 클라이언트 WebSocket 연결 종료됨")
     if log_process:
-        log_process.terminate()  # 🛑 tail 프로세스 종료
+        log_process.terminate()  # tail 프로세스 종료
         log_process = None
     is_tail_running = False
 
