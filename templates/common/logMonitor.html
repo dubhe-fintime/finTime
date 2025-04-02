@@ -99,43 +99,50 @@
         const logContainer = document.getElementById("log-container");
         const searchInput = document.getElementById("search-input");
         const socket = io.connect("https://admin.fin-time.com:8084");
-
+    
         let logs = [];
         let searchResults = [];
         let currentIndex = -1;
-
+        const MAX_LOGS = 100; // 화면에 표시할 최대 로그 수
+    
         // WebSocket 연결 및 로그 요청
         socket.on("connect", () => {
             console.log("✅ WebSocket 연결됨");
             socket.emit("request_logs");  // 서버에 로그 요청
         });
-
-        // 로그 수신 및 출력
+    
+        // 로그 수신 및 화면에 추가
         socket.on("log_update", (data) => {
             const logEntry = document.createElement("pre");
             logEntry.textContent = data;
             logEntry.classList.add("log-entry");
             logContainer.appendChild(logEntry);
             logs.push(logEntry);
-
+    
+            // 최대 개수를 초과하면 가장 오래된 로그 삭제
+            if (logContainer.childElementCount > MAX_LOGS) {
+                logContainer.removeChild(logContainer.firstChild);
+                logs.shift();
+            }
+    
             // 스크롤을 항상 최신 로그 위치로 이동
             logContainer.scrollTop = logContainer.scrollHeight;
         });
-
+    
         function searchLogs() {
             const keyword = searchInput.value.trim().toLowerCase();
             if (!keyword) return;
-
+    
             logs.forEach(log => log.classList.remove("highlight"));
-
+    
             searchResults = logs.filter(log => log.textContent.toLowerCase().includes(keyword));
             currentIndex = 0;
-
+    
             if (searchResults.length > 0) {
                 moveToResult();
             }
         }
-
+    
         function moveToResult() {
             if (searchResults.length > 0) {
                 searchResults.forEach(log => log.classList.remove("highlight"));
@@ -143,7 +150,7 @@
                 searchResults[currentIndex].scrollIntoView({ behavior: "smooth", block: "center" });
             }
         }
-
+    
         function nextResult() {
             if (searchResults.length > 0) {
                 currentIndex = (currentIndex + 1) % searchResults.length;
