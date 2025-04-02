@@ -68,6 +68,7 @@ config.read(config_path, encoding="utf-8")
 domain = config['SERVER']['domain']
 frontDomain = config['SERVER']['front_domain']
 port = config['SERVER']['port_1']
+port2 = config['SERVER']['port_2']
 real_yn = config['SERVER']['real']
 server_host = config['SERVER']['server_host']
 success = config['CODE']['success']
@@ -1917,7 +1918,7 @@ def batchResultSearch():
 # 로그관리 화면
 @app.route("/logMonitor")
 def logMonitor():
-    return render_template("common/logMonitor.html", domain=domain, port=port)
+    return render_template("common/logMonitor.html", domain=domain, port=port, port2=port2)
 
 # 로그 파일 목록 반환
 LOG_DIR = "/home/finTime/logs"
