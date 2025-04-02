@@ -18,7 +18,8 @@ def send_logs(data=None):
 
     filename = data["filename"]
     log_path = os.path.join(LOG_DIR, filename)
-
+    print("1"*1000)
+    print(log_path)
     if not os.path.exists(log_path):
         socketio.emit("log_update", f"❌ 파일 '{filename}'이 존재하지 않습니다.")
         return
