@@ -112,14 +112,16 @@
 
         // 로그 수신 및 출력
         socket.on("log_update", (data) => {
-            const logEntry = document.createElement("pre");
-            logEntry.textContent = data;
-            logEntry.classList.add("log-entry");
-            logContainer.appendChild(logEntry);
-            logs.push(logEntry);
+            console.log("📥 수신된 로그:", data);  // ✅ 실제 데이터 확인
 
-            // 스크롤을 항상 최신 로그 위치로 이동
-            logContainer.scrollTop = logContainer.scrollHeight;
+            requestAnimationFrame(() => {  // ✅ 렌더링 부하 감소
+                const logEntry = document.createElement("pre");
+                logEntry.textContent = data;
+                logEntry.classList.add("log-entry");
+                logContainer.appendChild(logEntry);
+                logs.push(logEntry);
+                logContainer.scrollTop = logContainer.scrollHeight;
+            });
         });
 
         function searchLogs() {

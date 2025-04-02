@@ -33,18 +33,18 @@ def tail_log():
 
     is_tail_running = True
     log_process = subprocess.Popen(
-        ['tail', '-F', LOG_FILE_PATH],  # ✅ `-F`로 변경 (파일 변경 감지 가능)
+        ['tail', '-n', '100', '-F', LOG_FILE_PATH],  # ✅ 최신 100줄도 포함
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        bufsize=1,  # ✅ 한 줄씩 버퍼링
+        bufsize=0,  # ✅ 한 줄씩 버퍼링
         universal_newlines=True,  # ✅ 개행 문자 자동 변환
         text=True
     )
 
     try:
-        for line in iter(log_process.stdout.readline, ''):  # ✅ `iter()`를 사용하여 즉시 읽기
-            if line:
-                socketio.emit("log_update", line.strip())  # ✅ 실시간으로 클라이언트에게 로그 전송
+        for line in iter(log_process.stdout.readline, ''):
+            print(f"📤 서버 전송 로그: {line.strip()}", flush=True)  # ✅ 즉시 출력
+            socketio.emit("log_update", line.strip())
             #socketio.sleep(0.1)
     except Exception as e:
         print(f"🚨 로그 스트리밍 오류 발생: {e}")
