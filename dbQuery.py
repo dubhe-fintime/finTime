@@ -574,7 +574,7 @@ def selectQuery(qType, values):
                 """   
     elif qType == "C7" : #SNS 가입 확인
         query = """
-                SELECT * FROM CLIENT_USER WHERE SNS_ID = %s  and SNS_TYPE = %s
+                SELECT USER_ID FROM CLIENT_USER WHERE SNS_ID = %s  and SNS_TYPE = %s
                 """
     elif qType == "C8" : # SNS 로그인 마지막로그인 시간 업데이트
         query = """
@@ -592,6 +592,32 @@ def selectQuery(qType, values):
                 SNS_ID = %s AND SNS_TYPE = %s
                 """
 
+    elif qType == "C10" : # CLIENT_AUTH 최초 INSERT
+        query = """
+                INSERT INTO CLIENT_AUTH (
+                    USER_ID, AUTH_TYPE, IDENTIFIER, ACCESS_TOKEN, ACCESS_TOKEN_EXPIRE, REFRESH_TOKEN, REFRESH_TOKEN_EXPIRE,
+                    FIRST_LOGIN, RECENT_LOGIN
+                ) VALUES (
+                    %s,    %s,    %s,    %s,    %s,    %s,    %s,    NOW(),    NOW()
+                )
+                """
+
+    elif qType == "C11" : # CLIENT_AUTH 마지막로그인 update
+        query = """
+                UPDATE CLIENT_AUTH
+                SET RECENT_LOGIN = SYSDATE()
+                WHERE 
+                IDENTIFIER = %s AND AUTH_TYPE = %s
+                """
+    
+    elif qType == "C12" : # SNS 로그인 연동해제
+        query = """
+                UPDATE CLIENT_AUTH
+                SET USE_YN = 'N'
+                WHERE
+                SNS_ID = %s AND SNS_TYPE = %s
+                """
+        
     elif qType == "COMMON_CD":  # 공통 코드 조회
         query = """
                 SELECT 

@@ -7,7 +7,7 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 from datetime import timedelta
 
-from flask import Flask, abort, session, request, render_template, send_file, send_from_directory
+from flask import Flask, abort, session, request, render_template, send_file, send_from_directory, redirect
 from flask_socketio import SocketIO
 from flask_cors import CORS
 from flask import jsonify
@@ -45,7 +45,8 @@ from util import getHoliday,indexlist,indexlist_yahoo
 from util import makeJwt
 
 from util.product import deposit, savings, loan
-from util.snsLogin import naverLogin, naverCallback
+from util.session_manage import set_login_session
+from util.snsLogin import naverLogin, naverCallback, naverDisconnect
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
@@ -65,6 +66,7 @@ else:
 config = configparser.ConfigParser()
 config.read(config_path, encoding="utf-8")
 domain = config['SERVER']['domain']
+frontDomain = config['SERVER']['front_domain']
 port = config['SERVER']['port_1']
 real_yn = config['SERVER']['real']
 server_host = config['SERVER']['server_host']
@@ -1442,8 +1444,8 @@ def adminLogin_check():
         logger.info(f'Connect || ID -- {username} || ENTER_DATE -- {session.get("start_time")} || TOKEN -- {session.get("token")}')
         return [success]
 
-@app.route('/clientLogin', methods=["POST"])
-def clientLogin_check():
+@app.route('/clientLogin2', methods=["POST"])
+def clientLogin_check2():
     data = request.get_json()
     username, password = data.get("id"), data.get("pw")
     results = execute_mysql_query_select("C1", [username, password])
@@ -1460,7 +1462,20 @@ def naverLoginRoute():
 
 @app.route("/naverCallback")
 def naverLoginCallbackRoute():
-    return naverCallback()
+    result = naverCallback()
+
+    if result :
+        token = session['token']
+        userId = session['userId']
+        frontend_url = f"{frontDomain}/main?token={token}&user_id={userId}"
+    else :
+        frontend_url = f"{frontDomain}/index.html"
+
+    return redirect(frontend_url)
+
+@app.route("/naverDisconnect")
+def naverDisconnectRoute():
+    return naverDisconnect()
 
 # 관리자 메인 화면 호출
 @app.route("/adminMain")
