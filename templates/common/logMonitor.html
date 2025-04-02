@@ -156,7 +156,7 @@
 
         // 🔹 서버에서 로그 수신하여 화면에 출력
         socket.on("log_update", (data) => {
-            log.debug(data)
+            console.debug(data)
             requestAnimationFrame(() => {
                 const logEntry = document.createElement("pre");
                 logEntry.textContent = data;
