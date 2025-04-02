@@ -1,53 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>실시간 로그 모니터링</title>
+    
+    <!-- jQuery 및 Socket.IO -->
     <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
-
     <script src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
 
+    <!-- 스타일시트 -->
     <link href="{{ url_for('static', filename='style/common.css') }}" rel="stylesheet" />
     <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        #search-container {
+            margin-bottom: 10px;
+        }
+
+        #search-input {
+            padding: 8px;
+            width: 200px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 8px 12px;
+            margin-left: 5px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #log-container {
+            width: 80%;
+            max-width: 900px;
+            height: 400px;
+            margin: 20px auto;
+            padding: 10px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow-y: auto;
+            text-align: left;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .log-entry {
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .highlight {
+            background-color: yellow;
+            font-weight: bold;
+        }
+    </style>
 </head>
+
 <body>
     <h2>실시간 로그 모니터링</h2>
-    
-    <input type="text" id="search-input" placeholder="검색어 입력">
-    <button onclick="searchLogs()">검색</button>
-    <button onclick="nextResult()">다음</button>
-    
+
+    <div id="search-container">
+        <input type="text" id="search-input" placeholder="검색어 입력">
+        <button onclick="searchLogs()">검색</button>
+        <button onclick="nextResult()">다음</button>
+    </div>
+
     <div id="log-container"></div>
 
     <script>
         const logContainer = document.getElementById("log-container");
         const searchInput = document.getElementById("search-input");
-        var socket = io.connect('https://admin.fin-time.com:8084');
+        const socket = io.connect("https://admin.fin-time.com:8084");
+
         let logs = [];
         let searchResults = [];
         let currentIndex = -1;
 
         // WebSocket 연결 및 로그 요청
         socket.on("connect", () => {
-            console.log("WebSocket 연결됨");
+            console.log("✅ WebSocket 연결됨");
             socket.emit("request_logs");  // 서버에 로그 요청
-        });
-
-        socket.on('disconnect', function () {
-            connect = false;
-            console.log('소켓 연결이 끊어졌습니다.');
-            // 여기에 끊어졌을 때 해야할 작업을 추가할 수 있습니다.
         });
 
         // 로그 수신 및 출력
         socket.on("log_update", (data) => {
-            const logLine = document.createElement("div");
-            logLine.textContent = data;
-            logContainer.appendChild(logLine);
-            logs.push(logLine);
+            const logEntry = document.createElement("pre");
+            logEntry.textContent = data;
+            logEntry.classList.add("log-entry");
+            logContainer.appendChild(logEntry);
+            logs.push(logEntry);
+
+            // 스크롤을 항상 최신 로그 위치로 이동
             logContainer.scrollTop = logContainer.scrollHeight;
         });
 
