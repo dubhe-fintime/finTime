@@ -90,8 +90,6 @@ def send_logs(data):
             return None  # 로그 파일이 없으면 None 반환
     
     #if not is_tail_running:
-    print("333"*1000)
-    print(file_path)
     socketio.start_background_task(partial(tail_log, file_path))
 
 
