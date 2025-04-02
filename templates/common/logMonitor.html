@@ -19,31 +19,37 @@
     
     <div id="log-container"></div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
     <script>
         const logContainer = document.getElementById("log-container");
         const searchInput = document.getElementById("search-input");
-        const socket = new WebSocket("wss://3.37.13.12:8084/logs");
+        const socket = io("wss://3.37.13.12:8084", { transports: ["websocket"] });
 
         let logs = [];
         let searchResults = [];
         let currentIndex = -1;
 
-        socket.onmessage = function(event) {
+        // WebSocket 연결 및 로그 요청
+        socket.on("connect", () => {
+            console.log("WebSocket 연결됨");
+            socket.emit("request_logs");  // 서버에 로그 요청
+        });
+
+        // 로그 수신 및 출력
+        socket.on("log_update", (data) => {
             const logLine = document.createElement("div");
-            logLine.textContent = event.data;
+            logLine.textContent = data;
             logContainer.appendChild(logLine);
             logs.push(logLine);
             logContainer.scrollTop = logContainer.scrollHeight;
-        };
+        });
 
         function searchLogs() {
             const keyword = searchInput.value.trim().toLowerCase();
             if (!keyword) return;
 
-            // 기존 하이라이트 제거
             logs.forEach(log => log.classList.remove("highlight"));
 
-            // 검색어 포함된 로그 찾기
             searchResults = logs.filter(log => log.textContent.toLowerCase().includes(keyword));
             currentIndex = 0;
 

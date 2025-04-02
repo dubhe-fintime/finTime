@@ -1,10 +1,24 @@
 from flask import Flask
-from flask_sock import Sock
+from flask_socketio import SocketIO
+from flask_cors import CORS
 import subprocess
-import ssl
+import os
+import configparser
+
+# 설정 파일 읽기
+script_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(script_dir, 'config.ini')
+config = configparser.ConfigParser()
+config.read(config_path)
+
+server_host = config['SERVER']['server_host']
+port4 = int(config['SERVER']['port_4'])
+ssl_cert = config['SECURE']['ssl_cert']
+ssl_key = config['SECURE']['ssl_key']
 
 app = Flask(__name__)
-sock = Sock(app)
+CORS(app)
+socketio = SocketIO(app, cors_allowed_origins="*")  # 모든 origin 허용
 
 LOG_FILE_PATH = "/home/finTime/logs/batch_log_20250402.log"
 
@@ -17,14 +31,15 @@ def tail_log():
             break
         yield line.strip()
 
-@sock.route('/logs')
-def logs(ws):
+# WebSocket 이벤트 핸들러
+@socketio.on("connect")
+def handle_connect():
+    print("클라이언트 WebSocket 연결됨")
+
+@socketio.on("request_logs")
+def send_logs():
     for line in tail_log():
-        ws.send(line)
+        socketio.emit("log_update", line)
 
 if __name__ == '__main__':
-    # SSL 설정 추가
-    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    context.load_cert_chain(certfile='/etc/letsencrypt/live/fin-time.com/fullchain.pem', keyfile='/etc/letsencrypt/live/fin-time.com/privkey.pem')  # SSL 인증서 경로 지정
-
-    app.run(host='0.0.0.0', port=8084, debug=True, ssl_context=context)
+    socketio.run(app, host=server_host, port=port4, ssl_context=(ssl_cert, ssl_key), allow_unsafe_werkzeug=True)
