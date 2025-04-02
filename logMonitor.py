@@ -21,15 +21,20 @@ CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")  # 모든 origin 허용
 
 LOG_FILE_PATH = "/home/finTime/logs/batch_log_20250402.log"
+is_tail_running = False  # 🟢 tail_log 실행 상태를 저장하는 변수
 
 # WebSocket에서 보낼 로그 파일
 def tail_log():
-    process = subprocess.Popen(['tail', '-f', LOG_FILE_PATH], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    while True:
-        line = process.stdout.readline()
-        if not line:
-            break
-        yield line.strip()
+    global is_tail_running
+    if is_tail_running:
+        return  # 🛑 이미 실행 중이면 중복 실행 방지
+    is_tail_running = True
+    
+    with subprocess.Popen(['tail', '-F', LOG_FILE_PATH], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
+        for line in process.stdout:
+            if line:
+                socketio.emit("log_update", line.strip())  # 실시간 로그 전송
+            socketio.sleep(0.1)  # 비동기 루프 유지
 
 # WebSocket 이벤트 핸들러
 @socketio.on("connect")
@@ -38,8 +43,9 @@ def handle_connect():
 
 @socketio.on("request_logs")
 def send_logs():
-    for line in tail_log():
-        socketio.emit("log_update", line)
+    global is_tail_running
+    if not is_tail_running:  # 🔥 실행 중이 아닐 때만 tail_log 실행
+        socketio.start_background_task(target=tail_log)
 
 if __name__ == '__main__':
     socketio.run(app, host=server_host, port=port2, ssl_context=(ssl_cert, ssl_key), allow_unsafe_werkzeug=True)
