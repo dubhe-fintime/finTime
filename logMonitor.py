@@ -57,7 +57,7 @@ def tail_log():
         for line in process.stdout:
             if line:
                 socketio.emit("log_update", line.strip())  # 실시간 로그 전송
-            #socketio.sleep(0.1)  # 비동기 루프 유지
+            socketio.sleep(0.1)  # 비동기 루프 유지
 
 # WebSocket 이벤트 핸들러
 @socketio.on("connect")
