@@ -31,8 +31,16 @@ log_process = None  # 로그 프로세스를 관리하는 변수
 # WebSocket에서 보낼 로그 파일
 def tail_log(file_path):
     global is_tail_running, log_process
+    
+    # 기존 tail 프로세스 종료
+    if log_process:
+        log_process.terminate()
+        log_process = None
+        is_tail_running = False
+
     if is_tail_running:
         return  # 중복 실행 방지
+    
     LOG_FILE_PATH = file_path
     is_tail_running = True
     log_process = subprocess.Popen(
