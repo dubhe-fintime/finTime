@@ -94,7 +94,7 @@
         </select>
         <button onclick="requestLogs()">로그 보기</button>
     </div>
-    
+
     <div id="search-container">
         <input type="text" id="search-input" placeholder="검색어 입력">
         <button onclick="searchLogs()">검색</button>
@@ -160,6 +160,7 @@
                 const logEntry = document.createElement("pre");
                 logEntry.textContent = data;
                 logEntry.classList.add("log-entry");
+                print(logEntry)
                 logContainer.appendChild(logEntry);
                 logs.push(logEntry);
                 logContainer.scrollTop = logContainer.scrollHeight;
