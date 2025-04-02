@@ -1445,7 +1445,7 @@ def adminLogin_check():
         logger.info(f'Connect || ID -- {username} || ENTER_DATE -- {session.get("start_time")} || TOKEN -- {session.get("token")}')
         return [success]
 
-@app.route('/clientLogin2', methods=["POST"])
+@app.route('/clientLogin', methods=["POST"])
 def clientLogin_check2():
     data = request.get_json()
     username, password = data.get("id"), data.get("pw")
