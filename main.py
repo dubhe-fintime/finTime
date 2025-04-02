@@ -1898,6 +1898,12 @@ def batchResultSearch():
 
 
 ################## 배치 관리 END ###############################
+################## 로그 관리 START ###############################
+# 로그관리 화면
+@app.route("/logMonitor")
+def batchControl():
+    return render_template("common/logMonitor.html", domain=domain, port=port)    
+################## 로그 관리 END ###############################
 ############## 관리자 START ############################
 # 배치데이터 조회(스크래핑관리 페이지 - BATCH_RST SELECT)
 @app.route('/batchDataList', methods=["POST"])
