@@ -28,5 +28,18 @@ def check_session(session,token):
         return session_fail
     except jwt.InvalidTokenError:
         return session_fail
-    
+
+def check_client_session(token,userId):
+    try:
+        payload = jwt.decode(token, key, algorithms=['HS256'])
+        if(userId == payload.get("user_id")):
+            return True
+        else:
+            return session_fail
+    except jwt.ExpiredSignatureError:
+        print('토큰만료')
+        return session_fail
+    except jwt.InvalidTokenError:
+        print('유효하지않은 토큰')
+        return session_fail
     

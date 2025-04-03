@@ -616,6 +616,7 @@ def selectQuery(qType, values):
                 )
                 """
 
+
     elif qType == "C11" : # CLIENT_AUTH 마지막로그인 update
         query = """
                 UPDATE CLIENT_AUTH
@@ -630,6 +631,21 @@ def selectQuery(qType, values):
                 SET USE_YN = 'N'
                 WHERE
                 SNS_ID = %s AND SNS_TYPE = %s
+                """
+        
+    elif qType == "C13" : # USER정보 가져오기
+        query = """
+                SELECT 
+                    A.USER_ID, A.NAME, A.COMPANY, A.PHONE_NO, A.ADDRESS1, A.ADDRESS2, A.SNS_ID, A.SNS_TYPE, A.FIRST_LOGIN, A.RECENT_LOGIN,
+                    B.ACCESS_TOKEN, B.ACCESS_TOKEN_EXPIRE, B.REFRESH_TOKEN, B.REFRESH_TOKEN_EXPIRE, B.FIRST_LOGIN SNS_FIRST_LOGIN, B.RECENT_LOGIN SNS_RECENT_LOGIN
+                FROM
+                    CLIENT_USER A
+                        LEFT JOIN
+                    CLIENT_AUTH B ON A.USER_ID = B.USER_ID
+                    AND A.SNS_TYPE = B.AUTH_TYPE
+                    AND A.SNS_ID = B.IDENTIFIER
+                WHERE A.USE_YN = 'Y'
+                AND A.USER_ID = %s
                 """
         
     elif qType == "COMMON_CD":  # 공통 코드 조회

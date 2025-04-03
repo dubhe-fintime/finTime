@@ -27,7 +27,7 @@ import jwt
 
 import configparser
 
-from check_session import check_session
+from check_session import check_session, check_client_session
 
 from corp.assurance import kyoboLife, ablLife ,dbLife,dongyangLife,heungkuklife,kdbLife,samsungLife,hanhwaLife,miraeAssetLife,shinhanLife
 from corp.assurance import samsungFire,heungkukFire,kbInsure,nhInsure
@@ -1467,7 +1467,7 @@ def naverLoginCallbackRoute():
 
     if result :
         token = session['token']
-        userId = session['userId']
+        userId = session['username']
         frontend_url = f"{frontDomain}/main?token={token}&user_id={userId}"
     else :
         frontend_url = f"{frontDomain}/index.html"
@@ -1477,6 +1477,48 @@ def naverLoginCallbackRoute():
 @app.route("/naverDisconnect")
 def naverDisconnectRoute():
     return naverDisconnect()
+
+# 로그인 사용자 정보 가져오기
+@app.route("/getUserInfo", methods=["POST"])
+def getUserInfo():
+    token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+    print(token)
+    userId = request.form.get('id', type=str)
+    if not userId:
+        return [error]
+
+    flag = check_client_session(token,userId)
+    
+    print(flag)
+
+    if flag:
+        result = execute_mysql_query_select("C13",[userId])
+        print(result)
+        
+        for item in result:
+            userInfo = {
+                'userId': item[0],
+                'name': item[1],
+                'phoneNo': item[2],
+                'addr1': item[3],
+                'addr2': item[4],
+                'snsId': item[5],
+                'snsType': item[6],
+                'firstLogin': item[7],
+                'recentLogin': item[8],
+                'accessToken': item[9],
+                'accessTokenExpire': item[10],
+                'refreshToken': item[11],
+                'refreshTokenExpire': item[11],
+                'snsFirstLogin': item[12],
+                'snsRecentLogin': item[13]
+            }
+    
+        return userInfo
+    elif (flag == session_fail):
+        return session_fail
+    else:
+        return [error]
 
 # 관리자 메인 화면 호출
 @app.route("/adminMain")
