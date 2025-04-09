@@ -47,6 +47,7 @@ from util import makeJwt
 from util.product import deposit, savings, loan
 from util.session_manage import set_login_session
 from util.snsLogin import naverLogin, naverCallback, naverDisconnect
+from util.snsLogin import kakaoLogin, kakaoCallback, kakaoDisconnect
 
 from batch_handler import start_batch, stop_batch, check_batch_status
 
@@ -1474,9 +1475,45 @@ def naverLoginCallbackRoute():
 
     return redirect(frontend_url)
 
-@app.route("/naverDisconnect")
-def naverDisconnectRoute():
-    return naverDisconnect()
+@app.route("/snsDisconnect", methods=["POST"])
+def snsDisconnectRoute():
+
+    token = request.headers['Authorization'] if 'Authorization' in request.headers else ""
+    print(token)
+    userId = request.form.get('id', type=str)
+    snsType = request.form.get('snsType', type=str)
+    if not userId:
+        return [error]
+
+    flag = check_client_session(token,userId)
+    
+    print(flag)
+
+    if flag and snsType == 'KAKAO':
+        return kakaoDisconnect()
+    elif flag and snsType == 'NAVER':
+        return naverDisconnect()
+    elif flag == session_fail:
+        return session_fail
+    else:
+        return [error]
+
+@app.route("/kakaoLogin")
+def kakaoLoginRoute():
+    return kakaoLogin()
+
+@app.route("/kakaoCallback")
+def kakaoLoginCallbackRoute():
+    result = kakaoCallback()
+
+    if result :
+        token = session['token']
+        userId = session['username']
+        frontend_url = f"{frontDomain}/main?token={token}&user_id={userId}"
+    else :
+        frontend_url = f"{frontDomain}/index.html"
+
+    return redirect(frontend_url)
 
 # 로그인 사용자 정보 가져오기
 @app.route("/getUserInfo", methods=["POST"])
@@ -1499,19 +1536,20 @@ def getUserInfo():
             userInfo = {
                 'userId': item[0],
                 'name': item[1],
-                'phoneNo': item[2],
-                'addr1': item[3],
-                'addr2': item[4],
-                'snsId': item[5],
-                'snsType': item[6],
-                'firstLogin': item[7],
-                'recentLogin': item[8],
-                'accessToken': item[9],
-                'accessTokenExpire': item[10],
-                'refreshToken': item[11],
-                'refreshTokenExpire': item[11],
-                'snsFirstLogin': item[12],
-                'snsRecentLogin': item[13]
+                'company': item[2],
+                'phoneNo': item[3],
+                'addr1': item[4],
+                'addr2': item[5],
+                'snsId': item[6],
+                'snsType': item[7],
+                'firstLogin': item[8],
+                'recentLogin': item[9],
+                'accessToken': item[10],
+                'accessTokenExpire': item[11],
+                'refreshToken': item[12],
+                'refreshTokenExpire': item[13],
+                'snsFirstLogin': item[14],
+                'snsRecentLogin': item[15]
             }
     
         return userInfo

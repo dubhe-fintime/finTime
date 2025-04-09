@@ -11,6 +11,7 @@ import os
 import configparser
 import secrets
 import uuid
+import jwt
 
 # 서버 경로 취득
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -35,11 +36,12 @@ naver_client_id = config['NAVER']['client_id']
 naver_client_secret = config['NAVER']['client_secret']
 naver_auth_host = config['NAVER']['auth_host']
 naver_api_host = config['NAVER']['api_host']
-# [KAKAO]
-# kakao_client_id = fd7015f41962b09d27ecf884114bb9a6
-# kakao_redirect_uri = http://127.0.0.1:8081/redirectPage
-# kakao_auth_host = https://kauth.kakao.com
-# kakao_api_host = https://kapi.kakao.com
+# 카카오 앱 등록 정보
+kakao_client_id = config['KAKAO']['client_id']
+kakao_client_secret = config['KAKAO']['client_secret']
+kakao_auth_host = config['KAKAO']['auth_host']
+kakao_api_host = config['KAKAO']['api_host']
+#### 네이버 시작 ####
 def naverLogin():
     
     state = secrets.token_urlsafe(16)  # CSRF 방지용 임의값
@@ -104,13 +106,13 @@ def naverCallback():
     for item in user:
         userId = item[0]  
 
-    # 4. 없으면 INSERT (의사 물어보는 단계 필요?)
+    # 4. 없으면 INSERT (추후 의사 물어보는 단계 필요)
     if not user:
         userId = generate_user_id()
         values = (userId,'',name,'','','','','Y',sns_id,'NAVER')
         execute_mysql_query_insert("C6",values)
         # Insert client_auth
-        authValues = (userId,'naver',sns_id,access_token,access_token_expire,refresh_token,refresh_token_expire)
+        authValues = (userId,'NAVER',sns_id,access_token,access_token_expire,refresh_token,refresh_token_expire)
         execute_mysql_query_insert("C10",authValues)
         
     # 4-1. 있으면 마지막 LOGIN 업데이트
@@ -159,8 +161,95 @@ def naverDisconnect() :
     print(del_token_res)
 
     # TODO::: DB작업 CLIENT_USER USE_YN 변경 
-    
+    #values = (sns_id ,'NAVER')
+    #execute_mysql_query_update("C12",values)
     return f"회원연동 해제"
+#### 네이버 종료 ####
+#### 카카오 시작 ####
+def kakaoLogin():
+    
+    state = secrets.token_urlsafe(16)  # CSRF 방지용 임의값
+    kakao_redirect_uri = domain+'/kakaoCallback'
+    kakao_auth_url = (
+        f"{kakao_auth_host}/oauth/authorize?"
+        f"response_type=code&client_id={kakao_client_id}"
+        f"&redirect_uri={urllib.parse.quote(kakao_redirect_uri)}"
+        f"&state={state}"
+    )
+    print(kakao_auth_url)
+    return redirect(kakao_auth_url)
 
+def kakaoCallback():
+    code = request.args.get("code")
+    state = request.args.get("state")
+
+    # 1. 액세스 토큰 요청
+    token_url = f"{kakao_auth_host}/oauth/token"
+    print(token_url)
+    token_params = {
+        "grant_type": "authorization_code",
+        "client_id": kakao_client_id,
+        "client_secret": kakao_client_secret,
+        "code": code,
+        "state": state
+    }
+
+    token_res = requests.get(token_url, params=token_params).json()
+    print('token_res')
+    print(token_res)
+    # {'access_token': '-cvg5CHj1H2vDtmZ2n6lQBRdCgCmETrHAAAAAQoNGVMAAAGWGLxMAM2yTeNnt1bO', 'token_type': 'bearer', 'refresh_token': 'srowtQqgWn1A1S0K825ZVam4XIbHk8Z7AAAAAgoNGVMAAAGWGLxL-M2yTeNnt1bO', 'expires_in': 21599, 'refresh_token_expires_in': 5183999}
+    access_token = token_res.get("access_token")
+    refresh_token = token_res.get("refresh_token")
+    issued_at = datetime.now()
+    # 60초 버퍼 줌(토큰발행시점 dbinsert 시점 차이로)
+    expires_in = token_res.get("expires_in")
+    refresh_token_expires_in = token_res.get("refresh_token_expires_in")
+    access_token_expire = issued_at + timedelta(seconds=int(expires_in) - 60)
+    refresh_token_expire = issued_at + timedelta(seconds=refresh_token_expires_in)
+
+    id_token = token_res.get("id_token")
+    # TODO ::: 공개키로 서명 검증 -카카오의 공개키 JWKS(JSON Web Key Set) 엔드포인트를 사용
+    # https://kauth.kakao.com/.well-known/jwks.json
+    payload = jwt.decode(id_token, options={"verify_signature": False})
+
+    print(payload)
+    
+    sns_id = payload["sub"]
+    # email = profile["email"]
+    name = payload.get("nickname", "")
+
+    if not sns_id :
+        # TODO::: 회원연동실패 처리 필요 
+        return f"회원연동 실패"
+
+    # 3. 사용자 존재 여부 확인
+    snsVal = (sns_id, 'KAKAO')
+    user = execute_mysql_query_select("C7",snsVal)
+    for item in user:
+        userId = item[0]  
+
+    # # 4. 없으면 INSERT (추후 의사 물어보는 단계 필요?)
+    if not user:
+        userId = generate_user_id()
+        values = (userId,'',name,'','','','','Y',sns_id,'KAKAO')
+        execute_mysql_query_insert("C6",values)
+        # Insert client_auth
+        authValues = (userId,'KAKAO',sns_id,access_token,access_token_expire,refresh_token,refresh_token_expire)
+        execute_mysql_query_insert("C10",authValues)
+        
+    # # 4-1. 있으면 마지막 LOGIN 업데이트
+    else :
+        values = (sns_id ,'KAKAO')
+        execute_mysql_query_update("C8",values)
+        execute_mysql_query_update("C11",values)
+    
+    # # 5.세션처리
+    set_login_session(userId, 'KAKAO')
+
+    return [00000]
+
+def kakaoDisconnect():
+    return
+#### 카카오 종료 ####
 def generate_user_id():
     return f"user_{uuid.uuid4().hex[:12]}"
