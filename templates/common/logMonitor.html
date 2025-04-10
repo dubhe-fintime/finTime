@@ -120,6 +120,7 @@
                 .then(response => response.json())
                 .then(files => {
                     fileSelect.innerHTML = '<option value="">파일 선택</option>';
+                    files.sort().reverse();
                     files.forEach(file => {
                         let option = document.createElement("option");
                         option.value = file;
