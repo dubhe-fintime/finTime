@@ -128,7 +128,7 @@ def naverCallback():
     return [00000]
 
 # TODO 네이버 연동해제 개발중
-def naverDisconnect() :
+def naverDisconnect(userId) :
 
     # 회원 가입 시 access_token / refresh_token 저장 필요 
     # 
@@ -248,7 +248,7 @@ def kakaoCallback():
 
     return [00000]
 
-def kakaoDisconnect():
+def kakaoDisconnect(userId):
     return
 #### 카카오 종료 ####
 def generate_user_id():

@@ -1490,9 +1490,9 @@ def snsDisconnectRoute():
     print(flag)
 
     if flag and snsType == 'KAKAO':
-        return kakaoDisconnect()
+        return kakaoDisconnect(userId)
     elif flag and snsType == 'NAVER':
-        return naverDisconnect()
+        return naverDisconnect(userId)
     elif flag == session_fail:
         return session_fail
     else:
