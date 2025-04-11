@@ -693,7 +693,7 @@ def selectQuery(qType, values):
             DELETE FROM FINANCIAL_LOAN_PRODUCTS
             """
 
-    print("###################################")
-    print(query)
-    print("###################################")
+    # print("###################################")
+    # print(query)
+    # print("###################################")
     return query
