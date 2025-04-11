@@ -598,7 +598,7 @@ def selectQuery(qType, values):
                 """   
     elif qType == "C7" : #SNS 가입 확인
         query = """
-                SELECT USER_ID FROM CLIENT_USER WHERE SNS_ID = %s  and SNS_TYPE = %s
+                SELECT USER_ID, USE_YN FROM CLIENT_USER WHERE SNS_ID = %s  and SNS_TYPE = %s
                 """
     elif qType == "C8" : # SNS 로그인 마지막로그인 시간 업데이트
         query = """
@@ -631,16 +631,18 @@ def selectQuery(qType, values):
         query = """
                 UPDATE CLIENT_AUTH
                 SET RECENT_LOGIN = SYSDATE()
-                WHERE 
-                IDENTIFIER = %s AND AUTH_TYPE = %s
+                WHERE IDENTIFIER = %s AND AUTH_TYPE = %s
                 """
     
-    elif qType == "C12" : # SNS 로그인 연동해제
+    elif qType == "C12" : # SNS 로그인 USEYN 정보 수정
         query = """
                 UPDATE CLIENT_AUTH
-                SET USE_YN = 'N'
-                WHERE
-                SNS_ID = %s AND SNS_TYPE = %s
+                SET USE_YN = %s,
+                ACCESS_TOKEN = %s,
+                ACCESS_TOKEN_EXPIRE = %s,
+                REFRESH_TOKEN = %s,
+                REFRESH_TOKEN_EXPIRE = %s
+                WHERE IDENTIFIER = %s AND AUTH_TYPE = %s
                 """
         
     elif qType == "C13" : # USER정보 가져오기
@@ -657,7 +659,12 @@ def selectQuery(qType, values):
                 WHERE A.USE_YN = 'Y'
                 AND A.USER_ID = %s
                 """
-        
+    elif qType == "C14" : # 회원정보 USEYN 수정
+        query = """
+                UPDATE CLIENT_USER
+                SET USE_YN = %s
+                WHERE SNS_ID = %s AND SNS_TYPE = %s
+                """ 
     elif qType == "COMMON_CD":  # 공통 코드 조회
         query = """
                 SELECT 
@@ -692,8 +699,9 @@ def selectQuery(qType, values):
         query = """
             DELETE FROM FINANCIAL_LOAN_PRODUCTS
             """
+        
 
-    # print("###################################")
+    # print('####################')    
     # print(query)
-    # print("###################################")
+    # print('####################')    
     return query

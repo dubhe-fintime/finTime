@@ -2,7 +2,7 @@
 
 import requests
 import urllib.parse
-from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2,execute_mysql_query_insert_update_bulk, execute_mysql_query_insert2
+from dbconn import execute_mysql_query_select, execute_mysql_query_insert, execute_mysql_query_delete, execute_mysql_query_update, execute_mysql_query_rest, execute_mysql_query_update2,execute_mysql_query_insert_update_bulk, execute_mysql_query_insert2, execute_multi_update
 from flask import redirect, session, request
 from datetime import datetime, timedelta
 from util.session_manage import set_login_session
@@ -52,7 +52,6 @@ def naverLogin():
         f"&redirect_uri={urllib.parse.quote(naver_redirect_uri)}"
         f"&state={state}"
     )
-    print(naver_auth_url)
     return redirect(naver_auth_url)
 
 def naverCallback():
@@ -62,7 +61,6 @@ def naverCallback():
 
     # 1. 액세스 토큰 요청
     token_url = f"{naver_auth_host}/token"
-    print(token_url)
     token_params = {
         "grant_type": "authorization_code",
         "client_id": naver_client_id,
@@ -72,8 +70,6 @@ def naverCallback():
     }
 
     token_res = requests.get(token_url, params=token_params).json()
-    print('token_res')
-    print(token_res)
     
     access_token = token_res.get("access_token")
     refresh_token = token_res.get("refresh_token")
@@ -89,11 +85,8 @@ def naverCallback():
     headers = {"Authorization": f"Bearer {access_token}"}
     profile_res = requests.get(f"{naver_api_host}/me", headers=headers).json()
     profile = profile_res["response"]
-    print('profile')
-    print(profile)
     
     sns_id = profile["id"]
-    email = profile["email"]
     name = profile.get("name", "")
 
     if not sns_id :
@@ -105,6 +98,7 @@ def naverCallback():
     user = execute_mysql_query_select("C7",snsVal)
     for item in user:
         userId = item[0]  
+        useYn = item[1]
 
     # 4. 없으면 INSERT (추후 의사 물어보는 단계 필요)
     if not user:
@@ -115,23 +109,35 @@ def naverCallback():
         authValues = (userId,'NAVER',sns_id,access_token,access_token_expire,refresh_token,refresh_token_expire)
         execute_mysql_query_insert("C10",authValues)
         
-    # 4-1. 있으면 마지막 LOGIN 업데이트
+    # 4-1. 있으면
     else :
         # userId = userId
-        values = (sns_id ,'NAVER')
-        execute_mysql_query_update("C8",values)
-        execute_mysql_query_update("C11",values)
+        # 연동해제 후 재연동 시 처리
+        update_items = []
+        if useYn == 'N':
+            update_items.append(("C14", ('Y', sns_id, 'NAVER')))
+            update_items.append(("C12", ('Y', access_token, access_token_expire, refresh_token, refresh_token_expire, sns_id, 'NAVER')))
+
+        # 마지막 로그인일시 갱신 (조건 상관없이 항상 추가)
+        update_items.append(("C8", (sns_id, 'NAVER')))
+        update_items.append(("C11", (sns_id, 'NAVER')))
+
+        # 최종 업데이트 실행
+        execute_multi_update(update_items)
     
     # 5.세션처리
     set_login_session(userId, 'NAVER')
 
     return [00000]
 
-# TODO 네이버 연동해제 개발중
+# 네이버 연동해제 
 def naverDisconnect(userId) :
-
-    # 회원 가입 시 access_token / refresh_token 저장 필요 
-    # 
+    
+    userId = userId
+    result = execute_mysql_query_select("C13",[userId])
+    item = result[0]
+    refresh_token = item[12]
+    sns_id = item[6]
     # 네이버 연동해제시 refresh_token 으로 access_token 갱신 필요
     # access token 갱신
     # {naver_auth_host}/token?grant_type=refresh_token&client_id=CLIENT_ID&client_secret=CLIENT_SECRET&refresh_token=REFRESH_TOKEN
@@ -140,11 +146,9 @@ def naverDisconnect(userId) :
         "grant_type": "refresh_token",
         "client_id": naver_client_id,
         "client_secret": naver_client_secret,
-        "refresh_token": 'F5cqlENZ8Snjvipd0pK9RgvzE2HwcSnIHX4GRS3eOBWZb9dcMWdbapJxUHrkg73gDGI8nu0jCzSkottisZyUUygkfzfQNcADqZORx2a2CevTYie'             # 
+        "refresh_token": refresh_token
     }    
     refresh_token_res = requests.get(token_url, params=refresh_token_params).json()
-    print('refresh_token_res')
-    print(refresh_token_res)
     access_token = refresh_token_res.get("access_token")
     # 연동해제
     # {naver_auth_host}/token?grant_type=delete&client_id=ugZD9QSKdWFTAls9nqfF&client_secret=hj6cr1Ypf5&access_token=AAAANVp7taKfZSlTXvQsLscm_GKF7jcyINeTCW0bff78Ro1EZmCrlJbCgebTkfKxyAbdzBdGSaJ9jQWHyk_oA4cvIUo
@@ -157,13 +161,14 @@ def naverDisconnect(userId) :
     }    
 
     del_token_res = requests.get(token_url, params=delete_token_params).json()
-    print('del_token_res')
-    print(del_token_res)
-
-    # TODO::: DB작업 CLIENT_USER USE_YN 변경 
-    #values = (sns_id ,'NAVER')
-    #execute_mysql_query_update("C12",values)
-    return f"회원연동 해제"
+    
+    update_items = []
+    update_items.append(("C14", ('N', sns_id, 'NAVER')))
+    update_items.append(("C12", ('N', '', None,'',None, sns_id, 'NAVER')))
+    
+    execute_multi_update(update_items)
+    
+    return [success]
 #### 네이버 종료 ####
 #### 카카오 시작 ####
 def kakaoLogin():
@@ -176,7 +181,6 @@ def kakaoLogin():
         f"&redirect_uri={urllib.parse.quote(kakao_redirect_uri)}"
         f"&state={state}"
     )
-    print(kakao_auth_url)
     return redirect(kakao_auth_url)
 
 def kakaoCallback():
@@ -185,7 +189,6 @@ def kakaoCallback():
 
     # 1. 액세스 토큰 요청
     token_url = f"{kakao_auth_host}/oauth/token"
-    print(token_url)
     token_params = {
         "grant_type": "authorization_code",
         "client_id": kakao_client_id,
@@ -195,9 +198,6 @@ def kakaoCallback():
     }
 
     token_res = requests.get(token_url, params=token_params).json()
-    print('token_res')
-    print(token_res)
-    # {'access_token': '-cvg5CHj1H2vDtmZ2n6lQBRdCgCmETrHAAAAAQoNGVMAAAGWGLxMAM2yTeNnt1bO', 'token_type': 'bearer', 'refresh_token': 'srowtQqgWn1A1S0K825ZVam4XIbHk8Z7AAAAAgoNGVMAAAGWGLxL-M2yTeNnt1bO', 'expires_in': 21599, 'refresh_token_expires_in': 5183999}
     access_token = token_res.get("access_token")
     refresh_token = token_res.get("refresh_token")
     issued_at = datetime.now()
@@ -212,8 +212,6 @@ def kakaoCallback():
     # https://kauth.kakao.com/.well-known/jwks.json
     payload = jwt.decode(id_token, options={"verify_signature": False})
 
-    print(payload)
-    
     sns_id = payload["sub"]
     # email = profile["email"]
     name = payload.get("nickname", "")
@@ -249,6 +247,7 @@ def kakaoCallback():
     return [00000]
 
 def kakaoDisconnect(userId):
+    userId
     return
 #### 카카오 종료 ####
 def generate_user_id():

@@ -195,3 +195,29 @@ def execute_mysql_query_insert2(queryId, values):
             cursor.close()
         if cnx:
             cnx.close()
+
+# 다건 UPDATE 트랜잭션 처리 (conn → execute 반복 → commit or rollback → close)
+def execute_multi_update(update_items):
+
+    cnx = None
+    cursor = None
+    try:
+        cnx = conn_mysql()
+        cursor = cnx.cursor()
+
+        for query_id, values in update_items:
+            cursor.execute(selectQuery(query_id, values), tuple(values))
+
+        cnx.commit()
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        if cnx:
+            cnx.rollback()
+        raise
+
+    finally:
+        if cursor:
+            cursor.close()
+        if cnx:
+            cnx.close()
