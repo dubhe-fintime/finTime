@@ -47,7 +47,13 @@
             <li class="option" onclick="ClickSelectOption('chkYn','전체','')">
               전체
             </li>
-            <li class="option" onclick="ClickSelectOption('chkYn','확인필요','Y')">
+            <li class="option" onclick="ClickSelectOption('chkYn','진행중','ING')">
+              진행중
+            </li>
+            <li class="option" onclick="ClickSelectOption('chkYn','종료','END')">
+              종료
+            </li>
+            <li class="option" onclick="ClickSelectOption('chkYn','확인필요','CHK')">
               확인필요
             </li>
           </ul>
@@ -433,9 +439,9 @@ function fileUpload() {
                   var listUrlCol = ''
                   var encodingJSON = encodeURIComponent(JSON.stringify(v));
                   var chkMsg = ''
-                  if(v['chk_yn']=='Y')
+                  if(v['chk_yn']=='CHK')
                   {
-                    chkMsg = '확인필요'
+                    chkMsg = "확인필요"
                   }
                   if(status =='Y')
                   {
@@ -481,7 +487,7 @@ function fileUpload() {
                   values +=`  </td>`
                   values += statusCol
                   values += `<td><button id='dtBtn' class='btn primary sm' data-json=`+encodingJSON+`  onclick="delEvt(this)" >삭제</button></td>`
-                  values += `<td style="color:red;">${chkMsg}</td>`
+                  values += `<td style='color:red;'>${chkMsg}</td>`
                   values += `  </tr>`
                 });
                 $("#dataContent").append(values)

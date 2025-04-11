@@ -472,7 +472,11 @@ def selectQuery(qType, values):
         query += "    a.USE_YN use_yn, "
         query += "    a.C_DATE c_date, "
         query += "    a.E_DATE e_date, "
-        query += "    CASE WHEN r.EVT_ID IS NOT NULL THEN '' ELSE 'Y' END AS CHK_YN "
+        query += "    CASE  WHEN (a.EVT_ST_DATE IS NULL OR a.EVT_ED_DATE IS NULL OR r.EVT_ID IS NULL)"
+        query += "    AND (a.EVT_ED_DATE IS NULL OR a.EVT_ED_DATE >= CURDATE()) "
+        query += "    THEN 'CHK'  ELSE ''  END AS CHK_YN, "
+        query += "    CASE WHEN a.EVT_ED_DATE < CURDATE() THEN 'END'"
+        query += "    ELSE 'ING' END AS ING_YN "
         query += "FROM EVT_MST a "
         query += "	LEFT JOIN COR_MST b ON a.COR_NO = b.COR_NO "
         query += "  LEFT JOIN BATCH_RST r ON a.EVT_ID = r.EVT_ID "
@@ -486,7 +490,13 @@ def selectQuery(qType, values):
         if len(values[2])>0 :
             query += f" AND a.USE_YN = '{values[2]}'"
         if len(values[3])>0 :
-            query += f" AND a.EVT_ID NOT IN (SELECT DISTINCT EVT_ID FROM BATCH_RST WHERE EVT_ID IS NOT NULL)"
+            if values[3] == 'CHK':
+                query += f" AND ( (a.EVT_ST_DATE IS NULL OR a.EVT_ED_DATE IS NULL OR r.EVT_ID IS NULL)"
+                query += f" AND (a.EVT_ED_DATE IS NULL OR a.EVT_ED_DATE >= CURDATE()) ) "
+            if values[3] == 'END' : 
+                query += f" AND a.EVT_ED_DATE < CURDATE()"
+            if values[3] == 'ING' : 
+                query += f" AND a.EVT_ED_DATE >= CURDATE()"
 
         query += " GROUP BY a.EVT_ID "
         query += " ORDER BY cor_nm, evt_st_date desc"
@@ -683,7 +693,7 @@ def selectQuery(qType, values):
             DELETE FROM FINANCIAL_LOAN_PRODUCTS
             """
 
-    # print("###################################")
-    # print(query)
-    # print("###################################")
+    print("###################################")
+    print(query)
+    print("###################################")
     return query
